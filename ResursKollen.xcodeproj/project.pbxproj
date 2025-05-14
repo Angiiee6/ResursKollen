@@ -6,8 +6,17 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		FD2607D02DD4B3B0009ADDEF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FD2607CF2DD4B3B0009ADDEF /* GoogleService-Info.plist */; };
+		FD2607D32DD4B3F6009ADDEF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = FD2607D22DD4B3F6009ADDEF /* FirebaseAnalytics */; };
+		FD2607D52DD4B3F6009ADDEF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = FD2607D42DD4B3F6009ADDEF /* FirebaseAuth */; };
+		FD2607D72DD4B3F6009ADDEF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FD2607D62DD4B3F6009ADDEF /* FirebaseCore */; };
+		FD2607D92DD4B3F6009ADDEF /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = FD2607D82DD4B3F6009ADDEF /* FirebaseFirestore */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		FD2607B92DD4B070009ADDEF /* ResursKollen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ResursKollen.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FD2607CF2DD4B3B0009ADDEF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -23,6 +32,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD2607D32DD4B3F6009ADDEF /* FirebaseAnalytics in Frameworks */,
+				FD2607D92DD4B3F6009ADDEF /* FirebaseFirestore in Frameworks */,
+				FD2607D72DD4B3F6009ADDEF /* FirebaseCore in Frameworks */,
+				FD2607D52DD4B3F6009ADDEF /* FirebaseAuth in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,6 +45,7 @@
 		FD2607B02DD4B070009ADDEF = {
 			isa = PBXGroup;
 			children = (
+				FD2607CF2DD4B3B0009ADDEF /* GoogleService-Info.plist */,
 				FD2607BB2DD4B070009ADDEF /* ResursKollen */,
 				FD2607BA2DD4B070009ADDEF /* Products */,
 			);
@@ -65,6 +79,10 @@
 			);
 			name = ResursKollen;
 			packageProductDependencies = (
+				FD2607D22DD4B3F6009ADDEF /* FirebaseAnalytics */,
+				FD2607D42DD4B3F6009ADDEF /* FirebaseAuth */,
+				FD2607D62DD4B3F6009ADDEF /* FirebaseCore */,
+				FD2607D82DD4B3F6009ADDEF /* FirebaseFirestore */,
 			);
 			productName = ResursKollen;
 			productReference = FD2607B92DD4B070009ADDEF /* ResursKollen.app */;
@@ -94,6 +112,9 @@
 			);
 			mainGroup = FD2607B02DD4B070009ADDEF;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				FD2607D12DD4B3F6009ADDEF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FD2607BA2DD4B070009ADDEF /* Products */;
 			projectDirPath = "";
@@ -109,6 +130,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD2607D02DD4B3B0009ADDEF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,6 +283,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -289,6 +312,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -324,6 +348,40 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		FD2607D12DD4B3F6009ADDEF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 11.12.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		FD2607D22DD4B3F6009ADDEF /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FD2607D12DD4B3F6009ADDEF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		FD2607D42DD4B3F6009ADDEF /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FD2607D12DD4B3F6009ADDEF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+		FD2607D62DD4B3F6009ADDEF /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FD2607D12DD4B3F6009ADDEF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		FD2607D82DD4B3F6009ADDEF /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = FD2607D12DD4B3F6009ADDEF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = FD2607B12DD4B070009ADDEF /* Project object */;
 }
