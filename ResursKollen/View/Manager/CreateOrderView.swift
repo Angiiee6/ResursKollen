@@ -10,36 +10,18 @@ import SwiftUI
 struct CreateOrderView: View {
     @StateObject var viewModel = ViewModel()
     
-    let order: Order?
-    
     //Order
-    @State var title: String
-    @State var description: String
-    @State var selectedDate: Date
+    @State var title: String = ""
+    @State var description: String = ""
+    @State var selectedDate: Date = Date().addingTimeInterval(60 * 60 * 24 * 7)
     
     //Customer
-    @State var name: String
-    @State var phoneNumber: String
-    @State var streetName: String
-    @State var postalCode: String
-    @State var city: String
-    @State var email: String
-    
-    
-    init(order: Order?) {
-        self.order = order
-        self.title = order?.title ?? ""
-        self.description = order?.description ?? ""
-        //Start calendar one week from current date
-        self.selectedDate = order?.dueDate ?? Date().addingTimeInterval(60 * 60 * 24 * 7)
-        self.name = order?.customer.name ?? ""
-        self.phoneNumber = order?.customer.phoneNumber ?? ""
-        self.streetName = order?.customer.streetName ?? ""
-        self.postalCode = order?.customer.postalCode ?? ""
-        self.city = order?.customer.city ?? ""
-        self.email = order?.customer.emailAddress ?? ""
-        
-    }
+    @State var name: String = ""
+    @State var phoneNumber: String = ""
+    @State var streetName: String = ""
+    @State var postalCode: String = ""
+    @State var city: String = ""
+    @State var email: String = ""
 
     var body: some View {
         VStack {
@@ -110,12 +92,12 @@ struct CreateOrderView: View {
                     || phoneNumber.isEmpty || title.isEmpty
             )
         }
-        .navigationTitle(order?.orderNumber ?? "Skapa ny arbetsorder")
+        .navigationTitle("Skapa ny arbetsorder")
     }
 }
 
 #Preview {
-    CreateOrderView(order: nil)
+    CreateOrderView()
 }
 
 extension CreateOrderView {
