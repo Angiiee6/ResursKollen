@@ -9,11 +9,12 @@ import Foundation
 
 struct Order: Codable, Identifiable {
     var id: String
-    var name: String
+    var title: String = ""
+    var description: String = ""
     var creationDate = Date()
     var orderNumber: String
     var timeConsumption: String
-    var materialConsumption: [Material]
+    var materialConsumption: [Material] = []
     var status: OrderStatus
     var dueDate: Date
     var customer: Customer
