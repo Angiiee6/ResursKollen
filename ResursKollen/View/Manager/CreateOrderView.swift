@@ -42,11 +42,12 @@ struct CreateOrderView: View {
                     DatePicker(
                         "Förfallodatum:",
                         selection: $selectedDate,
+                        //Block selecting days before current day
                         in: Date()...,
                         displayedComponents: [.date]
                     )
                 }
-                //TODO: Add search existing customer function?
+                //TODO: Add search existing customer function here?
                 Section("Kundinformation") {
                     TextField("Namn *", text: $name)
                         .keyboardType(.namePhonePad)
@@ -100,6 +101,7 @@ struct CreateOrderView: View {
     CreateOrderView()
 }
 
+//MARK: View Model
 extension CreateOrderView {
 
     class ViewModel: ObservableObject {
