@@ -9,8 +9,32 @@ import SwiftUI
 
 struct ManagerHomeView: View {
     var body: some View {
-        Text("Här ska en Cardview Vara")
-            .foregroundColor(.white)
+        NavigationStack {
+            TabView {
+                Tab("Ordrar", systemImage:
+                        "list.bullet.clipboard"
+                ) {
+                    AllOrdersView()
+                }
+                Tab("Statistik", systemImage:
+                        "waveform.badge.magnifyingglass"
+                ) {
+                    SummaryView()
+                }
+                Tab("Personal", systemImage: "person.3") {
+                    StaffDetailView()
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        CreateOrderView()
+                    } label: {
+                        Image(systemName: "plus")
+                    }
+                }
+            }
+        }
     }
 }
 
