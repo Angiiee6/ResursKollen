@@ -8,7 +8,7 @@ import SwiftUI
 
 struct EmployeeHomeView: View {
     @State private var selectedTab = 0
-    let user: User
+    let user: UserData
     let orders: [Order]
 
     var body: some View {
@@ -30,7 +30,7 @@ struct EmployeeHomeView: View {
 }
 
 struct EmployeeMyOrders: View {
-    let user: User
+    let user: UserData
     let orders: [Order]
 
     var body: some View {
@@ -175,7 +175,7 @@ struct AllOrders: View {
 // Förhandsvisning med mockdata
 #Preview {
     EmployeeHomeView(
-        user: User(id: "1", status: .employee, name: "Vivianne och Angie", employmentDate: Date(), employmentNumber: "EMP123", phoneNumber: "0701234567"),
+        user: UserData(id: "1", status: .employee, name: "Vivianne och Angie", employmentDate: Date(), employmentNumber: "EMP123", phoneNumber: "0701234567"),
         orders: [
             Order(id: "O1", description: "Laga Spisen",orderNumber: "123-456-AB", timeConsumption: "2h", status: .registered, dueDate: Date(), customer: Customer(name: "Kalle", phoneNumber: "0701231234", orders: [], streetName: "Storgatan 1", city: "Göteborg", postalCode: "41100", emailAddress: "kalle@mail.com")),
             Order(id: "O2",description: "Laga Spisen", orderNumber: "789-456-CD", timeConsumption: "3h", status: .started, dueDate: Date(), customer: Customer(name: "Lisa", phoneNumber: "0702345678", orders: [], streetName: "Vägen 2", city: "Stockholm", postalCode: "11300", emailAddress: "lisa@mail.com"))
