@@ -20,7 +20,7 @@ struct ResursKollenApp: App {
   var body: some Scene {
     WindowGroup {
       NavigationView {
-        ContentView()
+          EmployeeHomeView()
       }
     }
   }
