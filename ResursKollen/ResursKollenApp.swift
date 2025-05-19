@@ -20,8 +20,8 @@ struct ResursKollenApp: App {
   var body: some Scene {
     WindowGroup {
       NavigationView {
-       // ContentView()
-          LoginView()    //Da provar auth
+        ContentView()
+         // LoginView()    //Da provar auth
       }
     }
   }

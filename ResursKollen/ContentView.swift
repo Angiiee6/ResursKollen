@@ -9,14 +9,24 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        CreateOrderView()
-//        VStack {
-//            Image(systemName: "globe")
-//                .imageScale(.large)
-//                .foregroundStyle(.tint)
-//            Text("Hello, world!")
-//        }
-//        .padding()
+        OrderDetailView(
+            order: Order(
+                id: "1",
+                orderNumber: "244-2359-12",
+                timeConsumption: 1,
+                status: .registered,
+                dueDate: Date(),
+                customer: Customer(
+                    name: "Saga Andersson",
+                    phoneNumber: "070-2358914",
+                    orders: [],
+                    streetName: "Kungsgatan 61",
+                    city: "Uppsala",
+                    postalCode: "75579",
+                    emailAddress: "saga.andersson@gmail.com"
+                )
+            )
+        )
     }
 }
 

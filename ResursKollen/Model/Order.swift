@@ -14,14 +14,15 @@ struct Order: Codable, Identifiable {
     var description: String = ""
     var creationDate = Date()
     var orderNumber: String
-    var timeConsumption: String
+    var timeConsumption: Double = 0
     var materialConsumption: [Material] = []
     var status: OrderStatus
     var dueDate: Date
     var customer: Customer
 }
 
-enum OrderStatus: Codable {
+enum OrderStatus: Codable, CaseIterable {
+    
     case registered, delayed, started, completed
     
     var nameSE : String {

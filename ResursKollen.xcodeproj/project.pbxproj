@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FD2607D02DD4B3B0009ADDEF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = FD2607CF2DD4B3B0009ADDEF /* GoogleService-Info.plist */; };
 		FD2607D32DD4B3F6009ADDEF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = FD2607D22DD4B3F6009ADDEF /* FirebaseAnalytics */; };
 		FD2607D52DD4B3F6009ADDEF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = FD2607D42DD4B3F6009ADDEF /* FirebaseAuth */; };
 		FD2607D72DD4B3F6009ADDEF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FD2607D62DD4B3F6009ADDEF /* FirebaseCore */; };
@@ -16,7 +15,6 @@
 
 /* Begin PBXFileReference section */
 		FD2607B92DD4B070009ADDEF /* ResursKollen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ResursKollen.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FD2607CF2DD4B3B0009ADDEF /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -45,7 +43,6 @@
 		FD2607B02DD4B070009ADDEF = {
 			isa = PBXGroup;
 			children = (
-				FD2607CF2DD4B3B0009ADDEF /* GoogleService-Info.plist */,
 				FD2607BB2DD4B070009ADDEF /* ResursKollen */,
 				FD2607BA2DD4B070009ADDEF /* Products */,
 			);
@@ -130,7 +127,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FD2607D02DD4B3B0009ADDEF /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -273,9 +269,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KVS9943R6V;
+				DEVELOPMENT_TEAM = X25QFDB9QU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -291,6 +288,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ResursKollen.ResursKollen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -302,9 +300,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = KVS9943R6V;
+				DEVELOPMENT_TEAM = X25QFDB9QU;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -320,6 +319,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = ResursKollen.ResursKollen;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

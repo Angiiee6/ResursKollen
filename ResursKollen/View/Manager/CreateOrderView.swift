@@ -82,7 +82,7 @@ struct CreateOrderView: View {
                     title: title,
                     description: description,
                     orderNumber: UUID().uuidString,
-                    timeConsumption: "",
+                    timeConsumption: 1,
                     status: .registered,
                     dueDate: selectedDate,
                     customer: newCustomer
