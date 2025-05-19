@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 struct Order: Codable, Identifiable {
     var id: String
@@ -21,14 +22,14 @@ struct Order: Codable, Identifiable {
 }
 
 enum OrderStatus: Codable {
-    case registered, booked, delayed, started, completed
+    case registered, delayed, started, completed
     
     var nameSE : String {
         switch self {
         case .registered:
             "registrerad"
-        case .booked:
-            "bokad"
+       // case .booked:
+        //    "ledig"
         case .delayed:
             "försenad"
         case .started:
@@ -38,3 +39,36 @@ enum OrderStatus: Codable {
         }
     }
 }
+    
+    extension OrderStatus {
+        var color: Color {
+            switch self {
+            case .registered:
+                return .gray
+           // case .booked:
+             //   return .blue
+            case .delayed:
+                return .red
+            case .started:
+                return .orange
+            case .completed:
+                return .green
+            }
+        }
+        
+        var icon: String {
+            switch self {
+            case .registered:
+                return "doc"
+            //case .booked:
+              //  return "calendar"
+            case .delayed:
+                return "exclamationmark.triangle"
+            case .started:
+                return "hammer"
+            case .completed:
+                return "checkmark.seal"
+            }
+        }
+    }
+
