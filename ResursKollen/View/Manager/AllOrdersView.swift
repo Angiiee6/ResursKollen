@@ -28,31 +28,18 @@ extension AllOrdersView{
         
         @Published var orders : [Order] = []
         
+        //Lyssnar direkt vi initierar viewmodlen
         init() {
             listenToOrderCollection()
         }
-        
+        // Updaterar UI på maintråden
         func listenToOrderCollection() {
-            let orderRef = firestore.orderRef
-            
-            orderRef.addSnapshotListener {snapshot, error in
-                if let error = error {
-                    print("Error listening to Orders: \(error.localizedDescription)")
-                    return
+            firestore.listenToOrderCollection { [weak self] newOrders in
+                DispatchQueue.main.async {
+                    self?.orders = newOrders
                 }
-                
-                guard let documents = snapshot?.documents else {
-                    print("No documents")
-                    return
-                }
-                
-                self.orders = documents.compactMap { doc in
-                    try? doc.data(as: Order.self)
-                }
-                
             }
         }
-        
     }
 }
 
