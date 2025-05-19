@@ -8,6 +8,18 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
+    
+    ///EXEMPEL USER
+        let exampleUser = UserData(
+            id: "1",
+            status: .employee,
+            name: "Vivianne och Angie",
+            employmentDate: Date(),
+            employmentNumber: "EMP123",
+            phoneNumber: "0701234567"
+        )
+    
+    
     var body: some View {
         NavigationStack {
             TabView {
@@ -22,7 +34,7 @@ struct ManagerHomeView: View {
                     SummaryView()
                 }
                 Tab("Personal", systemImage: "person.3") {
-                    StaffDetailView()
+                    StaffView(user: exampleUser)
                 }
             }
             .toolbar {
