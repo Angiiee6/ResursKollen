@@ -4,94 +4,182 @@
 //
 //  Created by Magnus Freidenfelt on 2025-05-16.
 //
-
 import SwiftUI
 
 struct EmployeeHomeView: View {
-    @StateObject private var vm = EmployeeHomeViewModel()
-    
+    @State private var selectedTab = 0
+    let user: UserData
+    let orders: [Order]
+
     var body: some View {
-        NavigationStack {
-            VStack(alignment: .leading, spacing: 16) {
-                
-                //Titel för Listan
-                Text("Alla ordrar")
-                    .font(.title2)
-                    .bold()
-                    .foregroundColor(.white)
-                    .padding(.horizontal)
-                
-                // Lista för Ordrar
-                List(vm.orders) { order in
-                    NavigationLink(destination: OrderDetailView(order: order)) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            
-                            Text(order.title)
-                                .font(.headline)
-                                .foregroundColor(.white)
-                            
-                            Text("Deadline: \(order.dueDate.formatted(date: .abbreviated, time: .shortened))")
-                                .font(.caption2)
-                                .foregroundColor(.white.opacity(0.6))
+        TabView(selection: $selectedTab) {
+            EmployeeMyOrders(user: user, orders: orders)
+                .tabItem {
+                    Label("Mina ordrar", systemImage: "person.fill")
+                }
+                .tag(0)
+
+            AllOrders(orders: orders)
+                .tabItem {
+                    Label("Alla ordrar", systemImage: "tray.full.fill")
+                }
+                .tag(1)
+        }
+        .accentColor(.orange)
+    }
+}
+
+struct EmployeeMyOrders: View {
+    let user: UserData
+    let orders: [Order]
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [Color(.systemGray6), Color(.systemGray5)]),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            ).edgesIgnoringSafeArea(.all)
+
+            NavigationView {
+                VStack(alignment: .leading) {
+                    Text("Hej, \(user.name) 👋")
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .padding(.top)
+                        .padding(.leading)
+
+
+                    List {
+                        Section(header: Text("Påbörjade ordrar:")      .foregroundColor(.orange)) {
+                            ForEach(orders) { order in
+                                OrderRowMyOrders(order: order)
+                            }
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding()
-                        .background(.ultraThinMaterial)
-                        .cornerRadius(12)
-                        .shadow(radius: 4)
                     }
-                    .listRowBackground(Color.clear)
+                    .listStyle(.insetGrouped)
                 }
-                .scrollContentBackground(.hidden)
-                .background(Color.clear)
+        
             }
-            .padding()
-            .background(
-                LinearGradient(
-                    gradient: Gradient(colors: [Color(red: 0.11, green: 0.11, blue: 0.15),
-                    Color(red: 0.20, green: 0.20, blue: 0.25)]),
-                    startPoint: .top, endPoint: .bottom
-                ).edgesIgnoringSafeArea(.all)
-            )
         }
     }
 }
 
+struct OrderRowMyOrders: View {
+    let order: Order
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text("\(order.description)")
+                        .font(.headline)
+
+                    Text(order.customer.streetName)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.orange)
+            }
+
+            Text("Förfaller: \(order.dueDate, style: .date)")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+        }
+        .padding(.vertical, 8)
+    }
+}
+
+struct OrderRowAllOrders: View {
+    let order: Order
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Image(systemName: "wrench.fill")
+                    .foregroundColor(order.status.color)
+                    .padding(8)
+                    .background(order.status.color.opacity(0.2))
+                    .clipShape(Circle())
+
+                VStack(alignment: .leading) {
+                    Text("\(order.description)")
+                        .font(.headline)
+
+                    Text(order.customer.name)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.gray)
+            }
+
+            Text("Status: \(order.status.nameSE)")
+                .font(.caption)
+                .padding(.vertical, 4)
+                .padding(.horizontal, 8)
+                .background(order.status.color.opacity(0.1))
+                .foregroundColor(order.status.color)
+                .cornerRadius(8)
+
+            Text("Förfaller: \(order.dueDate, style: .date)")
+                .font(.caption2)
+                .foregroundColor(.secondary)
+        }
+        .padding(.vertical, 8)
+    }
+}
+struct AllOrders: View {
+    let orders: [Order]
+
+    var body: some View {
+        NavigationView {
+            List {
+                Section(header: Text("Lediga ordrar")      .foregroundColor(.blue)) {
+                    ForEach(orders.filter { $0.status == .registered }) { order in
+                        OrderRowAllOrders(order: order)
+                    }
+                }
+                Section(header: Text("Påbörjade ordrar")      .foregroundColor(.orange)) {
+                    ForEach(orders.filter { $0.status == .started }) { order in
+                        OrderRowAllOrders(order: order)
+                    }
+                }
+                Section(header: Text("Försenade ordrar")      .foregroundColor(.red)) {
+                    ForEach(orders.filter { $0.status == .delayed }) { order in
+                        OrderRowAllOrders(order: order)
+                    }
+                }
+
+                Section(header: Text("Avslutade ordrar")      .foregroundColor(.green)) {
+                    ForEach(orders.filter { $0.status == .completed }) { order in
+                        OrderRowAllOrders(order: order)
+                    }
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("Alla ordrar")
+            .searchable(text: .constant(""), prompt: "Sök bland ordrar")
+        }
+    }
+}
+
+
+// Förhandsvisning med mockdata
 #Preview {
-    EmployeeHomeView()
+    EmployeeHomeView(
+        user: UserData(id: "1", status: .employee, name: "Vivianne och Angie", employmentDate: Date(), employmentNumber: "EMP123", phoneNumber: "0701234567"),
+        orders: [
+            Order(id: "O1", description: "Laga Spisen",orderNumber: "123-456-AB", timeConsumption: "2h", status: .registered, dueDate: Date(), customer: Customer(name: "Kalle", phoneNumber: "0701231234", orders: [], streetName: "Storgatan 1", city: "Göteborg", postalCode: "41100", emailAddress: "kalle@mail.com")),
+            Order(id: "O2",description: "Laga Spisen", orderNumber: "789-456-CD", timeConsumption: "3h", status: .started, dueDate: Date(), customer: Customer(name: "Lisa", phoneNumber: "0702345678", orders: [], streetName: "Vägen 2", city: "Stockholm", postalCode: "11300", emailAddress: "lisa@mail.com"))
+        ]
+    )
 }
 
-extension EmployeeHomeView {
-    
-    class EmployeeHomeViewModel: ObservableObject {
-        private let firestore = FirestoreManager()
-        
-        @Published var orders : [Order] = []
-        
-        init() {
-            listenToOrderCollection()
-        }
-        
-        func listenToOrderCollection() {
-            let orderRef = firestore.orderRef
-            
-            orderRef.addSnapshotListener {snapshot, error in
-                if let error = error {
-                    print("Error listening to Orders: \(error.localizedDescription)")
-                    return
-                }
-                
-                guard let documents = snapshot?.documents else {
-                    print("No documents")
-                    return
-                }
-                
-                self.orders = documents.compactMap { doc in
-                    try? doc.data(as: Order.self)
-                }
-                
-            }
-        }
-        
-    }
-}
