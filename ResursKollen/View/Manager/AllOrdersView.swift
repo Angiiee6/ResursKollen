@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct AllOrdersView: View {
+    @StateObject private var vm = AllOrdersViewModel()
+    
     var body: some View {
-        NavigationStack {
             VStack {
-                
+                AllOrders(orders: vm.orders)
             }
+            
         }
     }
-}
+
 
 #Preview {
     AllOrdersView()
@@ -28,7 +30,7 @@ extension AllOrdersView{
         
         @Published var orders : [Order] = []
         
-        //Lyssnar direkt vi initierar viewmodlen
+        //Lyssnar direkt vi initierar viewmodel
         init() {
             listenToOrderCollection()
         }

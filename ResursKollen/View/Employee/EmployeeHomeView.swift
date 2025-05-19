@@ -136,9 +136,6 @@ struct OrderRowAllOrders: View {
         .padding(.vertical, 8)
     }
 }
-
-
-
 // Förhandsvisning med mockdata
 #Preview {
     EmployeeHomeView(
