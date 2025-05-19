@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct CreateOrderView: View {
+    @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
-    
+
     //Order
     @State var title: String = ""
     @State var description: String = ""
     @State var selectedDate: Date = Date().addingTimeInterval(60 * 60 * 24 * 7)
-    
+
     //Customer
     @State var name: String = ""
     @State var phoneNumber: String = ""
@@ -25,6 +26,7 @@ struct CreateOrderView: View {
 
     var body: some View {
         VStack {
+            //MARK: Form
             Form {
                 Section("Arbetsorder") {
                     TextField("Titel *", text: $title)
@@ -50,17 +52,20 @@ struct CreateOrderView: View {
                 //TODO: Add search existing customer function here?
                 Section("Kundinformation") {
                     TextField("Namn *", text: $name)
-                        .keyboardType(.namePhonePad)
+                        .textInputAutocapitalization(.words)
                     TextField("Gata *", text: $streetName)
                     TextField("Postnummer *", text: $postalCode)
                         .keyboardType(.numberPad)
                     TextField("Stad *", text: $city)
                     TextField("Telefonnummer *", text: $phoneNumber)
-                        .keyboardType(.namePhonePad)
+                        .keyboardType(.numberPad)
                     TextField("Email", text: $email)
                         .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+
                 }
             }
+            //MARK: Save button
             Button("Skapa") {
                 let newCustomer = Customer(
                     name: name,
@@ -93,7 +98,21 @@ struct CreateOrderView: View {
                     || phoneNumber.isEmpty || title.isEmpty
             )
         }
+        //MARK: Navigation title
         .navigationTitle("Skapa ny arbetsorder")
+        //MARK: Alert
+        .alert(
+            "Meddelande",
+            isPresented: $viewModel.messageAlertPresent,
+            actions: {
+                Button("Ok", role: .cancel) {
+                    if viewModel.saveSuccessful {
+                        dismiss()
+                    }
+                }
+            },
+            message: { Text(viewModel.message) }
+        )
     }
 }
 
@@ -107,8 +126,22 @@ extension CreateOrderView {
     class ViewModel: ObservableObject {
         let fireStoreManager = FirestoreManager()
 
+        @Published var message: String = ""
+        @Published var messageAlertPresent: Bool = false
+        @Published var saveSuccessful: Bool = false
+
+        @MainActor
         func saveOrder(_ order: Order) async {
-          print(order)
+            do {
+                try await fireStoreManager.saveOrder(order)
+                message = "Order skapad!"
+                saveSuccessful = true
+                messageAlertPresent = true
+            } catch {
+                message = error.localizedDescription
+                saveSuccessful = false
+                messageAlertPresent = true
+            }
         }
 
     }
