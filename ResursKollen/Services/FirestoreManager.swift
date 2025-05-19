@@ -8,9 +8,14 @@
 import FirebaseFirestore
 
 class FirestoreManager {
+    @Published var orders : [Order] = []
+    
+    static let shared = FirestoreManager()
+    
     let db = Firestore.firestore()
 
     var orderRef: CollectionReference { db.collection("orders") }
+    
 
     func saveOrder(_ order: Order) async throws {
         let newDocument = orderRef.document()
@@ -19,5 +24,26 @@ class FirestoreManager {
         try orderRef.document(newDocument.documentID).setData(
             from: updatedOrder
         )
+    }
+    
+    //Snapshot lyssnare för order collectionen som kallas i viewmodels och använder closure i viewmodel
+    func listenToOrderCollection(onUpdate: @escaping ([Order]) -> Void) {
+            orderRef.addSnapshotListener { snapshot, error in
+                if let error = error {
+                    print("Error listening to Orders: \(error.localizedDescription)")
+                    return
+                }
+
+                guard let documents = snapshot?.documents else {
+                    print("No documents")
+                    return
+                }
+
+                let orders = documents.compactMap { doc in
+                    try? doc.data(as: Order.self)
+                }
+
+                onUpdate(orders)
+            }
     }
 }
