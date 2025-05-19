@@ -11,7 +11,7 @@ struct AllOrdersView: View {
     @StateObject private var vm = AllOrdersViewModel()
     
     var body: some View {
-            VStack {
+        VStack {
                 AllOrders(orders: vm.orders)
             }
             
