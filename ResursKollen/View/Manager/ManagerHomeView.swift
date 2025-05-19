@@ -11,10 +11,14 @@ struct ManagerHomeView: View {
     var body: some View {
         NavigationStack {
             TabView {
-                Tab("Ordrar", systemImage: "list.bullet") {
+                Tab("Ordrar", systemImage:
+                        "list.bullet.clipboard"
+                ) {
                     AllOrdersView()
                 }
-                Tab("Statistik", systemImage: "list.bullet.clipboard") {
+                Tab("Statistik", systemImage:
+                        "waveform.badge.magnifyingglass"
+                ) {
                     SummaryView()
                 }
                 Tab("Personal", systemImage: "person.3") {
