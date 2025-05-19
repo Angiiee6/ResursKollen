@@ -124,7 +124,7 @@ struct CreateOrderView: View {
 extension CreateOrderView {
 
     class ViewModel: ObservableObject {
-        let fireStoreManager = FirestoreManager()
+        let fireStoreManager = FirestoreManager.shared
 
         @Published var message: String = ""
         @Published var messageAlertPresent: Bool = false

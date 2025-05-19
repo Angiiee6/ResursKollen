@@ -26,7 +26,7 @@ struct AllOrdersView: View {
 extension AllOrdersView{
     
     class AllOrdersViewModel: ObservableObject {
-        private let firestore = FirestoreManager()
+        private let firestore = FirestoreManager.shared
         
         @Published var orders : [Order] = []
         

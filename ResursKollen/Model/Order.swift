@@ -12,6 +12,7 @@ struct Order: Codable, Identifiable {
     var id: String
     var title: String = ""
     var description: String = ""
+    var workPerformed: String = ""
     var creationDate = Date()
     var orderNumber: String
     var timeConsumption: Double = 0

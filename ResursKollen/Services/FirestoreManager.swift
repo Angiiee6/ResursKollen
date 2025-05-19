@@ -7,7 +7,7 @@
 
 import FirebaseFirestore
 
-class FirestoreManager {
+final class FirestoreManager {
     @Published var orders : [Order] = []
     
     static let shared = FirestoreManager()
@@ -16,14 +16,20 @@ class FirestoreManager {
 
     var orderRef: CollectionReference { db.collection("orders") }
     
+    private init (){}
+    
 
-    func saveOrder(_ order: Order) async throws {
+    func saveOrder(_ order: Order) throws {
         let newDocument = orderRef.document()
         var updatedOrder = order
         updatedOrder.id = newDocument.documentID
         try orderRef.document(newDocument.documentID).setData(
             from: updatedOrder
         )
+    }
+    
+    func updateOrder(_ order: Order) throws {
+        try orderRef.document(order.id).setData(from: order)
     }
     
     //Snapshot lyssnare för order collectionen som kallas i viewmodels och använder closure i viewmodel
