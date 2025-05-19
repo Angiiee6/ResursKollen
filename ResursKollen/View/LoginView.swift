@@ -153,9 +153,9 @@ final class LoginViewViewmodel: ObservableObject {
         print("användaren inloggad")   //TODO kan tas bort
     }
     
-    func resetPassword(){
+    func resetPassword() async throws{
         
-        
+       try? await AuthenticationManager.shared.resetPassword(email: email)
         
     }
     
