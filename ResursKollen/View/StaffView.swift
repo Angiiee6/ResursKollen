@@ -1,4 +1,5 @@
-
+// 19/5 Daniel A
+// Skapde en viewModel
 
 import SwiftUI
 
@@ -43,6 +44,8 @@ struct StaffView: View {
         }
     }
 }
+
+
 
 #Preview {
     StaffView(
