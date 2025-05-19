@@ -11,42 +11,48 @@ struct EmployeeHomeView: View {
     @StateObject private var vm = EmployeeHomeViewModel()
     
     var body: some View {
-        ZStack {
-            //Bakgrund
-            LinearGradient(gradient: Gradient(colors: [Color(red: 0.11, green: 0.11, blue: 0.15),Color(red: 0.20, green: 0.20, blue: 0.25)]),startPoint: .top,endPoint: .bottom).edgesIgnoringSafeArea(.all)
-            
-            VStack {
-                // CardView med announcment från chef
-                ManagerHomeView()
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 16) {
                 
+                //Titel för Listan
+                Text("Alla ordrar")
+                    .font(.title2)
+                    .bold()
+                    .foregroundColor(.white)
+                    .padding(.horizontal)
+                
+                // Lista för Ordrar
                 List(vm.orders) { order in
+                    NavigationLink(destination: OrderDetailView(order: order)) {
                         VStack(alignment: .leading, spacing: 8) {
+                            
                             Text(order.title)
                                 .font(.headline)
                                 .foregroundColor(.white)
-                            
-                            Text(order.description)
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            
-                            Text("Status: \(order.status.nameSE)")
-                                .font(.caption)
-                                .foregroundColor(.blue)
                             
                             Text("Deadline: \(order.dueDate.formatted(date: .abbreviated, time: .shortened))")
                                 .font(.caption2)
                                 .foregroundColor(.white.opacity(0.6))
                         }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding()
-                        .background(.thinMaterial)
+                        .background(.ultraThinMaterial)
                         .cornerRadius(12)
                         .shadow(radius: 4)
-                        .listRowBackground(Color.clear)
                     }
-                    .scrollContentBackground(.hidden)
-                    .background(Color.clear)
-                    .padding()
+                    .listRowBackground(Color.clear)
+                }
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
             }
+            .padding()
+            .background(
+                LinearGradient(
+                    gradient: Gradient(colors: [Color(red: 0.11, green: 0.11, blue: 0.15),
+                    Color(red: 0.20, green: 0.20, blue: 0.25)]),
+                    startPoint: .top, endPoint: .bottom
+                ).edgesIgnoringSafeArea(.all)
+            )
         }
     }
 }
