@@ -82,8 +82,7 @@ struct OrderRowMyOrders: View {
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.orange)
+               
             }
 
             Text("Förfaller: \(order.dueDate, style: .date)")
@@ -117,8 +116,6 @@ struct OrderRowAllOrders: View {
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
             }
 
             Text("Status: \(order.status.nameSE)")
