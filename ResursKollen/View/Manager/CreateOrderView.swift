@@ -133,7 +133,7 @@ extension CreateOrderView {
         @MainActor
         func saveOrder(_ order: Order) async {
             do {
-                try await fireStoreManager.saveOrder(order)
+                try fireStoreManager.saveOrder(order)
                 message = "Order skapad!"
                 saveSuccessful = true
                 messageAlertPresent = true
