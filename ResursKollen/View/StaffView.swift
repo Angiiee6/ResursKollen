@@ -11,52 +11,56 @@ struct StaffView: View {
     @State private var isAddNewEmployeePresented = false
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(.systemGray6), Color(.systemGray5),
-                ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ).edgesIgnoringSafeArea(.all)
-            
             NavigationView {
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    List() {
-                        HStack {
-                          
-                                VStack(alignment: .leading) {
-                                    //Text("namn \(user.name)")
-                                    //   Text("Namn: \(user.name)")
-                                    //      .font(.headline)
-                             
-                            
-                                //Spacer()
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.orange)
-                            } //.listStyle(.insetGrouped)
+                VStack(alignment: .leading, spacing: 16) {
+                    List {
+                        Section(header: Text("Anställda")) {
+                            ForEach(viewModel.user, id: \.id) { user in
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Namn: \(user.name)")
+                                        .font(.headline)
+                                    Text("Telefonnummer: \(user.phoneNumber)")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    Text("Anställningsform: \(user.status)")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                    Text("Anställningsnummer: \(user.employmentNumber)")
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(.vertical, 4)
+                            }
                         }
                     }
                     .listStyle(.insetGrouped)
                     .navigationTitle("Anställda")
                     
-                    
+                    Button(action: {
+                        isAddNewEmployeePresented = true
+                    }) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                            Text("Lägg till anställd")
+                        }
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.orange)
+                        .cornerRadius(12)
+                        .padding(.horizontal)
+                    }
+                    .sheet(isPresented: $isAddNewEmployeePresented) {
+                        AddEmployeeView()
+                            .presentationDragIndicator(.visible)
+                    }
+                }.onAppear{
+                    Task{ try? await viewModel.loadUsers() }
                 }
-                
-            }.task {
-                try? await viewModel.loadUsers()
-            }
-            Button("Lägg till anstäld"){
-                isAddNewEmployeePresented = true
-            }.sheet(isPresented: $isAddNewEmployeePresented) {
-                AddEmployeeView()
-                    .presentationDragIndicator(.visible) //dragfliken synlig
-                
-                    
             }
         }
-    }
+
 }
 
 @MainActor
@@ -67,9 +71,7 @@ final class StaffViewViewModel: ObservableObject {
     func loadUsers() async throws {
         
         self.user = try await UsersManager.shared.getAllUser()
-        
-        print("Användare hämtade: \(self.user)")    //testing
-        
+       
     }
 
 }
