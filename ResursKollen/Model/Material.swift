@@ -5,8 +5,15 @@
 //  Created by Magnus Freidenfelt on 2025-05-16.
 //
 
-struct Material: Codable {
+import Foundation
+
+struct Material: Codable, Identifiable {
     var name: String
     var quantity: Int
     var price: Double
+    var id: String = UUID().uuidString
+    
+    var totalPrice: Double {
+        price * Double(quantity)
+    }
 }

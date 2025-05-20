@@ -16,4 +16,13 @@ extension Double {
         formatter.decimalSeparator = ","
         return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
     }
+    
+    var formattedAsCurrency: String {
+        let formatter = NumberFormatter()
+        formatter.minimumIntegerDigits = 1
+        formatter.minimumFractionDigits = 2
+        formatter.maximumFractionDigits = 2
+        formatter.decimalSeparator = ","
+        return formatter.string(from: NSNumber(value: self)) ?? "\(self))"
+    }
 }

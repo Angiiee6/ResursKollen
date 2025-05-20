@@ -10,15 +10,17 @@ import SwiftUI
 struct OrderDetailView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
-    let order: Order
+    
+    enum ActiveSheet : Identifiable {
+        case workDone, material
+        var id: Self {self}
+    }
+    
+    @State var order: Order
 
-    //Order
-    @State var selectedStatus: OrderStatus
-    @State var timeConsumption: Double
-    @State var workPerformedSheetPresent: Bool = false
+    @State var activeSheet: ActiveSheet?
 
     //Text boxes
-    @State var workPerformed: String
     @State var workPerformedExpanded: Bool = false
     @State var descriptionExpanded: Bool = false
 
@@ -26,12 +28,6 @@ struct OrderDetailView: View {
     @State var errorMessage: String = ""
     @State var errorAlertPresent: Bool = false
 
-    init(order: Order) {
-        self.order = order
-        self.selectedStatus = order.status
-        self.timeConsumption = order.timeConsumption
-        self.workPerformed = order.workPerformed
-    }
     var body: some View {
         VStack {
             ScrollView {
@@ -49,7 +45,7 @@ struct OrderDetailView: View {
                         Spacer()
                         Picker(
                             "Status",
-                            selection: $selectedStatus
+                            selection: $order.status
                         ) {
                             ForEach(
                                 OrderStatus.allCases.filter {
@@ -87,24 +83,24 @@ struct OrderDetailView: View {
                         TextBox(
                             isExpanded: $workPerformedExpanded,
                             title: "Utfört:",
-                            text: workPerformed,
+                            text: order.workPerformed,
                             placeHolderText:
                                 "Lägg till text för att kunna spara..."
                         )
                         HStack {
                             Spacer()
-                            Button("Ändra/lägg till") {
-                                workPerformedSheetPresent = true
+                            Button("Ändra/lägg till text") {
+                                activeSheet = .workDone
                             }
                         }
                     }
                     //MARK: Time consumption
                     HStack {
-                        Text("Tidsåtgång: ")
+                        Text("Tidsåtgång:")
                         Spacer()
-                        Text(timeConsumption.formattedAsHours)
+                        Text(order.timeConsumption.formattedAsHours)
                         Stepper(
-                            value: $timeConsumption,
+                            value: $order.timeConsumption,
                             in: 0...Double.infinity,
                             step: 0.5
                         ) {
@@ -113,42 +109,119 @@ struct OrderDetailView: View {
                         .frame(maxWidth: 130)
                     }
                     //MARK: Material
+                    VStack {
+                        HStack {
+                            Text("Förbrukat material:")
+                            Spacer()
+                        }
+                        VStack {
+                            HStack {
+                                Text("Namn")
+                                Spacer()
+                                Text("kr/st")
+                                    .frame(width: 50, alignment: .leading)
+                                Text("Antal")
+                                    .frame(width: 50)
+                                Text("Totalt (kr)")
+                                    .frame(width: 65, alignment: .trailing)
+                            }
+                            .font(.caption)
+                            Divider()
+                            ScrollView {
+                                ForEach(order.materialConsumption) { material in
+                                    HStack {
+                                        Text(material.name)
+                                        Spacer()
+                                        Text(
+                                            "\(material.price.formattedAsCurrency)"
+                                        )
+                                        .frame(width: 50, alignment: .leading)
+                                        Text("\(material.quantity)")
+                                            .frame(width: 50)
+                                        Text(
+                                            "\(material.totalPrice.formattedAsCurrency)"
+                                        )
+                                        .frame(width: 65, alignment: .trailing)
 
+                                    }
+                                    .font(.caption)
+                                }
+                            }
+                            .frame(height: 100)
+                            .scrollIndicators(.never)
+                        }
+                        .padding()
+                        HStack {
+                            Spacer()
+                            Button("Ändra/lägg till material") {
+                                activeSheet = .material
+                            }
+                        }
+
+                    }
+                  
                 }
+                .padding(.horizontal, 34)
+                .padding(.vertical)
             }
             .scrollIndicators(.hidden)
             Spacer()
+            //MARK: Summary
+            VStack {
+                Divider()
+                HStack {
+                    Text("Arbetstid:")
+                    Spacer()
+                    Text("\(order.totalLaborCost.formattedAsCurrency) kr")
+                }
+                .font(.caption)
+                HStack {
+                    Text("Material:")
+                    Spacer()
+                    Text("\(order.totalMaterialCost.formattedAsCurrency) kr")
+                }
+                .font(.caption)
+                HStack {
+                    Text("Summa:")
+                    Spacer()
+                    Text("\(order.totalOrderCost.formattedAsCurrency) kr")
+                }
+                Divider()
+            }
+            .padding(.horizontal)
             //MARK: Save button
             Button("Spara") {
-                var updatedOrder = order
-                updatedOrder.status = selectedStatus
-                updatedOrder.workPerformed = workPerformed
-                updatedOrder.timeConsumption = timeConsumption
                 do {
-                    try viewModel.updateOrder(updatedOrder)
+                    try viewModel.updateOrder(order)
                     dismiss()
                 } catch {
                     errorMessage = error.localizedDescription
                     errorAlertPresent = true
                 }
             }
+            .padding()
             .buttonStyle(.borderedProminent)
-            .disabled(workPerformed.isEmpty)
+            .disabled(order.workPerformed.isEmpty)
         }
-        .padding(.horizontal, 30)
         .padding(.vertical, 16)
         .navigationTitle("Arbetsorder: \(order.orderNumber)")
         //MARK: Sheet
-        .sheet(isPresented: $workPerformedSheetPresent) {
-            VStack {
-                Text("Utfört arbete: ")
-                TextEditor(text: $workPerformed)
-                Spacer()
-                Button("Stäng") {
-                    workPerformedSheetPresent = false
+        .sheet(item: $activeSheet) { activeSheet in
+            switch activeSheet {
+            case .workDone:
+                VStack {
+                    Text("Utfört arbete: ")
+                    TextEditor(text: $order.workPerformed)
+                    Spacer()
+                    Button("Klar") {
+                        self.activeSheet = nil
+                    }
                 }
+                .padding()
+            case .material:
+                MaterialSheetView(materialConsumption: $order.materialConsumption)
             }
-            .padding()
+        
         }
         //MARK: Alert
         .alert(isPresented: $errorAlertPresent) {
@@ -178,46 +251,6 @@ extension OrderDetailView {
 
 }
 
-//MARK: TextBox
-struct TextBox: View {
-    @Binding var isExpanded: Bool
-    let title: String
-    let text: String
-    var placeHolderText: String?
-    var body: some View {
-        VStack {
-            HStack {
-                Text(title)
-                Spacer()
-                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-            }
-            Group {
-                if isExpanded {
-                    ScrollView {
-                        Text(text.isEmpty ? placeHolderText ?? "" : text)
-
-                    }
-                } else {
-                    Text(text.isEmpty ? placeHolderText ?? "" : text)
-                }
-            }
-            .italic(text.isEmpty)
-            .foregroundStyle(.opacity(text.isEmpty ? 0.5 : 1))
-            .frame(
-                maxWidth: .infinity,
-                maxHeight: isExpanded ? 400 : 135,
-                alignment: .leading
-            )
-            .padding(8)
-            .background(.secondary.opacity(0.35))
-            .clipShape(RoundedRectangle(cornerRadius: 5))
-            .onTapGesture {
-                isExpanded.toggle()
-            }
-        }
-    }
-}
-
 //MARK: Preview
 #Preview {
     OrderDetailView(
@@ -228,6 +261,18 @@ struct TextBox: View {
                 "Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta  ",
             orderNumber: "244-2359-12",
             timeConsumption: 3.5,
+            materialConsumption: [
+                Material(name: "Copper Wire", quantity: 50, price: 2.50),
+                Material(name: "Oak Plank", quantity: 10, price: 15.00),
+                Material(name: "Steel Handle", quantity: 8, price: 7.25),
+                Material(name: "Rose Bush", quantity: 5, price: 12.99),
+                Material(name: "PVC Pipe", quantity: 20, price: 3.75),
+                Material(name: "Brass Knob", quantity: 12, price: 4.50),
+                Material(name: "Mulch Bag", quantity: 15, price: 6.00),
+                Material(name: "LED Bulb", quantity: 25, price: 8.99),
+                Material(name: "Ceramic Tile", quantity: 30, price: 2.20),
+                Material(name: "Paint Can", quantity: 3, price: 25.50),
+            ],
             status: .registered,
             dueDate: Date(),
             customer: Customer(
