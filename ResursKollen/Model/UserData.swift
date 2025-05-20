@@ -10,15 +10,15 @@ import Foundation
 struct UserData: Codable, Identifiable {
     var id: String
     var status: EmploymentStatus
-    var name: String?
-    var email: String?
-    var employmentDate: Date?
-    var employmentNumber: String?
-    var phoneNumber: String?
-    var createdDate: Date?
+    var name: String
+    var email: String
+    var employmentDate: Date
+    var employmentNumber: String
+    var phoneNumber: String
+    var createdDate: Date
     
     //create userprofile from an auth. user
-    init(auth: AuthDataResultModel, name: String, employmentNumber: String, phoneNumber: String){
+    init(auth: AuthDataResultModel, name: String, employmentNumber: String, phoneNumber: String, employmentDay: Date){
         self.id = auth.uid
         self.email = auth.email ?? "Epost saknas"
         self.status = .employee
@@ -30,14 +30,14 @@ struct UserData: Codable, Identifiable {
     }
     
     //create user profile
-    init(id: String,
+    init(id: String = UUID().uuidString,
          status: EmploymentStatus = .employee,
-         name: String? = nil,
-         email: String? = nil,
-         employmentDate: Date? = nil,
-         employmentNumber: String? = nil,
-         createdDate: Date? = nil,
-         phoneNumber: String? = nil){
+         name: String = "",
+         email: String = "",
+         employmentDate: Date = Date(),
+         employmentNumber: String = "",
+         createdDate: Date = Date(),
+         phoneNumber: String = ""){
         
         self.id = id
         self.status = status
@@ -46,10 +46,11 @@ struct UserData: Codable, Identifiable {
         self.employmentNumber = employmentNumber
         self.createdDate = createdDate
         self.phoneNumber = phoneNumber
+        self.name = name
     }
     
     // Function to generate an uniqe emp. number  ex. ABC123
-    func generateEmploymentNumber() -> String{
+    func generateEmploymentNumber()-> String{
      
         let letters = (0..<3).map { _ in
             Character(UnicodeScalar(Int.random(in: 65...90))!)
