@@ -23,14 +23,15 @@ struct StaffView: View {
             NavigationView {
                 
                 VStack(alignment: .leading, spacing: 8) {
-                    List {
+                    List() {
                         HStack {
-                            if let user = viewModel.user {
+                          
                                 VStack(alignment: .leading) {
-                                    Text("Namn: \(user.name)")
-                                        .font(.headline)
-                                    
-                                }
+                                    //Text("namn \(user.name)")
+                                    //   Text("Namn: \(user.name)")
+                                    //      .font(.headline)
+                             
+                            
                                 //Spacer()
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(.orange)
@@ -43,10 +44,10 @@ struct StaffView: View {
                     
                 }
                 
-            }//.task {
-                //try? await viewModel.loadCurrentUser()
-            //}
-            Button("Läggtill anstäld"){
+            }.task {
+                try? await viewModel.loadUsers()
+            }
+            Button("Lägg till anstäld"){
                 isAddNewEmployeePresented = true
             }.sheet(isPresented: $isAddNewEmployeePresented) {
                 AddEmployeeView()
@@ -61,15 +62,14 @@ struct StaffView: View {
 @MainActor
 final class StaffViewViewModel: ObservableObject {
 
-    @Published private(set) var user: UserData? = nil
+    @Published private(set) var user: [UserData] = []
 
-    func loadCurrentUser() async throws {
-
-        let authDataResult = try AuthenticationManager.shared
-            .getAuthenticatedUser()
-        self.user = try await UsersManager.shared.getUser(
-            userId: authDataResult.uid
-        )
+    func loadUsers() async throws {
+        
+        self.user = try await UsersManager.shared.getAllUser()
+        
+        print("Användare hämtade: \(self.user)")    //testing
+        
     }
 
 }

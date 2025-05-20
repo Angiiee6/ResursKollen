@@ -27,7 +27,7 @@ struct UserData: Codable, Identifiable {
         self.createdDate = Date()
         self.phoneNumber = phoneNumber
         self.name = name
-        self.status = .employee
+        self.status = status
     }
     
     //create user profile
@@ -49,6 +49,8 @@ struct UserData: Codable, Identifiable {
         self.phoneNumber = phoneNumber
         self.name = name
     }
+    
+ 
     
     // Function to generate an uniqe emp. number  ex. ABC123
     func generateEmploymentNumber()-> String{

@@ -43,5 +43,20 @@ final class UsersManager {
     func getUser(userId: String) async throws -> UserData {
         try await userDocuments(userId: userId).getDocument(as: UserData.self, decoder: decoder)
     }
+    
+    // getAllUser, gets all users from database
+    func getAllUser() async throws -> [UserData] {
+        let snapshot = try await Firestore.firestore().collection("users").getDocuments()
+        for doc in snapshot.documents {
+                print("DOC ID: \(doc.documentID)")
+                print("RAW DATA: \(doc.data())")
+            }
 
+            let users = snapshot.documents.compactMap { doc in
+                try? doc.data(as: UserData.self)
+            }
+
+            print("Konverterade användare: \(users.count) st")
+            return users
+    }
 }
