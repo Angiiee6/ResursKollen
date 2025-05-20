@@ -11,6 +11,8 @@ struct OrderDetailView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
     
+    //TODO: Varning innan man trycker på back-knapp? (Använd Equatable och jämför ordern som kommer in med den som går ut)
+    
     enum ActiveSheet : Identifiable {
         case workDone, material
         var id: Self {self}
@@ -119,7 +121,7 @@ struct OrderDetailView: View {
                                 Text("Namn")
                                 Spacer()
                                 Text("kr/st")
-                                    .frame(width: 50, alignment: .leading)
+                                    .frame(width: 80, alignment: .leading)
                                 Text("Antal")
                                     .frame(width: 50)
                                 Text("Totalt (kr)")
@@ -135,7 +137,7 @@ struct OrderDetailView: View {
                                         Text(
                                             "\(material.price.formattedAsCurrency)"
                                         )
-                                        .frame(width: 50, alignment: .leading)
+                                        .frame(width: 80, alignment: .leading)
                                         Text("\(material.quantity)")
                                             .frame(width: 50)
                                         Text(
@@ -258,7 +260,7 @@ extension OrderDetailView {
             id: "1",
             title: "Laga låskista",
             description:
-                "Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta Kund behöver byta  ",
+                "Dynastin styrdes av mycket vidskepliga kungar från den mytologiska stammen Shang. Dynastin grundades efter att kung Cheng Tang störtat den föregående Xiadynastin. Dynastin präglades av många krig och oroligheter, men även av stora tekniska framsteg, inte minst inom bronsgjutning som upplevde en guldålder under Shangdynastin. Shangdynastins guldålder var under kung Wu Dings regeringstid. Wu Ding bedrev många militära kampanjer mot de omgivande stammarna såsom Tufang (土方) och Guifang (鬼方) vilket resulterade i territoriella erövringar. Efter Wu Ding följde flera kungar som prioriterade nöje före stadsaffärer, vilket gjorde att kungamakten blev alltmer isolerad och tidigare underlydande grupper blev självständiga och aggressiva. Den långlivade dynastin föll slutligen efter slaget vid Muye då huset Zhou tog makten och bildade Zhoudynastin. Shangdynastin är den äldsta kinesiska dynastin med samtida skriftliga källor",
             orderNumber: "244-2359-12",
             timeConsumption: 3.5,
             materialConsumption: [

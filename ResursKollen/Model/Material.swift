@@ -9,7 +9,7 @@ import Foundation
 
 struct Material: Codable, Identifiable {
     var name: String
-    var quantity: Int
+    var quantity: Int = 1
     var price: Double
     var id: String = UUID().uuidString
     
