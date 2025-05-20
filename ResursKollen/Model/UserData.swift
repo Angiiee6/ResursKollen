@@ -53,7 +53,7 @@ struct UserData: Codable, Identifiable {
  
     
     // Function to generate an uniqe emp. number  ex. ABC123
-    func generateEmploymentNumber()-> String{
+  static func generateEmploymentNumber()-> String{
      
         let letters = (0..<3).map { _ in
             Character(UnicodeScalar(Int.random(in: 65...90))!)
@@ -70,7 +70,7 @@ struct UserData: Codable, Identifiable {
     
 }
 
-enum EmploymentStatus: Codable {
+enum EmploymentStatus:String, Codable {
     case manager, employee
 
     var nameSE: String {
