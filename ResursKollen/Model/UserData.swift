@@ -18,7 +18,7 @@ struct UserData: Codable, Identifiable {
     var createdDate: Date
     
     //create userprofile from an auth. user
-    init(auth: AuthDataResultModel, name: String, employmentNumber: String, phoneNumber: String, employmentDay: Date){
+    init(auth: AuthDataResultModel, name: String, employmentNumber: String, phoneNumber: String, employmentDay: Date, status: EmploymentStatus){
         self.id = auth.uid
         self.email = auth.email ?? "Epost saknas"
         self.status = .employee
@@ -27,6 +27,7 @@ struct UserData: Codable, Identifiable {
         self.createdDate = Date()
         self.phoneNumber = phoneNumber
         self.name = name
+        self.status = .employee
     }
     
     //create user profile

@@ -21,7 +21,7 @@ class AddEmployeeViewModel: ObservableObject {
         }
        let authData = try await AuthenticationManager.shared.addUser(email: user.email, password: password)
         
-        let newUser = UserData(auth: authData, name: user.name, employmentNumber: "123", phoneNumber: user.phoneNumber, employmentDay: user.employmentDate )
+        let newUser = UserData(auth: authData, name: user.name, employmentNumber: "123", phoneNumber: user.phoneNumber, employmentDay: user.employmentDate, status: user.status )
         
         try await UsersManager.shared.createNewUser(user: newUser)
     }
@@ -59,13 +59,13 @@ struct AddEmployeeView: View {
                     //    anstNr = viewModel.user.generateEmploymentNumber()
                    // }
                Toggle("Chef eller likande?", isOn: $isManager)
-                   /* .onChange(of: isManager) { oldValue, newValue in
+                   .onChange(of: isManager) { oldValue, newValue in
                         if newValue {
                             viewModel.user.status = .manager
                         } else {
                             viewModel.user.status = .employee
                         }
-                    } */
+                    } 
             }
             HStack(spacing: 16) {
 
