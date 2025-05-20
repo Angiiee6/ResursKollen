@@ -92,6 +92,7 @@ extension SummaryView {
         @Published var orders : [Order] = []
         
         var totalHoursString: String {
+            let calendar = Calendar.current
             let total = orders
                 .compactMap { Int($0.timeConsumption) }
                 .reduce(0, +)
