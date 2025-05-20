@@ -9,8 +9,8 @@ import SwiftUI
 import Charts
 
 struct SummaryView: View {
+    let columns = [GridItem(.flexible()),GridItem(.flexible())]
     
-    let dummyOrders : [String] = ["Hej","Hejehej","Robin","HAERKJAH"]
     @StateObject var vm = SummaryViewModel()
     var body: some View {
         ZStack {
@@ -62,8 +62,18 @@ struct SummaryView: View {
                 }
                 .frame(height: 200)
                 .padding()
-                Spacer()
                 
+                HStack(spacing: 50) {
+                    ShowCaseView(value: vm.totalHoursString)
+                    ShowCaseView(value: vm.totalHoursString)
+                }
+                HStack(spacing: 50) {
+                    ShowCaseView(value: vm.totalHoursString)
+                    ShowCaseView(value: vm.totalHoursString)
+                    
+                    
+                    }
+                Spacer()
                 }
             }
         }
@@ -80,6 +90,13 @@ extension SummaryView {
         let db = FirestoreManager()
         
         @Published var orders : [Order] = []
+        
+        var totalHoursString: String {
+            let total = orders
+                .compactMap { Int($0.timeConsumption) }
+                .reduce(0, +)
+            return "\(total) h"
+        }
         
         init() {
             GetOrders()
@@ -108,3 +125,4 @@ extension SummaryView {
         
     }
 }
+
