@@ -52,7 +52,16 @@ final class AuthenticationManager {
         )
         return AuthDataResultModel(user: authDataResult.user)
     }
-
+    
+    //Get authtenticated user
+    @discardableResult
+    func getAuthenticatedUser() throws -> AuthDataResultModel {
+        guard let user = Auth.auth().currentUser else {
+            throw AuthErrorCode.nullUser
+        }
+        return AuthDataResultModel(user: user)
+    }
+    
     //Delete user
     func deleteUser() async throws {
         guard let user = Auth.auth().currentUser else {

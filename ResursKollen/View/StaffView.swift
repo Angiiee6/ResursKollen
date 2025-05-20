@@ -1,50 +1,94 @@
-
-
+import FirebaseAuth
 import SwiftUI
 
 struct StaffView: View {
-    
-    @State var user: UserData
-    
+    @StateObject private var viewModel = StaffViewViewModel()
+    @State private var isAddNewEmployeePresented = false
+
     var body: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [Color(.systemGray6), Color(.systemGray5)]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ).edgesIgnoringSafeArea(.all)
-
-            NavigationView {
+        NavigationView {
+            ZStack {
+                // Bakgrund
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(red: 0.11, green: 0.11, blue: 0.15),
+                        Color(red: 0.20, green: 0.20, blue: 0.25),
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .edgesIgnoringSafeArea(.all)
                 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 16) {
                     List {
-                        HStack {
-                            
-                                VStack(alignment: .leading) {
-                                    Text("\(user.name)")
-                                        .font(.headline)
-                                    
-                                    Text("\(user.phoneNumber)")
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
+                        Section(header: Text("").foregroundColor(.white)) {
+                            ForEach(viewModel.user, id: \.id) { user in
+                                NavigationLink {
+                                    StaffDetailView(user: user)
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(user.name)
+                                            .font(.headline)
+                                            .foregroundColor(.black)
+//                                        Text(user.phoneNumber)
+//                                            .font(.subheadline)
+//                                            .foregroundColor(.gray)
+                                        Text(user.status.nameSE)
+                                            .font(.subheadline)
+                                            .foregroundColor(.gray)
+                                    }
+                                    .padding(.vertical, 4)
                                 }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.orange)
-                            }.listStyle(.insetGrouped)
+                                .listRowBackground(Color.white)
+                            }
                         }
+                    }
                     .listStyle(.insetGrouped)
+                    .background(Color.clear)
+                    .scrollContentBackground(.hidden)
                     .navigationTitle("Anställda")
-                }
-
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbarColorScheme(.dark, for: .navigationBar)
                     
-        
+                    Button(action: {
+                        isAddNewEmployeePresented = true
+                    }) {
+                        HStack {
+                            Image(systemName: "plus.circle.fill")
+                            Text("Lägg till anställd")
+                        }
+                        .font(.headline)
+                        .foregroundColor(.white)
+                        .padding()
+                        .frame(maxWidth: .infinity)
+                        .background(Color.orange)
+                        .cornerRadius(12)
+                        .padding(.horizontal)
+                    }
+                    .sheet(isPresented: $isAddNewEmployeePresented) {
+                        AddEmployeeView()
+                            .presentationDragIndicator(.visible)
+                    }
+                }
+            }
+            .onAppear {
+                Task { try? await viewModel.loadUsers() }
             }
         }
     }
 }
 
+@MainActor
+final class StaffViewViewModel: ObservableObject {
+    @Published private(set) var user: [UserData] = []
+
+    func loadUsers() async throws {
+        self.user = try await UsersManager.shared.getAllUser()
+    }
+}
+
 #Preview {
-    StaffView(
-        user: UserData(id: "1", status: .employee, name: "Vivianne och Angie", employmentDate: Date(), employmentNumber: "EMP123", phoneNumber: "0701234567"))
+    NavigationStack {
+        StaffView()
+    }
 }

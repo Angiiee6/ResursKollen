@@ -43,7 +43,7 @@ struct EmployeeMyOrders: View {
 
             NavigationView {
                 VStack(alignment: .leading) {
-                    Text("Hej, \(user.name) 👋")
+                    Text("Hej, \(user.name ) 👋")
                         .font(.largeTitle)
                         .fontWeight(.bold)
                         .padding(.top)
