@@ -29,6 +29,7 @@ struct SummaryView: View {
                     .font(.title)
                     .foregroundColor(.white)
                     .bold()
+                
                 // Chart
                 Chart {
                     ForEach(vm.chartData) {data in
