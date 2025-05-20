@@ -34,22 +34,42 @@ final class FirestoreManager {
     
     //Snapshot lyssnare för order collectionen som kallas i viewmodels och använder closure i viewmodel
     func listenToOrderCollection(onUpdate: @escaping ([Order]) -> Void) {
-            orderRef.addSnapshotListener { snapshot, error in
-                if let error = error {
-                    print("Error listening to Orders: \(error.localizedDescription)")
-                    return
-                }
-
-                guard let documents = snapshot?.documents else {
-                    print("No documents")
-                    return
-                }
-
-                let orders = documents.compactMap { doc in
-                    try? doc.data(as: Order.self)
-                }
-
-                onUpdate(orders)
+        orderRef.addSnapshotListener { snapshot, error in
+            if let error = error {
+                print("Error listening to Orders: \(error.localizedDescription)")
+                return
             }
+            
+            guard let documents = snapshot?.documents else {
+                print("No documents")
+                return
+            }
+            
+            let orders = documents.compactMap { doc in
+                try? doc.data(as: Order.self)
+            }
+            
+            onUpdate(orders)
+        }
+    }
+        
+    func listenToDelayed(onUpdate: @escaping ([Order]) -> Void) {
+        orderRef.whereField("status", isEqualTo: "delayed").addSnapshotListener {snapShot, error in
+            if let error = error {
+                print("Error listening to Orders \(error.localizedDescription)")
+                return
+            }
+                
+            guard let documents = snapShot?.documents else {
+                print("No documents")
+                return
+            }
+            
+            let orders = documents.compactMap { doc in
+                try? doc.data(as: Order.self)
+                
+            }
+                onUpdate(orders)
+        }
     }
 }
