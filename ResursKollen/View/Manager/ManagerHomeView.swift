@@ -34,7 +34,8 @@ struct ManagerHomeView: View {
                     SummaryView()
                 }
                 Tab("Personal", systemImage: "person.3") {
-                    StaffView(user: exampleUser)
+                    // StaffView(user: exampleUser)
+                        StaffView()
                 }
             }
             .toolbar {
