@@ -12,7 +12,7 @@ struct ContentView: View {
     @StateObject var viewModel = LoginViewViewmodel()
 
     var body: some View {
-        if let user = viewModel.currentUser {
+       if let user = viewModel.currentUser {
             switch user.status {
             case .manager:
                 ManagerHomeView()
@@ -23,7 +23,7 @@ struct ContentView: View {
             }
         } else {
             LoginView(viewModel: viewModel)
-        }
+        } 
     }
 }
 

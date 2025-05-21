@@ -89,8 +89,8 @@ struct LoginView: View {
                     Button(action: {
                         // Hantera inloggning, blir true i 2 sek, sedan false igen
                         isLoggingIn = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            Task {
+                        //DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                           Task {
                                 do {
                                     try await viewModel.signIn(email: email, password: password)
                                     return
@@ -99,7 +99,7 @@ struct LoginView: View {
                                 }
                             }
                             isLoggingIn = false
-                        }
+                        //}
                     }) {
                         HStack {
                             //Laddningsindikator vid knapptryck
