@@ -8,15 +8,25 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    @StateObject var viewModel = LoginViewViewmodel()
+    
     var body: some View {
-        CreateOrderView()
-//        VStack {
-//            Image(systemName: "globe")
-//                .imageScale(.large)
-//                .foregroundStyle(.tint)
-//            Text("Hello, world!")
-//        }
-//        .padding()
+    
+        if !viewModel.isUserLoggedIn {
+            LoginView(viewModel: viewModel)
+                
+        }else {
+            if viewModel.isUserManager {
+                ManagerHomeView()
+                    
+            }else {
+                
+                    
+            }
+        }
+        
+        
     }
 }
 

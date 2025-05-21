@@ -8,8 +8,7 @@ import SwiftUI
 
 struct EmployeeHomeView: View {
     let user: UserData
-    let orders: [Order]
-
+    let orders: [Order] 
     var body: some View
     {
         NavigationStack {
