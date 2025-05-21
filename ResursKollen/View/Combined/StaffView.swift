@@ -1,14 +1,24 @@
+
+
 import FirebaseAuth
 import SwiftUI
 
 struct StaffView: View {
     @StateObject private var viewModel = StaffViewViewModel()
     @State private var isAddNewEmployeePresented = false
+    
+   // Sorterar namnen på chefer
+    private var managers: [UserData] {
+        viewModel.user.filter { $0.status == .manager }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+    // Sorterar namnen på anställda
+    private var employees: [UserData] {
+        viewModel.user.filter { $0.status == .employee }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
 
     var body: some View {
         NavigationView {
             ZStack {
-                // Bakgrund
                 LinearGradient(
                     gradient: Gradient(colors: [
                         Color(red: 0.11, green: 0.11, blue: 0.15),
@@ -21,23 +31,27 @@ struct StaffView: View {
                 
                 VStack(alignment: .leading, spacing: 16) {
                     List {
-                        Section(header: Text("").foregroundColor(.white)) {
-                            ForEach(viewModel.user, id: \.id) { user in
+                        // Avdelning för chefer
+                        if !managers.isEmpty {
+                            Section(header: Text(EmploymentStatus.manager.nameSE.capitalized).foregroundColor(.orange)) {
+                                ForEach(managers, id: \.id) { user in
+                                    NavigationLink {
+                                        StaffDetailView(user: user)
+                                    } label: {
+                                        StaffRowView(user: user)
+                                    }
+                                    .listRowBackground(Color.white)
+                                }
+                            }
+                        }
+                        
+                        // Avdelning för anställda
+                        Section(header: Text(EmploymentStatus.employee.nameSE.capitalized).foregroundColor(.orange)) {
+                            ForEach(employees, id: \.id) { user in
                                 NavigationLink {
                                     StaffDetailView(user: user)
                                 } label: {
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        Text(user.name)
-                                            .font(.headline)
-                                            .foregroundColor(.black)
-//                                        Text(user.phoneNumber)
-//                                            .font(.subheadline)
-//                                            .foregroundColor(.gray)
-                                        Text(user.status.nameSE)
-                                            .font(.subheadline)
-                                            .foregroundColor(.gray)
-                                    }
-                                    .padding(.vertical, 4)
+                                    StaffRowView(user: user)
                                 }
                                 .listRowBackground(Color.white)
                             }
@@ -46,7 +60,6 @@ struct StaffView: View {
                     .listStyle(.insetGrouped)
                     .background(Color.clear)
                     .scrollContentBackground(.hidden)
-                    .navigationTitle("Anställda")
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbarColorScheme(.dark, for: .navigationBar)
                     
@@ -75,6 +88,20 @@ struct StaffView: View {
                 Task { try? await viewModel.loadUsers() }
             }
         }
+    }
+}
+
+struct StaffRowView: View {
+    let user: UserData
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(user.name)
+                .font(.headline)
+                .foregroundColor(.black.opacity(0.7))
+
+        }
+        .padding(.vertical, 4)
     }
 }
 

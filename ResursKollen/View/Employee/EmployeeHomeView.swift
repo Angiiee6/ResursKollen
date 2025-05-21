@@ -7,25 +7,28 @@
 import SwiftUI
 
 struct EmployeeHomeView: View {
-    @State private var selectedTab = 0
     let user: UserData
     let orders: [Order]
 
-    var body: some View {
-        TabView(selection: $selectedTab) {
-            EmployeeMyOrders(user: user, orders: orders)
-                .tabItem {
-                    Label("Mina ordrar", systemImage: "person.fill")
+    var body: some View
+    {
+        NavigationStack {
+            TabView {
+                Tab("Mina Ordrar", systemImage:
+                        "list.bullet.clipboard"
+                ) {
+                    EmployeeMyOrders(user: user, orders: orders)
                 }
-                .tag(0)
-
-            AllOrders(orders: orders)
-                .tabItem {
-                    Label("Alla ordrar", systemImage: "tray.full.fill")
+                Tab("Alla Ordrar", systemImage:
+                        "list.bullet.clipboard"
+                ) {
+                    AllOrdersView()
                 }
-                .tag(1)
+                Tab("Personal", systemImage: "person.3") {
+                        StaffView()
+                }
+            }
         }
-        .accentColor(.orange)
     }
 }
 
