@@ -11,6 +11,8 @@ struct AllOrders: View {
     let orders: [Order]
     
     var body: some View {
-       
+        VStack {
+            
+        }
     }
 }
