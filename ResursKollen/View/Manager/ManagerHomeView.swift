@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
-    
+
     ///EXEMPEL USER
         let exampleUser = UserData(
             id: "1",
@@ -26,7 +26,7 @@ struct ManagerHomeView: View {
                 Tab("Ordrar", systemImage:
                         "list.bullet.clipboard"
                 ) {
-                    AllOrdersView()
+                    ManagerAllOrdersView()
                 }
                 Tab("Statistik", systemImage:
                         "waveform.badge.magnifyingglass"

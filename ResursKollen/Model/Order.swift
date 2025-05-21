@@ -20,6 +20,7 @@ struct Order: Codable, Identifiable {
     var status: OrderStatus
     var dueDate: Date
     var customer: Customer
+    var assignedUser: UserData?
     
     var totalMaterialCost: Double {
         var sum: Double = 0

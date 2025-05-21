@@ -8,25 +8,22 @@
 import SwiftUI
 
 struct ContentView: View {
-    
+
     @StateObject var viewModel = LoginViewViewmodel()
-    
+
     var body: some View {
-    
-        if !viewModel.isUserLoggedIn {
-            LoginView(viewModel: viewModel)
-                
-        }else {
-            if viewModel.isUserManager {
+        if let user = viewModel.currentUser {
+            switch user.status {
+            case .manager:
                 ManagerHomeView()
-                    
-            }else {
-                
-                    
+            case .employee:
+                EmployeeHomeView(currentUser: user)
+            case .unknown:
+                Text("Unknown user!")
             }
+        } else {
+            LoginView(viewModel: viewModel)
         }
-        
-        
     }
 }
 
