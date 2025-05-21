@@ -8,30 +8,33 @@
 import SwiftUI
 
 struct ShowCaseView: View {
-    let value : String?
-    let icon : String
+    let title: String
+    let value: String
+    let iconName: String?
     
     var body: some View {
-        
-        if let value = value {
-            VStack {
-                Image(systemName: icon)
-                Text(value)
-                   
+        VStack(spacing: 8) {
+            if let iconName = iconName {
+                Image(systemName: iconName)
+                    .font(.title)
+                    .foregroundColor(.accentColor)
             }
-            .font(.title)
-            .foregroundColor(.white)
-            .frame(width: 100, height: 100)
-            .background(.ultraThinMaterial)
-            .cornerRadius(10)
-            .shadow(radius: 10)
-            .padding()
-        } else {
-            ProgressView()
+            Text(title)
+                .font(.caption)
+                .foregroundColor(.gray)
+            Text(value)
+                .font(.title2)
+                .bold()
         }
+        .frame(maxWidth: .infinity, minHeight: 100)
+        .padding()
+        .background(Color(.secondarySystemBackground))
+        .cornerRadius(12)
+        .shadow(radius: 2)
+        .padding()
     }
 }
 
 #Preview {
-    ShowCaseView(value: "13H", icon: "wrench")
+    ShowCaseView(title: "hello", value: "13H", iconName: "wrench")
 }
