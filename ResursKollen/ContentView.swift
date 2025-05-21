@@ -8,26 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
-    
+
     @StateObject var viewModel = LoginViewViewmodel()
-    
+
     var body: some View {
-        
-            switch viewModel.currentUser?.status {
+        if let user = viewModel.currentUser {
+            switch user.status {
             case .manager:
                 ManagerHomeView()
             case .employee:
-                EmployeeHomeView(currentUser: viewModel.currentUser!)
+                EmployeeHomeView(currentUser: user)
             case .unknown:
-                Text("User status unknown!")
-            case nil:
-                LoginView(viewModel: viewModel)
+                Text("Unknown user!")
             }
+        } else {
+            LoginView(viewModel: viewModel)
         }
-        
-        
     }
-
+}
 
 #Preview {
     ContentView()
