@@ -21,7 +21,8 @@ struct ResursKollenApp: App {
         
         var body: some Scene {
             WindowGroup {
-                ManagerHomeView()
+              //  ManagerHomeView()
+                ContentView()
             }
         }
         
@@ -40,8 +41,9 @@ struct ResursKollenApp: App {
     WindowGroup {
       NavigationView {
           
-        //  LoginView()
-          ManagerHomeView()
+    
+          //  LoginView()
+    //ManagerHomeView()
       }
     }
   }

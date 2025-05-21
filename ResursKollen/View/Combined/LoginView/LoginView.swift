@@ -11,8 +11,7 @@ import SwiftUI
 
 struct LoginView: View {
 
-    @StateObject var viewModel = LoginViewViewmodel()
-
+    @ObservedObject var viewModel: LoginViewViewmodel
     //för logga in knappens utseende
     @State private var isLoggingIn = false
 
@@ -146,36 +145,8 @@ struct LoginView: View {
     }
 }
 
-//Mark: - ViewModel
-@MainActor
-final class LoginViewViewmodel: ObservableObject {
 
-    @Published var email: String = ""
-    @Published var password: String = ""
-
-    func signIn() async throws {
-
-        guard !email.isEmpty && !password.isEmpty else {
-            print("Email eller lösenord sakans")
-            return
-        }
-
-        _ = try? await AuthenticationManager.shared.signInUser(
-            email: email,
-            password: password)
-
-        print("användaren inloggad")   //TODO kan tas bort
-    }
-    
-    func resetPassword() async throws{
-        
-       try? await AuthenticationManager.shared.resetPassword(email: email)
-        
-    }
-    
-    
-}
 
 #Preview {
-    LoginView()
+   // LoginView()
 }

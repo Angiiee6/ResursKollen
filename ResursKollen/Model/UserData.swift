@@ -71,7 +71,7 @@ struct UserData: Codable, Identifiable {
 }
 
 enum EmploymentStatus:String, Codable {
-    case manager, employee
+    case manager, employee, unknown
 
     var nameSE: String {
         switch self {
@@ -79,6 +79,8 @@ enum EmploymentStatus:String, Codable {
             "chef"
         case .employee:
             "anställd"
+        case .unknown:
+            "okändt"
         }
     }
 }
