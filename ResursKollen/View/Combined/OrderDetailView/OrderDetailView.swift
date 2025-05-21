@@ -256,37 +256,5 @@ extension OrderDetailView {
 
 //MARK: Preview
 #Preview {
-    OrderDetailView(
-        order: Order(
-            id: "1",
-            title: "Laga låskista",
-            description:
-                "Dynastin styrdes av mycket vidskepliga kungar från den mytologiska stammen Shang. Dynastin grundades efter att kung Cheng Tang störtat den föregående Xiadynastin. Dynastin präglades av många krig och oroligheter, men även av stora tekniska framsteg, inte minst inom bronsgjutning som upplevde en guldålder under Shangdynastin. Shangdynastins guldålder var under kung Wu Dings regeringstid. Wu Ding bedrev många militära kampanjer mot de omgivande stammarna såsom Tufang (土方) och Guifang (鬼方) vilket resulterade i territoriella erövringar. Efter Wu Ding följde flera kungar som prioriterade nöje före stadsaffärer, vilket gjorde att kungamakten blev alltmer isolerad och tidigare underlydande grupper blev självständiga och aggressiva. Den långlivade dynastin föll slutligen efter slaget vid Muye då huset Zhou tog makten och bildade Zhoudynastin. Shangdynastin är den äldsta kinesiska dynastin med samtida skriftliga källor",
-            orderNumber: "244-2359-12",
-            timeConsumption: 3.5,
-            materialConsumption: [
-                Material(name: "Copper Wire", quantity: 50, price: 2.50),
-                Material(name: "Oak Plank", quantity: 10, price: 15.00),
-                Material(name: "Steel Handle", quantity: 8, price: 7.25),
-                Material(name: "Rose Bush", quantity: 5, price: 12.99),
-                Material(name: "PVC Pipe", quantity: 20, price: 3.75),
-                Material(name: "Brass Knob", quantity: 12, price: 4.50),
-                Material(name: "Mulch Bag", quantity: 15, price: 6.00),
-                Material(name: "LED Bulb", quantity: 25, price: 8.99),
-                Material(name: "Ceramic Tile", quantity: 30, price: 2.20),
-                Material(name: "Paint Can", quantity: 3, price: 25.50),
-            ],
-            status: .registered,
-            dueDate: Date(),
-            customer: Customer(
-                name: "Saga Andersson",
-                phoneNumber: "070-2358914",
-                orders: [],
-                streetName: "Kungsgatan 61",
-                city: "Uppsala",
-                postalCode: "75579",
-                emailAddress: "saga.andersson@gmail.com"
-            )
-        )
-    )
+    OrderDetailView(order: Order.orderMockUpData )
 }
