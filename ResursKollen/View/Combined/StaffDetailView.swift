@@ -79,10 +79,10 @@ struct DetailRow: View {
                 .foregroundColor(.orange)
                 .frame(width: 25)
             Text(label)
-                .foregroundColor(.gray)
+                .foregroundColor(.black.opacity(0.7))
             Spacer()
             Text(value)
-                .foregroundColor(.gray)
+                .foregroundColor(.black.opacity(0.5))
         }
     }
 }

@@ -45,7 +45,9 @@ struct ManagerHomeView: View {
                     } label: {
                         Image(systemName: "plus")
                     }
+                    
                 }
+                
             }
         }
     }
