@@ -22,7 +22,7 @@ struct ResursKollenApp: App {
       NavigationView {
           
         //  LoginView()
-        ManagerHomeView()
+          ManagerHomeView()
       }
     }
   }

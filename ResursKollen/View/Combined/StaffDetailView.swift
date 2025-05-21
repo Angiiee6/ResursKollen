@@ -96,7 +96,7 @@ struct DetailRow: View {
             email: "test@example.com",
             employmentDate: Date(),
             employmentNumber: "EMP123",
-            phoneNumber: "0701234567",
+            phoneNumber: "0701234567"
 //            createdDate: Date()
         ))
     }

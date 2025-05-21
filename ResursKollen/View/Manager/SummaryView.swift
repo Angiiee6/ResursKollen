@@ -6,13 +6,137 @@
 //
 
 import SwiftUI
+import Charts
 
 struct SummaryView: View {
+    
+    @StateObject var vm = SummaryViewModel()
     var body: some View {
-        Text("Graf och statistik här")
+        ZStack {
+            //Bakgrund
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.11, green: 0.11, blue: 0.15),
+                    Color(red: 0.20, green: 0.20, blue: 0.25),
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            ).edgesIgnoringSafeArea(.all)
+            // Titel
+            VStack {
+                Text("Orderöversikt")
+                    .font(.title)
+                    .foregroundColor(.white)
+                    .bold()
+                
+                // Chart
+                Chart {
+                    ForEach(vm.chartData) {data in
+                        BarMark(
+                            x: .value("Status", data.status),
+                            y: .value("Antal", data.count)
+                        )
+                        .foregroundStyle(.blue)
+                        
+                    }
+                }
+                // X Led
+                .chartXAxis {
+                    AxisMarks {
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel()
+                            .foregroundStyle(.white)
+                            .font(.caption)
+                    }
+                }
+                // Y led
+                .chartYAxis {
+                    AxisMarks {
+                        AxisGridLine()
+                        AxisTick()
+                        AxisValueLabel()
+                            .foregroundStyle(.white)
+                    }
+                }
+                .frame(height: 200)
+                .padding()
+                VStack(alignment: .leading) {
+                    Text("Månadens Statistik")
+                        .foregroundColor(.white)
+                }
+                
+                // 4 lådorna i botten, behöver fyllas med info
+                HStack(spacing: 50) {
+                    ShowCaseView(value: vm.totalHoursString,icon: "clipboard.fill")
+                    ShowCaseView(value: vm.totalHoursString, icon: "flame.fill")
+                }
+                HStack(spacing: 50) {
+                    ShowCaseView(value: vm.totalHoursString, icon: "wrench.fill")
+                    ShowCaseView(value: vm.totalHoursString, icon: "hourglass")
+                    
+                    
+                    }
+                Spacer()
+                }
+            }
+        }
     }
-}
+
 
 #Preview {
     SummaryView()
 }
+
+extension SummaryView {
+    
+    class SummaryViewModel: ObservableObject {
+        let db = FirestoreManager()
+        
+        @Published var orders : [Order] = []
+        
+        // Hämtar alla timmar som är gjorda på alla ordrar under månaden som är jämfört med när den är skapad, OBS, kan va fel
+        var totalHoursString: String {
+            let calendar = Calendar.current
+            let now = Date()
+
+            let total = orders
+                .filter {
+                    calendar.isDate($0.creationDate, equalTo: now, toGranularity: .month)
+                }
+                .compactMap { Int($0.timeConsumption) }
+                .reduce(0, +)
+
+            return "\(total) h"
+        }
+        // Börja lyssna direkt vi initierar objektet
+        init() {
+            GetOrders()
+        }
+        
+        func GetOrders() {
+            db.listenToOrderCollection { [weak self ] newOrders in
+                DispatchQueue.main.async {
+                    self?.orders = newOrders
+                }
+                
+            }
+        }
+        
+        // grupperar orders beroende på status och visar i charten
+        // Gjort en klass för att göra det mer läsbart och snyggare
+        var chartData: [OrderChartData] {
+            let grouped = Dictionary(grouping: orders, by: {$0.status})
+            
+            return [
+                OrderChartData(status: "Påbörjade", count: grouped[.started]?.count ?? 0),
+                OrderChartData(status: "Försenade", count: grouped[.delayed]?.count ?? 0),
+                OrderChartData(status: "Avslutade", count: grouped[.completed]?.count ?? 0),
+                OrderChartData(status: "registrerade", count: grouped[.registered]?.count ?? 0)
+            ]
+        }
+        
+        
+    }
+}
+
