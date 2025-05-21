@@ -74,10 +74,10 @@ struct SummaryView: View {
                 
                 HStack(spacing: 50) {
                     ShowCaseView(title: "Arbetskostnad", value: vm.totalLaborCost, iconName: "hammer")
-                    ShowCaseView(title: "Arbetskostnad", value: vm.totalLaborCost, iconName: "hammer")
-                    
+                    ShowCaseView(title: "Total orderkostnad", value: vm.totalOrderCost, iconName: "hammer")
                     
                     }
+                ShowCaseView(title: "Profit", value: vm.ProfitThisMonth, iconName: "creditcard")
                 Spacer()
                 }
             }
@@ -119,7 +119,7 @@ extension SummaryView {
                 
                  calendar.isDate($0.creationDate, equalTo: now, toGranularity: .month)
             }
-                .compactMap { Int($0.totalOrderCost)}
+                .compactMap { Int($0.totalMaterialCost)}
                 .reduce(0, +)
             
             return "\(total) kr"
@@ -138,9 +138,38 @@ extension SummaryView {
             
             return "\(total) kr"
         }
+        
+        var totalOrderCost : String {
+            let calendar = Calendar.current
+            let now = Date()
+            
+            let total = orders.filter {
+                calendar.isDate($0.creationDate, equalTo: now, toGranularity: .month)
+            }
+                .compactMap {Int($0.totalOrderCost)}
+                .reduce(0, +)
+            
+            return "\(total) kr"
+        }
         // Börja lyssna direkt vi initierar objektet
         init() {
             GetOrders()
+        }
+        // Tar fram vinsten i månaden
+        var ProfitThisMonth: String {
+            let calendar = Calendar.current
+            let now = Date()
+            
+            let ordersThisMonth = orders
+                .filter { calendar.isDate($0.creationDate, equalTo: now, toGranularity: .month) }
+            
+            let material = ordersThisMonth.map { $0.totalMaterialCost }.reduce(0, +)
+            let labor = ordersThisMonth.map { $0.totalLaborCost }.reduce(0, +)
+            let total = ordersThisMonth.map { $0.totalOrderCost }.reduce(0, +)
+            
+            let profit = total - material - labor
+            
+            return "\(profit) kr"
         }
         
         func GetOrders() {
