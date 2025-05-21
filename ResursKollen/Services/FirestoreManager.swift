@@ -26,6 +26,10 @@ class FirestoreManager {
         )
     }
     
+    func updateOrder(_ order: Order) throws {
+        try orderRef.document(order.id).setData(from: order)
+    }
+    
     //Snapshot lyssnare för order collectionen som kallas i viewmodels och använder closure i viewmodel
     func listenToOrderCollection(onUpdate: @escaping ([Order]) -> Void) {
         orderRef.addSnapshotListener { snapshot, error in
