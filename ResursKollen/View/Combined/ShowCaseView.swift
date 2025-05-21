@@ -9,18 +9,23 @@ import SwiftUI
 
 struct ShowCaseView: View {
     let value : String?
+    let icon : String
     
     var body: some View {
         
         if let value = value {
-            Text(value)
-                .font(.title)
-                .foregroundColor(.white)
-                .frame(width: 100, height: 100)
-                .background(.ultraThinMaterial)
-                .cornerRadius(10)
-                .shadow(radius: 10)
-                .padding()
+            VStack {
+                Image(systemName: icon)
+                Text(value)
+                   
+            }
+            .font(.title)
+            .foregroundColor(.white)
+            .frame(width: 100, height: 100)
+            .background(.ultraThinMaterial)
+            .cornerRadius(10)
+            .shadow(radius: 10)
+            .padding()
         } else {
             ProgressView()
         }
@@ -28,5 +33,5 @@ struct ShowCaseView: View {
 }
 
 #Preview {
-    ShowCaseView(value: "13H")
+    ShowCaseView(value: "13H", icon: "wrench")
 }

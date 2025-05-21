@@ -9,7 +9,6 @@ import SwiftUI
 import Charts
 
 struct SummaryView: View {
-    let columns = [GridItem(.flexible()),GridItem(.flexible())]
     
     @StateObject var vm = SummaryViewModel()
     var body: some View {
@@ -62,14 +61,19 @@ struct SummaryView: View {
                 }
                 .frame(height: 200)
                 .padding()
+                VStack(alignment: .leading) {
+                    Text("Månadens Statistik")
+                        .foregroundColor(.white)
+                }
                 
+                // 4 lådorna i botten, behöver fyllas med info
                 HStack(spacing: 50) {
-                    ShowCaseView(value: vm.totalHoursString)
-                    ShowCaseView(value: vm.totalHoursString)
+                    ShowCaseView(value: vm.totalHoursString,icon: "clipboard.fill")
+                    ShowCaseView(value: vm.totalHoursString, icon: "flame.fill")
                 }
                 HStack(spacing: 50) {
-                    ShowCaseView(value: vm.totalHoursString)
-                    ShowCaseView(value: vm.totalHoursString)
+                    ShowCaseView(value: vm.totalHoursString, icon: "wrench.fill")
+                    ShowCaseView(value: vm.totalHoursString, icon: "hourglass")
                     
                     
                     }
@@ -91,14 +95,21 @@ extension SummaryView {
         
         @Published var orders : [Order] = []
         
+        // Hämtar alla timmar som är gjorda på alla ordrar under månaden som är jämfört med när den är skapad, OBS, kan va fel
         var totalHoursString: String {
             let calendar = Calendar.current
+            let now = Date()
+
             let total = orders
+                .filter {
+                    calendar.isDate($0.creationDate, equalTo: now, toGranularity: .month)
+                }
                 .compactMap { Int($0.timeConsumption) }
                 .reduce(0, +)
+
             return "\(total) h"
         }
-        
+        // Börja lyssna direkt vi initierar objektet
         init() {
             GetOrders()
         }
@@ -112,6 +123,8 @@ extension SummaryView {
             }
         }
         
+        // grupperar orders beroende på status och visar i charten
+        // Gjort en klass för att göra det mer läsbart och snyggare
         var chartData: [OrderChartData] {
             let grouped = Dictionary(grouping: orders, by: {$0.status})
             
