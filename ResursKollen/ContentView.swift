@@ -12,23 +12,22 @@ struct ContentView: View {
     @StateObject var viewModel = LoginViewViewmodel()
     
     var body: some View {
-    
-        if !viewModel.isUserLoggedIn {
-            LoginView(viewModel: viewModel)
-                
-        }else {
-            if viewModel.isUserManager {
+        
+            switch viewModel.currentUser?.status {
+            case .manager:
                 ManagerHomeView()
-                    
-            }else {
-                
-                    
+            case .employee:
+                EmployeeHomeView(currentUser: viewModel.currentUser!)
+            case .unknown:
+                Text("User status unknown!")
+            case nil:
+                LoginView(viewModel: viewModel)
             }
         }
         
         
     }
-}
+
 
 #Preview {
     ContentView()

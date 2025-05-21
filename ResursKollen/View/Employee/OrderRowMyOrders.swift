@@ -14,7 +14,7 @@ struct OrderRowMyOrders: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
                 VStack(alignment: .leading) {
-                    Text("\(order.description)")
+                    Text("\(order.title)")
                         .font(.headline)
 
                     Text(order.customer.streetName)

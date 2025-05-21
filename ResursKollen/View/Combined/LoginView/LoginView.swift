@@ -14,6 +14,8 @@ struct LoginView: View {
     @ObservedObject var viewModel: LoginViewViewmodel
     //för logga in knappens utseende
     @State private var isLoggingIn = false
+    @State private var email: String = ""
+    @State private var password: String = ""
 
     var body: some View {
         ZStack {
@@ -54,7 +56,7 @@ struct LoginView: View {
                     HStack {
                         Image(systemName: "envelope")
                             .foregroundColor(.white.opacity(0.7))
-                        TextField("Email", text: $viewModel.email)
+                        TextField("Email", text: $email)
                             .autocapitalization(.none)
                             .keyboardType(.emailAddress)
                     }
@@ -72,7 +74,7 @@ struct LoginView: View {
                         Image(systemName: "lock")
                             .foregroundColor(.white.opacity(0.7))
                         //för att inte visa lösenordet
-                        SecureField("Lösenord", text: $viewModel.password)
+                        SecureField("Lösenord", text: $password)
                     }
                     .padding()
                     .background(Color.white.opacity(0.2))
@@ -90,7 +92,7 @@ struct LoginView: View {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                             Task {
                                 do {
-                                    try await viewModel.signIn()
+                                    try await viewModel.signIn(email: email, password: password)
                                     return
                                 } catch {
                                     //lämpligt felmedd. om vi kastar
