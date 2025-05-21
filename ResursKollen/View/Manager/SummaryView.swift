@@ -155,7 +155,7 @@ extension SummaryView {
         init() {
             GetOrders()
         }
-        // Tar fram vinsten i månaden
+        // Tar fram vinsten denna månaden.
         var ProfitThisMonth: String {
             let calendar = Calendar.current
             let now = Date()
@@ -163,13 +163,13 @@ extension SummaryView {
             let ordersThisMonth = orders
                 .filter { calendar.isDate($0.creationDate, equalTo: now, toGranularity: .month) }
             
-            let material = ordersThisMonth.map { $0.totalMaterialCost }.reduce(0, +)
-            let labor = ordersThisMonth.map { $0.totalLaborCost }.reduce(0, +)
-            let total = ordersThisMonth.map { $0.totalOrderCost }.reduce(0, +)
+            let material = ordersThisMonth.compactMap { $0.totalMaterialCost }.reduce(0, +)
+            let labor = ordersThisMonth.compactMap { $0.totalLaborCost }.reduce(0, +)
+            let total = ordersThisMonth.compactMap { $0.totalOrderCost }.reduce(0, +)
             
             let profit = total - material - labor
             
-            return "\(profit) kr"
+            return "\(Int(profit)) kr"
         }
         
         func GetOrders() {
