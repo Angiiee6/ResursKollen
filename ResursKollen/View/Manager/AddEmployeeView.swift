@@ -29,12 +29,13 @@ class AddEmployeeViewModel: ObservableObject {
         
         
         let newUser = UserData(
-            auth: authData,
+            id: authData.user.uid,
+            status: user.status,
             name: user.name,
+            email: authData.user.email ?? "",
+            employmentDate: user.employmentDate,
             employmentNumber: anstNr,
             phoneNumber: user.phoneNumber,
-            employmentDay: user.employmentDate,
-            status: user.status
         )
 
         try await UsersManager.shared.createNewUser(user: newUser)

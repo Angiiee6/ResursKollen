@@ -8,38 +8,62 @@
 import SwiftUI
 
 struct EmployeeMyOrders: View {
-    let user: UserData
-    let orders: [Order]
+    @ObservedObject var viewModel: EmployeeHomeView.ViewModel
 
     var body: some View {
         ZStack {
             LinearGradient(
-                gradient: Gradient(colors: [Color(.systemGray6), Color(.systemGray5)]),
+                gradient: Gradient(colors: [
+                    Color(.systemGray6), Color(.systemGray5),
+                ]),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             ).edgesIgnoringSafeArea(.all)
 
-            NavigationView {
-                VStack(alignment: .leading) {
-                    Text("Hej, \(user.name ) 👋")
-                        .font(.largeTitle)
-                        .fontWeight(.bold)
-                        .padding(.top)
-                        .padding(.leading)
+            VStack(alignment: .leading) {
+                Text("Hej, \(viewModel.currentUser.name) 👋")
+                    .font(.largeTitle)
+                    .fontWeight(.bold)
+                    .padding(.top)
+                    .padding(.leading)
 
-
-                    List {
-                        Section(header: Text("Påbörjade ordrar:")      .foregroundColor(.orange)) {
-                            ForEach(orders) { order in
+                List {
+                    Section(
+                        header: Text("Påbörjade ordrar:").foregroundColor(
+                            .orange
+                        )
+                    ) {
+                        ForEach(viewModel.myOrders) { order in
+                            NavigationLink(
+                                destination: OrderDetailView(order: order)
+                            ) {
                                 OrderRowMyOrders(order: order)
+                                    .swipeActions(allowsFullSwipe: false) {
+                                        Button {
+                                            viewModel.leaveOrder(order)
+                                        } label: {
+                                            Label(
+                                                "Lämna order",
+                                                systemImage: "hand.raised.fill"
+                                            )
+                                        }
+                                        .tint(.red)
+                                    }
                             }
+
                         }
                     }
-                    .listStyle(.insetGrouped)
                 }
-        
+                .listStyle(.insetGrouped)
             }
         }
     }
 }
 
+#Preview {
+    EmployeeMyOrders(
+        viewModel: EmployeeHomeView.ViewModel(
+            currentUser: UserData(name: "Test user")
+        )
+    )
+}
