@@ -20,7 +20,7 @@ struct OrderRowAllOrders: View {
                     .clipShape(Circle())
 
                 VStack(alignment: .leading) {
-                    Text("\(order.description)")
+                    Text("\(order.title)")
                         .font(.headline)
 
                     Text(order.customer.name)
