@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-struct Order: Codable, Identifiable {
+struct Order: Codable, Identifiable, Equatable {
     var id: String
     var title: String = ""
     var description: String = ""
@@ -37,11 +37,19 @@ struct Order: Codable, Identifiable {
     var totalOrderCost: Double {
         totalLaborCost + totalMaterialCost
     }
+    
+    //För att göra ordern Equatable
+    static func ==(lhs: Order, rhs: Order) -> Bool {
+            return lhs.workPerformed == rhs.workPerformed &&
+                   lhs.timeConsumption == rhs.timeConsumption &&
+                   lhs.materialConsumption == rhs.materialConsumption &&
+                   lhs.status == rhs.status
+        }
 }
 
 enum OrderStatus: Codable, CaseIterable {
 
-    case registered, delayed, started, completed
+    case registered, delayed, started, needsReview, completed
 
     var nameSE: String {
         switch self {
@@ -53,6 +61,8 @@ enum OrderStatus: Codable, CaseIterable {
             "försenad"
         case .started:
             "påbörjad"
+        case .needsReview:
+            "granskas"
         case .completed:
             "avslutad"
         }
@@ -70,6 +80,8 @@ extension OrderStatus {
             return .red
         case .started:
             return .orange
+        case .needsReview:
+            return .purple
         case .completed:
             return .green
         }
@@ -85,6 +97,8 @@ extension OrderStatus {
             return "exclamationmark.triangle"
         case .started:
             return "hammer"
+        case .needsReview:
+            return "magnifyingglass"
         case .completed:
             return "checkmark.seal"
         }
