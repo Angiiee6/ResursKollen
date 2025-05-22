@@ -20,7 +20,7 @@ extension UserData{
                  email: "anna.svensson@example.com",
                  employmentDate: Date(timeIntervalSince1970: 1581292800),
                  employmentNumber: "EMP001",
-                 createdDate: Date(timeIntervalSince1970: 1628985600),
+                // createdDate: Date(timeIntervalSince1970: 1628985600),
                  phoneNumber: "+46701234567"),
         
         UserData(id: "fgdjgfjnkgfjk2232",
@@ -29,7 +29,7 @@ extension UserData{
                 email: "bjorn@example.com",
                 employmentDate: Date(timeIntervalSince1970: 1527811200),
                 employmentNumber: "EMP002",
-                createdDate: Date(timeIntervalSince1970: 1581292800),
+                //createdDate: Date(timeIntervalSince1970: 1581292800),
                 phoneNumber: "+46709876543"),
         
         UserData(id: "iodoemer858595",
@@ -38,7 +38,7 @@ extension UserData{
                  email: "carina@example.com",
                  employmentDate: Date(timeIntervalSince1970: 1527811200),
                  employmentNumber: "EMP003",
-                 createdDate: Date(timeIntervalSince1970: 1526774400),
+                // createdDate: Date(timeIntervalSince1970: 1526774400),
                  phoneNumber: "+46701112233")]
     
 }

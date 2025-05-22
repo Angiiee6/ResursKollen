@@ -53,7 +53,7 @@ struct StaffDetailView: View {
                     DetailRow(icon: "person.fill.checkmark", label: "Anställningsform", value: user.status.nameSE)
                     DetailRow(icon: "number", label: "Anställningsnummer", value: user.employmentNumber)
                     DetailRow(icon: "calendar", label: "Anställningsdatum", value: formatDate(user.employmentDate))
-                    DetailRow(icon: "calendar.badge.plus", label: "Skapad datum", value: formatDate(user.createdDate))
+                   // DetailRow(icon: "calendar.badge.plus", label: "Skapad datum", value: //formatDate(user.createdDate))
                         .listRowBackground(Color.white)
                 }
             }

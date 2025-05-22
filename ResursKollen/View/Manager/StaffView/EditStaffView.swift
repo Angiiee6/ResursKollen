@@ -36,7 +36,7 @@ struct EditStaffView: View {
 
                         
                     }
-                    .navigationTitle("Redigera användare")
+                    .navigationTitle("Redigera uppgifter")
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
                             Button("Avbryt") {

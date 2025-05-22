@@ -15,7 +15,7 @@ struct UserData: Codable, Identifiable {
     var employmentDate: Date
     var employmentNumber: String
     var phoneNumber: String
-    var createdDate: Date
+    //var createdDate: Date
 
     //create user profile
     init(id: String = UUID().uuidString,
@@ -24,7 +24,6 @@ struct UserData: Codable, Identifiable {
          email: String = "",
          employmentDate: Date = Date(),
          employmentNumber: String = "",
-         createdDate: Date = Date(),
          phoneNumber: String = ""){
         
         self.id = id
@@ -32,10 +31,10 @@ struct UserData: Codable, Identifiable {
         self.email = email
         self.employmentDate = employmentDate
         self.employmentNumber = employmentNumber
-        self.createdDate = createdDate
         self.phoneNumber = phoneNumber
         self.name = name
     }
+    
     
  
     
