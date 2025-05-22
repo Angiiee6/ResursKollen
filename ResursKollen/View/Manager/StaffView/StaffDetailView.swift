@@ -4,8 +4,12 @@ struct StaffDetailView: View {
     
     @State private var isEditUser = false
     @State var user: UserData
+    @State private var isShowMoreInfo = false
+    
+    
     
     var body: some View {
+        
         NavigationStack{
         ZStack {
             // Bakgrund
@@ -42,7 +46,6 @@ struct StaffDetailView: View {
                     .padding(.vertical)
                     .listRowBackground(Color.clear)
                 }
-                
                 Section(header: Text("Kontaktinformation").foregroundColor(.white)) {
                     DetailRow(icon: "envelope", label: "E-post", value: user.email)
                     DetailRow(icon: "phone", label: "Telefonnummer", value: user.phoneNumber)
@@ -50,16 +53,34 @@ struct StaffDetailView: View {
                 }
                 
                 Section(header: Text("Anställningsinformation").foregroundColor(.white)) {
-                    DetailRow(icon: "person.fill.checkmark", label: "Anställningsform", value: user.status.nameSE)
+                    DetailRow(icon: "person.fill.checkmark", label: "Anställningsform", value: user.detailedInfo.employmentType.employmentTypeSE )
                     DetailRow(icon: "number", label: "Anställningsnummer", value: user.employmentNumber)
                     DetailRow(icon: "calendar", label: "Anställningsdatum", value: formatDate(user.employmentDate))
-                   // DetailRow(icon: "calendar.badge.plus", label: "Skapad datum", value: //formatDate(user.createdDate))
-                        .listRowBackground(Color.white)
+                     .listRowBackground(Color.white)
                 }
+                
+                
+                  
+//NOTE: här har jag lagt till logik för en listan med mer information, @Angie, @Vivanne plocka bort om ni tycker jag kladdat för mycket /Da
+                Section{
+                    Button{
+                        withAnimation{
+                            isShowMoreInfo.toggle()
+                        }
+                    }label: {
+                        DetailRow(icon: "list.bullet.rectangle", label: "Mera information", value: "")
+                    }
+                }
+                
+                if isShowMoreInfo{
+                    
+                        ShowDetailsView(user: user)
+                    
+                    }
             }
             .scrollContentBackground(.hidden)
             .background(Color.clear)
-        }
+        }.ignoresSafeArea(.all)
     }
         .toolbar{
             ToolbarItem(placement: .topBarTrailing) {
@@ -89,6 +110,7 @@ struct StaffDetailView: View {
     }
 }
 
+//Note Jag lyfte ut DetailRow till 
 struct DetailRow: View {
     let icon: String
     let label: String
@@ -111,7 +133,7 @@ struct DetailRow: View {
 #Preview {
     NavigationStack {
         
-        StaffDetailView(user: UserData.UserDataMockData.first!)
+        StaffDetailView(user: UserData.UserDataMockData as UserData)
        
     }
 }

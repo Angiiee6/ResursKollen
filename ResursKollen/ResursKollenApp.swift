@@ -21,8 +21,8 @@ struct ResursKollenApp: App {
         
         var body: some Scene {
             WindowGroup {
-              //  ManagerHomeView()
-                ContentView()
+                ManagerHomeView()
+              //  ContentView()
                // StaffView()
             }
         }
