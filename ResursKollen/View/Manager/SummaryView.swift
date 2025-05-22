@@ -68,15 +68,16 @@ struct SummaryView: View {
                 
                 // 4 lådorna i botten, behöver fyllas med info
                 HStack(spacing: 50) {
-                    ShowCaseView(value: vm.totalHoursString,icon: "clipboard.fill")
-                    ShowCaseView(value: vm.totalHoursString, icon: "flame.fill")
+                    ShowCaseView(title: "MaterialKostnad", value: vm.totalMaterialCost, iconName: "cube.box")
+                    ShowCaseView(title: "Arbetade timmar", value: vm.totalHoursString, iconName: "clock")
                 }
+                
                 HStack(spacing: 50) {
-                    ShowCaseView(value: vm.totalHoursString, icon: "wrench.fill")
-                    ShowCaseView(value: vm.totalHoursString, icon: "hourglass")
-                    
+                    ShowCaseView(title: "Arbetskostnad", value: vm.totalLaborCost, iconName: "hammer")
+                    ShowCaseView(title: "Total orderkostnad", value: vm.totalOrderCost, iconName: "hammer")
                     
                     }
+                ShowCaseView(title: "Profit", value: vm.ProfitThisMonth, iconName: "creditcard")
                 Spacer()
                 }
             }
@@ -109,9 +110,66 @@ extension SummaryView {
 
             return "\(total) h"
         }
+        
+        var totalMaterialCost: String {
+            let calendar = Calendar.current
+            let now = Date()
+            
+            let total = orders.filter{
+                
+                 calendar.isDate($0.creationDate, equalTo: now, toGranularity: .month)
+            }
+                .compactMap { Int($0.totalMaterialCost)}
+                .reduce(0, +)
+            
+            return "\(total) kr"
+        }
+        
+        var totalLaborCost: String {
+            let calendar = Calendar.current
+            let now = Date()
+            
+            let total = orders.filter {
+                
+                calendar.isDate($0.creationDate, equalTo: now, toGranularity: .month)
+            }
+                .compactMap { Int($0.totalLaborCost)}
+                .reduce(0, +)
+            
+            return "\(total) kr"
+        }
+        
+        var totalOrderCost : String {
+            let calendar = Calendar.current
+            let now = Date()
+            
+            let total = orders.filter {
+                calendar.isDate($0.creationDate, equalTo: now, toGranularity: .month)
+            }
+                .compactMap {Int($0.totalOrderCost)}
+                .reduce(0, +)
+            
+            return "\(total) kr"
+        }
         // Börja lyssna direkt vi initierar objektet
         init() {
             GetOrders()
+        }
+        // Tar fram vinsten denna månaden.
+        var ProfitThisMonth: String {
+            let calendar = Calendar.current
+            let now = Date()
+            
+            let ordersThisMonth = orders
+                .filter { calendar.isDate($0.creationDate, equalTo: now, toGranularity: .month) }
+            
+            let material = ordersThisMonth.compactMap { $0.totalMaterialCost }.reduce(0, +)
+            let labor = ordersThisMonth.compactMap { $0.totalLaborCost }.reduce(0, +)
+            let total = ordersThisMonth.compactMap { $0.totalOrderCost }.reduce(0, +)
+            
+            let profit = total - material - labor
+            
+            return "\(Int(profit)) kr"
         }
         
         func GetOrders() {
