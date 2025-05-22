@@ -63,7 +63,7 @@ extension OrderStatus {
     var color: Color {
         switch self {
         case .registered:
-            return .gray
+            return .blue
         // case .booked:
         //   return .blue
         case .delayed:

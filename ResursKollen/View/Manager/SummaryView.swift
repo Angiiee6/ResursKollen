@@ -81,7 +81,7 @@ struct SummaryView: View {
                 Spacer()
                 }
             }
-        .searchable(text: .constant(""))
+//        .searchable(text: .constant(""))
         }
         
     }

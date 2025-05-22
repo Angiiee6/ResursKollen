@@ -9,59 +9,76 @@ import SwiftUI
 
 struct ManagerAllOrdersView: View {
     @StateObject private var vm = AllOrdersViewModel()
-    @State var searchText : String = ""
-    
+    @State var searchText: String = ""
     
     var body: some View {
-        List {
-            Section(header: Text("Lediga ordrar").foregroundColor(.blue)) {
-                ForEach(filteredOrders(for: .registered)) { order in
-                    NavigationLink(destination: OrderDetailView(order: order)) {
-                        OrderRowAllOrders(order: order)
+        NavigationView {
+            ZStack {
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(red: 0.11, green: 0.11, blue: 0.15),
+                        Color(red: 0.20, green: 0.20, blue: 0.25),
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .edgesIgnoringSafeArea(.all)
+                
+                List {
+                    Section(header: Text("Lediga ordrar").foregroundColor(.blue)) {
+                        ForEach(filteredOrders(for: .registered)) { order in
+                            NavigationLink(destination: OrderDetailView(order: order)) {
+                                OrderRowAllOrders(order: order)
+                            }
+                            .listRowBackground(Color.white)
+                        }
+                    }
+                    Section(header: Text("Påbörjade ordrar").foregroundColor(.orange)) {
+                        ForEach(filteredOrders(for: .started)) { order in
+                            NavigationLink(destination: OrderDetailView(order: order)) {
+                                OrderRowAllOrders(order: order)
+                            }
+                            .listRowBackground(Color.white)
+                        }
+                    }
+                    Section(header: Text("Försenade ordrar").foregroundColor(.red)) {
+                        ForEach(filteredOrders(for: .delayed)) { order in
+                            NavigationLink(destination: OrderDetailView(order: order)) {
+                                OrderRowAllOrders(order: order)
+                            }
+                            .listRowBackground(Color.white)
+                        }
+                    }
+                    Section(header: Text("Avslutade ordrar").foregroundColor(.green)) {
+                        ForEach(filteredOrders(for: .completed)) { order in
+                            NavigationLink(destination: OrderDetailView(order: order)) {
+                                OrderRowAllOrders(order: order)
+                            }
+                            .listRowBackground(Color.white)
+                        }
                     }
                 }
-            }
-            
-            Section(header: Text("Påbörjade ordrar").foregroundColor(.orange)) {
-                ForEach(filteredOrders(for: .started)) { order in
-                    NavigationLink(destination: OrderDetailView(order: order)) {
-                        OrderRowAllOrders(order: order)
-                    }
-                }
-            }
-            
-            Section(header: Text("Försenade ordrar").foregroundColor(.red)) {
-                ForEach(filteredOrders(for: .delayed)) { order in
-                    NavigationLink(destination: OrderDetailView(order: order)) {
-                        OrderRowAllOrders(order: order)
-                    }
-                }
-            }
-            
-            Section(header: Text("Avslutade ordrar").foregroundColor(.green)) {
-                ForEach(filteredOrders(for: .completed)) { order in
-                    NavigationLink(destination: OrderDetailView(order: order)) {
-                        OrderRowAllOrders(order: order)
-                    }
-                }
+                .listStyle(.insetGrouped)
+                .background(Color.clear)
+                .scrollContentBackground(.hidden)
+                .toolbarColorScheme(.dark, for: .navigationBar)
+                .searchable(text: $searchText, prompt: "Sök bland ordrar")
             }
         }
-        .listStyle(.insetGrouped)
-        .navigationTitle("Alla ordrar")
-        .searchable(text: $searchText, prompt: "Sök bland ordrar")
-        
     }
+    
+    
     func filteredOrders(for status : OrderStatus) -> [Order] {
         vm.orders.filter {
             $0.status == status &&
-            (
-                searchText.isEmpty ||
-                $0.customer.name.lowercased().contains(searchText.lowercased()) ||
-                $0.orderNumber.lowercased().contains(searchText.lowercased())
+            (searchText.isEmpty ||
+             $0.customer.name.lowercased().contains(searchText.lowercased()) ||
+             $0.orderNumber.lowercased().contains(searchText.lowercased())
             )
         }
     }
 }
+
 
 #Preview {
     ManagerAllOrdersView()
