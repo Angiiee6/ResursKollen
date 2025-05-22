@@ -50,7 +50,7 @@ struct ManagerAllOrdersView: View {
                 Section(
                     header: Text("Avslutade ordrar").foregroundColor(.green)
                 ) {
-                    ForEach(vm.orders.filter { $0.status == .completed }) {
+                    ForEach(vm.orders.filter { $0.status == .done }) {
                         order in
                         NavigationLink(
                             destination: OrderDetailView(order: order)

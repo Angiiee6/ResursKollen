@@ -55,12 +55,13 @@ extension EmployeeHomeView {
 
             FirestoreManager.shared.listenToOrderCollection { orders in
                 self.myOrders = orders.filter {
-                    $0.assignedUser?.id == currentUser.id
+                    $0.assignedUser?.id == currentUser.id && $0.status != .done
+                        && $0.status != .completed
                 }
                 self.unassignedOrders = orders.filter { $0.assignedUser == nil }
             }
         }
-        
+
         func takeOrder(_ order: Order) {
             var updatedOrder = order
             updatedOrder.assignedUser = currentUser
@@ -70,7 +71,7 @@ extension EmployeeHomeView {
                 print("Error taking order!")
             }
         }
-        
+
         func leaveOrder(_ order: Order) {
             var updatedOrder = order
             updatedOrder.assignedUser = nil

@@ -74,6 +74,32 @@ class FirestoreManager {
         }
     }
 
+    func listenToDoneOrders(onUpdate: @escaping (Result<[Order], Error>) -> Void) -> ListenerRegistration {
+        return orderRef.whereField("status", isEqualTo: OrderStatus.done.rawValue).addSnapshotListener {
+            snapshot,
+            error in
+            if let error = error {
+                onUpdate(.failure(error))
+                print("Done orders listener error.")
+                return
+            }
+            guard let documents = snapshot?.documents else {
+                onUpdate(.success([]))
+                print("Done orders listener empty document.")
+                return
+            }
+            for document in documents {
+                print(document)
+            }
+            let orders = documents.compactMap { document in
+                
+                try? document.data(as: Order.self)
+            }
+            onUpdate(.success(orders))
+            print("Done orders listener success: \(orders)")
+        }
+    }
+
     func fetchUserData(userId: String) async throws -> UserData {
         try await usersRef.document(userId).getDocument(as: UserData.self)
     }

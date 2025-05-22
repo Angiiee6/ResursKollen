@@ -47,9 +47,9 @@ struct Order: Codable, Identifiable, Equatable {
         }
 }
 
-enum OrderStatus: Codable, CaseIterable {
+enum OrderStatus: String, Codable, CaseIterable {
 
-    case registered, delayed, started, needsReview, completed
+    case registered, delayed, started, done, completed
 
     var nameSE: String {
         switch self {
@@ -61,8 +61,8 @@ enum OrderStatus: Codable, CaseIterable {
             "försenad"
         case .started:
             "påbörjad"
-        case .needsReview:
-            "granskas"
+        case .done:
+            "utförd"
         case .completed:
             "avslutad"
         }
@@ -80,7 +80,7 @@ extension OrderStatus {
             return .red
         case .started:
             return .orange
-        case .needsReview:
+        case .done:
             return .purple
         case .completed:
             return .green
@@ -97,7 +97,7 @@ extension OrderStatus {
             return "exclamationmark.triangle"
         case .started:
             return "hammer"
-        case .needsReview:
+        case .done:
             return "magnifyingglass"
         case .completed:
             return "checkmark.seal"

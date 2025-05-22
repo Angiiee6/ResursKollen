@@ -63,7 +63,7 @@ struct OrderDetailView: View {
                         ) {
                             ForEach(
                                 OrderStatus.allCases.filter {
-                                    $0 != .completed && $0 != .needsReview
+                                    $0 != .completed && $0 != .done
                                 },
                                 id: \.self
                             ) { status in
@@ -242,7 +242,7 @@ struct OrderDetailView: View {
                     secondaryButton: .destructive(Text("Ja")) {
                         do {
                             var updatedOrder = order
-                            updatedOrder.status = .needsReview
+                            updatedOrder.status = .done
                             try viewModel.updateOrder(updatedOrder)
                             dismiss()
                         } catch {
