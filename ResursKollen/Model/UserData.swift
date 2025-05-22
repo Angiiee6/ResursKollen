@@ -57,7 +57,7 @@ struct UserData: Codable, Identifiable {
     
 }
 
-enum EmploymentStatus:String, Codable {
+enum EmploymentStatus:String, Codable, Hashable {
     case manager, employee, unknown
 
     var nameSE: String {
