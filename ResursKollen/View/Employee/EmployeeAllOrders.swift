@@ -12,6 +12,7 @@ struct EmployeeAllOrders: View {
     @State var searchText : String = ""
     var body: some View {
         List {
+            
             Section(header: Text("Lediga ordrar").foregroundColor(.blue)) {
                 ForEach(
                     filteredOrders(for: .registered).filter {
