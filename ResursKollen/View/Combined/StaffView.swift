@@ -77,6 +77,7 @@ struct StaffView: View {
                         .background(Color.orange)
                         .cornerRadius(12)
                         .padding(.horizontal)
+                        .padding(20)
                     }
                     .sheet(isPresented: $isAddNewEmployeePresented) {
                         AddEmployeeView()
