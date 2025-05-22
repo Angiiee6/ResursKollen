@@ -9,12 +9,12 @@ import SwiftUI
 
 struct EmployeeAllOrders: View {
     @ObservedObject var viewModel: EmployeeHomeView.ViewModel
-
+    @State var searchText : String = ""
     var body: some View {
         List {
             Section(header: Text("Lediga ordrar").foregroundColor(.blue)) {
                 ForEach(
-                    viewModel.unassignedOrders.filter {
+                    filteredOrders(for: .registered).filter {
                         $0.status == .registered
                     }
                 ) {
@@ -108,9 +108,23 @@ struct EmployeeAllOrders: View {
         }
         .listStyle(.insetGrouped)
         .navigationTitle("Alla ordrar")
-        // .searchable(text: .constant(""), prompt: "Sök bland ordrar")
+        .searchable(text: $searchText, prompt: "Sök bland ordrar")
+        
+    }
+    //
+    // tar in en status och filtrerar baserat på status sen använder vi sökordet för att filtrera i listan
+    func filteredOrders(for status: OrderStatus) -> [Order] {
+        viewModel.unassignedOrders.filter {
+            $0.status == status &&
+            (
+                searchText.isEmpty ||
+                $0.customer.name.lowercased().contains(searchText.lowercased()) ||
+                $0.orderNumber.lowercased().contains(searchText.lowercased())
+            )
+        }
     }
 }
+
 
 #Preview {
     EmployeeAllOrders(viewModel: EmployeeHomeView.ViewModel(currentUser: UserData(name: "Test user")))
