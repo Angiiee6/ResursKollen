@@ -1,9 +1,12 @@
 import SwiftUI
 
 struct StaffDetailView: View {
-    let user: UserData
+    
+    @State private var isEditUser = false
+    @State var user: UserData
     
     var body: some View {
+        NavigationStack{
         ZStack {
             // Bakgrund
             LinearGradient(
@@ -58,6 +61,24 @@ struct StaffDetailView: View {
             .background(Color.clear)
         }
     }
+        .toolbar{
+            ToolbarItem(placement: .topBarTrailing) {
+                
+                Button{
+                    isEditUser = true
+                }label: {
+                    Label("Redigera", systemImage: "pencil")
+                        .foregroundColor(.white)
+                }
+            }
+            
+        }.sheet(isPresented: $isEditUser) {
+            EditStaffView(user: $user)
+                .presentationDragIndicator(.visible)
+        }
+        
+        
+    }
     
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
@@ -91,16 +112,6 @@ struct DetailRow: View {
     NavigationStack {
         
         StaffDetailView(user: UserData.UserDataMockData.first!)
-        
-       /* StaffDetailView(user: UserData(
-            id: "1",
-            status: .employee,
-            name: "Vivianne och Angie",
-            email: "test@example.com",
-            employmentDate: Date(),
-            employmentNumber: "EMP123",
-            phoneNumber: "0701234567"
-//            createdDate: Date()
-        ))*/
+       
     }
 }
