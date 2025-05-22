@@ -16,43 +16,44 @@ struct EmployeeHomeView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            TabView {
-                Tab(
-                    "Mina Ordrar",
-                    systemImage:
-                        "list.bullet.clipboard"
-                ) {
-                    //Filtrera på ordrar man äger
-                    EmployeeMyOrders(
-                        viewModel: viewModel
-                    )
-                }
-                Tab(
-                    "Alla Ordrar",
-                    systemImage:
-                        "list.bullet.clipboard"
-                ) {
-                    EmployeeAllOrders(viewModel: viewModel)
-                }
-                Tab("Personal", systemImage: "person.3") {
-                    StaffView()
-                }
+        TabView {
+          
+            NavigationStack {
+                EmployeeMyOrders(viewModel: viewModel)
+            }
+            .tabItem {
+                Label("Mina Ordrar", systemImage: "list.bullet.clipboard")
+            }
+            
+          
+            NavigationStack {
+                EmployeeAllOrders(viewModel: viewModel)
+            }
+            .tabItem {
+                Label("Alla Ordrar", systemImage: "list.bullet.clipboard")
+            }
+            
+ 
+            NavigationStack {
+                StaffView()
+            }
+            .tabItem {
+                Label("Personal", systemImage: "person.3")
             }
         }
     }
 }
 
 extension EmployeeHomeView {
-
+    
     class ViewModel: ObservableObject {
         let currentUser: UserData
         @Published var myOrders: [Order] = []
         @Published var unassignedOrders: [Order] = []
-
+        
         init(currentUser: UserData) {
             self.currentUser = currentUser
-
+            
             FirestoreManager.shared.listenToOrderCollection { orders in
                 self.myOrders = orders.filter {
                     $0.assignedUser?.id == currentUser.id
@@ -80,7 +81,7 @@ extension EmployeeHomeView {
                 print("Error leaving order!")
             }
         }
-
+        
     }
 }
 
