@@ -37,9 +37,7 @@ struct LoginView: View {
                     .frame(width: 200, height: 200)
                     .padding(.top, 20)
                     .padding(.bottom, 10)
-                          
-            
-                
+
                 VStack(spacing: 20) {
                     // Rubrik med ikon
                     HStack {
@@ -51,7 +49,7 @@ struct LoginView: View {
                     }
                     .foregroundColor(.white)
                     .padding(.bottom, 20)
-                    
+
                     // Email-fält
                     HStack {
                         Image(systemName: "envelope")
@@ -68,7 +66,7 @@ struct LoginView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.white.opacity(0.5), lineWidth: 1)
                     )
-                    
+
                     // Lösenord-fält
                     HStack {
                         Image(systemName: "lock")
@@ -84,21 +82,24 @@ struct LoginView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.white.opacity(0.5), lineWidth: 1)
                     )
-                    
+
                     // Logga in-knapp
                     Button(action: {
                         // Hantera inloggning, blir true i 2 sek, sedan false igen
                         isLoggingIn = true
                         //DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                           Task {
-                                do {
-                                    try await viewModel.signIn(email: email, password: password)
-                                    return
-                                } catch {
-                                    //lämpligt felmedd. om vi kastar
-                                }
+                        Task {
+                            do {
+                                try await viewModel.signIn(
+                                    email: email,
+                                    password: password
+                                )
+                                return
+                            } catch {
+                                //lämpligt felmedd. om vi kastar
                             }
-                            isLoggingIn = false
+                        }
+                        isLoggingIn = false
                         //}
                     }) {
                         HStack {
@@ -123,7 +124,7 @@ struct LoginView: View {
                         )
                     }
                     .disabled(isLoggingIn)
-                    
+
                     // Glömt lösenord-knapp
                     Button(action: {}) {
                         Text("Glömt lösenord?")
@@ -139,16 +140,41 @@ struct LoginView: View {
                 .shadow(radius: 20)
                 .padding(.horizontal)
                 Spacer()
-                
-               
+
+                VStack {
+                    Text("Test-logins:")
+                        .foregroundStyle(.pink)
+                    HStack {
+                        Button("Bossen") {
+                            Task {
+                                do {
+                                    try await viewModel.signIn(
+                                        email: "bossen@test.se",
+                                        password: "KalleAnka"
+                                    )
+                                } catch {}
+
+                            }
+                        }
+                        Button("Johan") {
+                            Task {
+                                do {
+                                    try await viewModel.signIn(
+                                        email: "johan@test.se",
+                                        password: "KalleAnka"
+                                    )
+                                } catch {}
+                            }
+
+                        }
+                    }
+                }
             }
         }
-
     }
+
 }
 
-
-
 #Preview {
-   // LoginView()
+    LoginView(viewModel: LoginViewViewmodel())
 }

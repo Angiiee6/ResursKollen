@@ -10,25 +10,37 @@ import SwiftUI
 struct OrderDetailView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
-    
-    //TODO: Varning innan man trycker på back-knapp? (Använd Equatable och jämför ordern som kommer in med den som går ut)
-    
-    enum ActiveSheet : Identifiable {
-        case workDone, material
-        var id: Self {self}
-    }
-    
-    @State var order: Order
 
+    //TODO: Varning innan man trycker på back-knapp? (Använd Equatable och jämför ordern som kommer in med den som går ut)
+
+    enum ActiveSheet: Identifiable {
+        case workDone, material
+        var id: Self { self }
+    }
+
+    enum ActiveAlert {
+        case error(Error)
+        case exit, orderDone
+    }
+
+    @State var order: Order
+    
+    //Används för att jämföra ev. osparade ändringar om man trycker på bakåt-knappen utan att spara
+    let orderOriginal: Order
+
+    init(order: Order) {
+        self.order = order
+        self.orderOriginal = order
+    }
+
+    //Sheets & alerts
     @State var activeSheet: ActiveSheet?
+    @State var activeAlert: ActiveAlert?
+    @State var alertPresent: Bool = false
 
     //Text boxes
     @State var workPerformedExpanded: Bool = false
     @State var descriptionExpanded: Bool = false
-
-    //Error handling
-    @State var errorMessage: String = ""
-    @State var errorAlertPresent: Bool = false
 
     var body: some View {
         VStack {
@@ -51,7 +63,7 @@ struct OrderDetailView: View {
                         ) {
                             ForEach(
                                 OrderStatus.allCases.filter {
-                                    $0 != .completed
+                                    $0 != .completed && $0 != .done
                                 },
                                 id: \.self
                             ) { status in
@@ -62,20 +74,9 @@ struct OrderDetailView: View {
                         .pickerStyle(.menu)
                     }
                     //MARK: Customer
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(order.customer.name)
-                            Group {
-                                Text(order.customer.streetName)
-                                Text(order.customer.postalCode)
-                                Text(order.customer.city)
-                            }
-                            .font(.subheadline)
-                        }
-                        Spacer()
-                        Text(order.customer.phoneNumber)
-                    }
-                    //MARK: Description
+                    CustomerDetailCard(customer: order.customer)
+
+                    //MARK: Texts
                     TextBox(
                         isExpanded: $descriptionExpanded,
                         title: "Arbetsbeskrivning:",
@@ -113,56 +114,14 @@ struct OrderDetailView: View {
                     }
                     //MARK: Material
                     VStack {
-                        HStack {
-                            Text("Förbrukat material:")
-                            Spacer()
-                        }
-                        VStack {
-                            HStack {
-                                Text("Namn")
-                                Spacer()
-                                Text("kr/st")
-                                    .frame(width: 80, alignment: .leading)
-                                Text("Antal")
-                                    .frame(width: 50)
-                                Text("Totalt (kr)")
-                                    .frame(width: 65, alignment: .trailing)
-                            }
-                            .font(.caption)
-                            Divider()
-                            ScrollView {
-                                ForEach(order.materialConsumption) { material in
-                                    HStack {
-                                        Text(material.name)
-                                        Spacer()
-                                        Text(
-                                            "\(material.price.formattedAsCurrency)"
-                                        )
-                                        .frame(width: 80, alignment: .leading)
-                                        Text("\(material.quantity)")
-                                            .frame(width: 50)
-                                        Text(
-                                            "\(material.totalPrice.formattedAsCurrency)"
-                                        )
-                                        .frame(width: 65, alignment: .trailing)
-
-                                    }
-                                    .font(.caption)
-                                }
-                            }
-                            .frame(height: 100)
-                            .scrollIndicators(.never)
-                        }
-                        .padding()
+                        MaterialDetailList(materials: order.materialConsumption)
                         HStack {
                             Spacer()
                             Button("Ändra/lägg till material") {
                                 activeSheet = .material
                             }
                         }
-
                     }
-                  
                 }
                 .padding(.horizontal, 34)
                 .padding(.vertical)
@@ -198,19 +157,48 @@ struct OrderDetailView: View {
                     try viewModel.updateOrder(order)
                     dismiss()
                 } catch {
-                    errorMessage = error.localizedDescription
-                    errorAlertPresent = true
+                    activeAlert = .error(error)
+                    alertPresent = true
                 }
             }
             .padding()
             .buttonStyle(.borderedProminent)
             .disabled(order.workPerformed.isEmpty)
         }
+        .navigationBarBackButtonHidden(true)
         .padding(.vertical, 16)
         .navigationTitle("Arbetsorder: \(order.orderNumber)")
-        //MARK: Sheet
+        //MARK: Toolbar
+        .toolbar(content: {
+            //Egen back button för att kunna visa alert
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: {
+                    if order != orderOriginal {
+                        activeAlert = .exit
+                        alertPresent = true
+                    }
+                    else {
+                        dismiss()
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "chevron.left")
+                        Text("Back")
+                    }
+                }
+            }
+            //Knapp för att utföra en order
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Utför") {
+                    activeAlert = .orderDone
+                    alertPresent = true
+                }
+            }
+        })
+        //MARK: Sheets
         .sheet(item: $activeSheet) { activeSheet in
             switch activeSheet {
+            //För att fylla i text om vad man gjort på en order
             case .workDone:
                 VStack {
                     Text("Utfört arbete: ")
@@ -222,20 +210,52 @@ struct OrderDetailView: View {
                 }
                 .padding()
             case .material:
-                MaterialSheetView(materialConsumption: $order.materialConsumption)
+                //För att lägga till/ta bort material på en order
+                MaterialSheetView(materials: $order.materialConsumption)
             }
-        
-        }
-        //MARK: Alert
-        .alert(isPresented: $errorAlertPresent) {
-            Alert(
-                title: Text("Error"),
-                message: Text(errorMessage),
-                dismissButton: .default(Text("OK"))
-            )
 
-        }.onDisappear {
-            errorMessage = ""
+        }
+        //MARK: Alerts
+        .alert(isPresented: $alertPresent) {
+            switch activeAlert {
+            case .error(let error):
+                //Vid någon form av error
+                Alert(
+                    title: Text("Ett fel uppstod"),
+                    message: Text(error.localizedDescription),
+                    dismissButton: .default(Text("OK"))
+                )
+            //När användaren trycker på bakåt-knappen
+            case .exit:
+                Alert(
+                    title: Text("Avsluta utan att spara?"),
+                    primaryButton: .cancel(Text("Nej")),
+                    secondaryButton: .destructive(Text("Ja")) {
+                        dismiss()
+                    }
+                )
+            //När användaren trycker på utför-knappen
+            case .orderDone:
+                Alert(
+                    title: Text("Utför order?"),
+                    primaryButton: .default(Text("Nej")),
+                    secondaryButton: .destructive(Text("Ja")) {
+                        do {
+                            var updatedOrder = order
+                            updatedOrder.status = .done
+                            try viewModel.updateOrder(updatedOrder)
+                            dismiss()
+                        } catch {
+                            activeAlert = .error(error)
+                        }
+                    }
+                )
+            case nil:
+                Alert(title: Text(""))
+            }
+        }
+        .onDisappear {
+            activeAlert = nil
         }
 
     }
@@ -256,5 +276,5 @@ extension OrderDetailView {
 
 //MARK: Preview
 #Preview {
-    OrderDetailView(order: Order.orderMockUpData )
+    OrderDetailView(order: Order.orderMockUpData)
 }
