@@ -89,7 +89,10 @@ struct DetailRow: View {
 
 #Preview {
     NavigationStack {
-        StaffDetailView(user: UserData(
+        
+        StaffDetailView(user: UserData.UserDataMockData.first!)
+        
+       /* StaffDetailView(user: UserData(
             id: "1",
             status: .employee,
             name: "Vivianne och Angie",
@@ -98,6 +101,6 @@ struct DetailRow: View {
             employmentNumber: "EMP123",
             phoneNumber: "0701234567"
 //            createdDate: Date()
-        ))
+        ))*/
     }
 }

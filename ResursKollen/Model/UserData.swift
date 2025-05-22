@@ -16,20 +16,7 @@ struct UserData: Codable, Identifiable {
     var employmentNumber: String
     var phoneNumber: String
     var createdDate: Date
-    
-//    //create userprofile from an auth. user
-//    init(auth: AuthDataResultModel, name: String, employmentNumber: String, phoneNumber: String, employmentDay: Date, status: EmploymentStatus){
-//        self.id = auth.uid
-//        self.email = auth.email ?? "Epost saknas"
-//        self.status = .employee
-//        self.employmentDate = Date()
-//        self.employmentNumber = employmentNumber
-//        self.createdDate = Date()
-//        self.phoneNumber = phoneNumber
-//        self.name = name
-//        self.status = status
-//    }
-    
+
     //create user profile
     init(id: String = UUID().uuidString,
          status: EmploymentStatus = .employee,

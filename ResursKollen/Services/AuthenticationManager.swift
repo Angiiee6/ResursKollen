@@ -1,4 +1,4 @@
-import FirebaseAuth
+
 //
 //  Authentication.swift
 //  ResursKollen
@@ -6,19 +6,21 @@ import FirebaseAuth
 //  Created by Magnus Freidenfelt on 2025-05-16.
 //
 import Foundation
+import FirebaseAuth
 
-//struct AuthDataResultModel {
-//    let uid: String
-//    let email: String?
-//
-//    init(user: User){
-//        self.uid = user.uid
-//        self.email = user.email
-//    }
-//}
+struct AuthDataResultModel {
+    let uid: String
+    let email: String?
 
+    init(user: User){
+        self.uid = user.uid
+        self.email = user.email
+    }
+}
 class AuthenticationManager {
-    let auth = Auth.auth()
+   
+    //let auth = Auth.auth()
+    
     static let shared = AuthenticationManager()  //Singelton kanske inte det bästa men vi kör på det
 
     //SignInUser
@@ -45,15 +47,15 @@ class AuthenticationManager {
         )
     }
 
-//    //Get authtenticated user
-//    @discardableResult
-//    func getAuthenticatedUser() throws -> AuthDataResult {
-//        guard let user = Auth.auth().currentUser else {
-//            throw AuthErrorCode.nullUser
-//        }
-//        return AuthDataResultModel(user: user)
-//    }
-
+   //Get authtenticated user
+  @discardableResult
+   func getAuthenticatedUser() throws -> AuthDataResultModel {
+       guard let user = Auth.auth().currentUser else {
+           throw AuthErrorCode.nullUser
+       }
+       return AuthDataResultModel(user: user)
+   }
+    
     //Delete user
     func deleteUser() async throws {
         guard let user = Auth.auth().currentUser else {

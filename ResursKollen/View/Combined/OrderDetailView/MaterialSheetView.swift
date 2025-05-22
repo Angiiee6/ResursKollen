@@ -146,70 +146,9 @@ struct MaterialSheetView: View {
 //MARK: View Model
 extension MaterialSheetView {
     class ViewModel: ObservableObject {
-
-        //TODO: Replace this with data from Firestore
-        @Published var premadeMaterials: [Material] = [
-            Material(name: "Kabelskor", price: 2.50),
-            Material(name: "Bräda", price: 15.00),
-            Material(name: "LED-list", price: 7.25),
-            Material(name: "Skruv", price: 12.99),
-            Material(name: "Kabel", price: 3.75),
-            Material(name: "Mutter", price: 4.50),
-            Material(name: "Silikon", price: 6.00),
-            Material(name: "Avkalkningsmedel", price: 8.99),
-            Material(name: "Hammare", price: 2.20),
-            Material(name: "Plåt", price: 25.50),
-            Material(name: "Kabelskor", price: 2.50),
-            Material(name: "Bräda", price: 15.00),
-            Material(name: "LED-list", price: 7.25),
-            Material(name: "Skruv", price: 12.99),
-            Material(name: "Kabel", price: 3.75),
-            Material(name: "Mutter", price: 4.50),
-            Material(name: "Silikon", price: 6.00),
-            Material(name: "Avkalkningsmedel", price: 8.99),
-            Material(name: "Hammare", price: 2.20),
-            Material(name: "Plåt", price: 25.50),
-            Material(name: "Kabelskor", price: 2.50),
-            Material(name: "Bräda", price: 15.00),
-            Material(name: "LED-list", price: 7.25),
-            Material(name: "Skruv", price: 12.99),
-            Material(name: "Kabel", price: 3.75),
-            Material(name: "Mutter", price: 4.50),
-            Material(name: "Silikon", price: 6.00),
-            Material(name: "Avkalkningsmedel", price: 8.99),
-            Material(name: "Hammare", price: 2.20),
-            Material(name: "Plåt", price: 25.50),
-            Material(name: "Kabelskor", price: 2.50),
-            Material(name: "Bräda", price: 15.00),
-            Material(name: "LED-list", price: 7.25),
-            Material(name: "Skruv", price: 12.99),
-            Material(name: "Kabel", price: 3.75),
-            Material(name: "Mutter", price: 4.50),
-            Material(name: "Silikon", price: 6.00),
-            Material(name: "Avkalkningsmedel", price: 8.99),
-            Material(name: "Hammare", price: 2.20),
-            Material(name: "Plåt", price: 25.50),
-            Material(name: "Kabelskor", price: 2.50),
-            Material(name: "Bräda", price: 15.00),
-            Material(name: "LED-list", price: 7.25),
-            Material(name: "Skruv", price: 12.99),
-            Material(name: "Kabel", price: 3.75),
-            Material(name: "Mutter", price: 4.50),
-            Material(name: "Silikon", price: 6.00),
-            Material(name: "Avkalkningsmedel", price: 8.99),
-            Material(name: "Hammare", price: 2.20),
-            Material(name: "Plåt", price: 25.50),
-            Material(name: "Kabelskor", price: 2.50),
-            Material(name: "Bräda", price: 15.00),
-            Material(name: "LED-list", price: 7.25),
-            Material(name: "Skruv", price: 12.99),
-            Material(name: "Kabel", price: 3.75),
-            Material(name: "Mutter", price: 4.50),
-            Material(name: "Silikon", price: 6.00),
-            Material(name: "Avkalkningsmedel", price: 8.99),
-            Material(name: "Hammare", price: 2.20),
-            Material(name: "Plåt", price: 25.50),
-        ]
+        
+        @Published var premadeMaterials = MaterialSheetView.premadeMaterialsMockData
+      
 
     }
 }
