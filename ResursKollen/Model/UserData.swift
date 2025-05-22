@@ -13,14 +13,14 @@ struct DetailedInfo: Codable, Identifiable{
     var employmentType: EmploymentType = .permanent
     var personNummer: String = ""
     var bankkonto: String = ""
-    var bank: String = ""
+    //var bank: String = ""
     var salary: Int = 0
     var emergencyContact: String = ""
     var extraInfo: String = ""
   
 }
 
-enum EmploymentType: String, Codable, Hashable, CaseIterable{
+enum EmploymentType: String, Codable, Hashable, CaseIterable, Identifiable{
     case permanent, temporary, hierd
     case formerEmployee, trainee, unknown
     

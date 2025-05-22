@@ -22,7 +22,7 @@ extension UserData{
                                            detailedInfo: DetailedInfo(employmentType: .permanent,
                                                           personNummer: "19541214-1524",
                                                           bankkonto: "123.456.23",
-                                                          bank: "Nordea",
+                                                          
                                                           salary: 32000,
                                                           emergencyContact: "Mamma 046-305689",
                                                           extraInfo: "Duktig på att laga bilar"))

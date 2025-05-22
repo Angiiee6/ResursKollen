@@ -110,7 +110,6 @@ struct StaffDetailView: View {
     }
 }
 
-//Note Jag lyfte ut DetailRow till 
 struct DetailRow: View {
     let icon: String
     let label: String
