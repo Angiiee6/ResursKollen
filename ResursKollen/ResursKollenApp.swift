@@ -23,6 +23,7 @@ struct ResursKollenApp: App {
             WindowGroup {
               //  ManagerHomeView()
                 ContentView()
+               // StaffView()
             }
         }
         

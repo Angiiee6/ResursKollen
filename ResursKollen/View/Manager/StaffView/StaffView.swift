@@ -112,6 +112,12 @@ final class StaffViewViewModel: ObservableObject {
     func loadUsers() async throws {
         self.user = try await UsersManager.shared.getAllUser()
     }
+    
+    func updateStaff(user: UserData) throws {
+        try? UsersManager.shared.updateUser(user: user)
+    }
+    
+    
 }
 
 #Preview {
