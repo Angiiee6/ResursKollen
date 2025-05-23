@@ -12,24 +12,42 @@ import Foundation
 //MARK: Mockdata för klassen UserData
 extension UserData{
     
-
-    static let UserDataMockData = [
-        UserData(id: "hdjdjlkj89357jjjf",
+    
+    static let UserDataMockData = UserData(status: .employee,
+                                           name: "Anna Svensson",
+                                           email: "anna@test.se",
+                                           employmentDate: Date(timeIntervalSince1970: 1581292800),
+                                           employmentNumber: "EMP001",
+                                           phoneNumber: "+46 8 123 456 789",
+                                           detailedInfo: DetailedInfo(employmentType: .permanent,
+                                                          personNummer: "19541214-1524",
+                                                          bankkonto: "123.456.23",
+                                                          
+                                                          salary: 32000,
+                                                          emergencyContact: "Mamma 046-305689",
+                                                          extraInfo: "Duktig på att laga bilar"))
+    
+    
+    
+    
+    
+    
+    /*UserData(id: "hdjdjlkj89357jjjf",
                  status: .employee,
                  name: "Anna Svensson",
                  email: "anna.svensson@example.com",
                  employmentDate: Date(timeIntervalSince1970: 1581292800),
                  employmentNumber: "EMP001",
-                 createdDate: Date(timeIntervalSince1970: 1628985600),
                  phoneNumber: "+46701234567"),
-        
-        UserData(id: "fgdjgfjnkgfjk2232",
+               detailedInfo: DetailedInfo( employmentType: .permanent, personNummer: "19541214-1524", bankkonto: "123.456.23", bank: "Nordea", salary: 32000, emergencyContact: "Mamma 046-305689", extraInfo: "Duktig på att laga bilar")
+    
+       UserData(id: "fgdjgfjnkgfjk2232",
         status: .manager,
                 name: "Björn Karlsson",
                 email: "bjorn@example.com",
                 employmentDate: Date(timeIntervalSince1970: 1527811200),
                 employmentNumber: "EMP002",
-                createdDate: Date(timeIntervalSince1970: 1581292800),
+                //createdDate: Date(timeIntervalSince1970: 1581292800),
                 phoneNumber: "+46709876543"),
         
         UserData(id: "iodoemer858595",
@@ -38,8 +56,8 @@ extension UserData{
                  email: "carina@example.com",
                  employmentDate: Date(timeIntervalSince1970: 1527811200),
                  employmentNumber: "EMP003",
-                 createdDate: Date(timeIntervalSince1970: 1526774400),
-                 phoneNumber: "+46701112233")]
+                // createdDate: Date(timeIntervalSince1970: 1526774400),
+                 phoneNumber: "+46701112233")] as [Any] */
     
 }
 

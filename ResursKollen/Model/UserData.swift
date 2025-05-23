@@ -7,6 +7,46 @@
 
 import Foundation
 
+//För lite mer detaljerad info om anställda
+struct DetailedInfo: Codable, Identifiable{
+    var id: UUID = UUID()
+    var employmentType: EmploymentType = .permanent
+    var personNummer: String = ""
+    var bankkonto: String = ""
+    //var bank: String = ""
+    var salary: Int = 0
+    var emergencyContact: String = ""
+    var extraInfo: String = ""
+  
+}
+
+enum EmploymentType: String, Codable, Hashable, CaseIterable, Identifiable{
+    case permanent, temporary, hierd
+    case formerEmployee, trainee, unknown
+    
+    var id: String {self.rawValue}
+    
+    var employmentTypeSE: String {
+        switch self {
+        case .permanent:
+            return "tillsvidare"
+        case .temporary:
+            return "tidsbegränsad"
+        case .hierd:
+            return "inhyrd"
+        case .formerEmployee:
+            return "tidigare anställd"
+        case .trainee:
+            return "lärling"
+        case .unknown:
+            return "saknas"
+        }
+    }
+    
+}
+
+
+//Basic info om den anställde
 struct UserData: Codable, Identifiable {
     var id: String
     var status: EmploymentStatus
@@ -15,7 +55,8 @@ struct UserData: Codable, Identifiable {
     var employmentDate: Date
     var employmentNumber: String
     var phoneNumber: String
-    var createdDate: Date
+    var detailedInfo: DetailedInfo
+    //var createdDate: Date
 
     //create user profile
     init(id: String = UUID().uuidString,
@@ -24,18 +65,21 @@ struct UserData: Codable, Identifiable {
          email: String = "",
          employmentDate: Date = Date(),
          employmentNumber: String = "",
-         createdDate: Date = Date(),
-         phoneNumber: String = ""){
+         phoneNumber: String = "",
+         detailedInfo: DetailedInfo = DetailedInfo()){
+    
         
         self.id = id
         self.status = status
         self.email = email
         self.employmentDate = employmentDate
         self.employmentNumber = employmentNumber
-        self.createdDate = createdDate
         self.phoneNumber = phoneNumber
         self.name = name
+        self.detailedInfo = detailedInfo
+        
     }
+    
     
  
     
