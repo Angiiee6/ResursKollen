@@ -49,8 +49,17 @@ struct ManagerAllOrdersView: View {
         .listStyle(.insetGrouped)
         .navigationTitle("Alla ordrar")
         .searchable(text: $searchText, prompt: "Sök bland ordrar")
-        
+        .toolbar { 
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    CreateOrderView()
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
+        }
     }
+    
     func filteredOrders(for status : OrderStatus) -> [Order] {
         vm.orders.filter {
             $0.status == status &&

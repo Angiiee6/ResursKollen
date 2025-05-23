@@ -33,7 +33,18 @@ struct ReviewOrdersView: View {
             }
         }
         .padding()
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    CreateOrderView()
+                } label: {
+                    Image(systemName: "plus")
+                }
+            }
+        }
     }
+    
+    
 }
 
 extension ReviewOrdersView {
