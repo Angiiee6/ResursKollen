@@ -23,6 +23,7 @@ struct ResursKollenApp: App {
             WindowGroup {
 //                ManagerHomeView()
                 ContentView()
+                    .environment(\.colorScheme, .dark)
                // StaffView()
             }
         }
@@ -31,6 +32,7 @@ struct ResursKollenApp: App {
             // Färg för ovalda ikoner
             UITabBar.appearance().unselectedItemTintColor = UIColor(Color.orange)
             
+            ///MARK
             // Färg för vald ikon (kan även sättas med .tint modifier)
             UITabBar.appearance().tintColor = UIColor(Color.blue)
             
