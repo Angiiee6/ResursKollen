@@ -81,9 +81,7 @@ struct SummaryView: View {
                 Spacer()
                 }
             }
-//        .searchable(text: .constant(""))
         }
-        
     }
 
 
@@ -169,7 +167,8 @@ extension SummaryView {
             let labor = ordersThisMonth.compactMap { $0.totalLaborCost }.reduce(0, +)
             let total = ordersThisMonth.compactMap { $0.totalOrderCost }.reduce(0, +)
             
-            let profit = total - material - labor
+            
+            let profit = total - material + labor
             
             return "\(Int(profit)) kr"
         }

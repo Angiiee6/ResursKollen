@@ -10,7 +10,7 @@ import SwiftUI
 struct MaterialSheetView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
-    @Binding var materialConsumption: [Material]
+    @Binding var materials: [Material]
 
     //TODO: Se över text fields för att lägga till ny del. Verkar inte gå att skriva in med decimaler?
 
@@ -29,7 +29,7 @@ struct MaterialSheetView: View {
             Text("Förbrukat material:")
             //MARK: Material list
             List {
-                ForEach($materialConsumption) { $material in
+                ForEach($materials) { $material in
                     HStack(alignment: .top) {
                         VStack(alignment: .leading) {
                             Text(material.name)
@@ -51,7 +51,7 @@ struct MaterialSheetView: View {
                     //MARK: Swipe actions
                     .swipeActions(allowsFullSwipe: false) {
                         Button(role: .destructive) {
-                            materialConsumption.removeAll(where: {
+                            materials.removeAll(where: {
                                 $0.id == $material.id
                             })
                         } label: {
@@ -104,7 +104,7 @@ struct MaterialSheetView: View {
                     Menu("Lägg till från lista") {
                         ForEach(viewModel.premadeMaterials) { material in
                             Button(action: {
-                                materialConsumption.append(material)
+                                materials.append(material)
                             }) {
                                 Text(material.name)
                             }
@@ -119,7 +119,7 @@ struct MaterialSheetView: View {
                             price: price
                         )
                         
-                        materialConsumption.append(newMaterial)
+                        materials.append(newMaterial)
                         name = ""
                         quantity = 1
                         price = 0
@@ -155,7 +155,7 @@ extension MaterialSheetView {
 
 #Preview {
     MaterialSheetView(
-        materialConsumption: .constant([
+        materials: .constant([
             Material(name: "Copper Wire", quantity: 50, price: 2.50),
             Material(name: "Oak Plank", quantity: 10, price: 15.00),
             Material(name: "Steel Handle", quantity: 8, price: 7.25),

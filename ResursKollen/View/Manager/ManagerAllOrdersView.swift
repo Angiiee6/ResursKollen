@@ -67,18 +67,17 @@ struct ManagerAllOrdersView: View {
         }
     }
     
-    
     func filteredOrders(for status : OrderStatus) -> [Order] {
         vm.orders.filter {
             $0.status == status &&
-            (searchText.isEmpty ||
-             $0.customer.name.lowercased().contains(searchText.lowercased()) ||
-             $0.orderNumber.lowercased().contains(searchText.lowercased())
+            (
+                searchText.isEmpty ||
+                $0.customer.name.lowercased().contains(searchText.lowercased()) ||
+                $0.orderNumber.lowercased().contains(searchText.lowercased())
             )
         }
     }
 }
-
 
 #Preview {
     ManagerAllOrdersView()
