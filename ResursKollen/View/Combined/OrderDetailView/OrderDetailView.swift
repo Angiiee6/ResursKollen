@@ -43,131 +43,144 @@ struct OrderDetailView: View {
     @State var descriptionExpanded: Bool = false
 
     var body: some View {
-        VStack {
-            ScrollView {
-                VStack(spacing: 32) {
-                    //MARK: Creation date
-                    HStack {
-                        Text("Skapad: \(order.creationDate.asYYYYMMDD)")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                        Spacer()
-                    }
-                    //MARK: Status
-                    HStack {
-                        Text("Status:")
-                        Spacer()
-                        Picker(
-                            "Status",
-                            selection: $order.status
-                        ) {
-                            ForEach(
-                                OrderStatus.allCases.filter {
-                                    $0 != .completed && $0 != .done
-                                },
-                                id: \.self
-                            ) { status in
-                                Text(status.nameSE.capitalized)
-                                    .tag(status)
-                            }
-                        }
-                        .pickerStyle(.menu)
-                    }
-                    //MARK: Customer
-                    CustomerDetailCard(customer: order.customer)
-
-                    //MARK: Texts
-                    TextBox(
-                        isExpanded: $descriptionExpanded,
-                        title: "Arbetsbeskrivning:",
-                        text: order.description
-                    )
-                    //MARK: Work performed
-                    VStack {
-                        TextBox(
-                            isExpanded: $workPerformedExpanded,
-                            title: "Utfört:",
-                            text: order.workPerformed,
-                            placeHolderText:
-                                "Lägg till text för att kunna spara..."
-                        )
-                        HStack {
-                            Spacer()
-                            Button("Ändra/lägg till text") {
-                                activeSheet = .workDone
-                            }
-                        }
-                    }
-                    //MARK: Time consumption
-                    HStack {
-                        Text("Tidsåtgång:")
-                        Spacer()
-                        Text(order.timeConsumption.formattedAsHours)
-                        Stepper(
-                            value: $order.timeConsumption,
-                            in: 0...Double.infinity,
-                            step: 0.5
-                        ) {
-                            Text("h")
-                        }
-                        .frame(maxWidth: 130)
-                    }
-                    //MARK: Material
-                    VStack {
-                        MaterialDetailList(materials: order.materialConsumption)
-                        HStack {
-                            Spacer()
-                            Button("Ändra/lägg till material") {
-                                activeSheet = .material
-                            }
-                        }
-                    }
-                }
-                .padding(.horizontal, 34)
-                .padding(.vertical)
-            }
-            .scrollIndicators(.hidden)
-            Spacer()
-            //MARK: Summary
+        ZStack {
+            // Gradientbakgrund
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.11, green: 0.11, blue: 0.15),
+                    Color(red: 0.20, green: 0.20, blue: 0.25),
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .edgesIgnoringSafeArea(.all)
+            
             VStack {
-                Divider()
-                HStack {
-                    Text("Arbetstid:")
-                    Spacer()
-                    Text("\(order.totalLaborCost.formattedAsCurrency) kr")
+                ScrollView {
+                    VStack(spacing: 32) {
+                        //MARK: Creation date
+                        HStack {
+                            Text("Skapad: \(order.creationDate.asYYYYMMDD)")
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                            Spacer()
+                        }
+                        //MARK: Status
+                        HStack {
+                            Text("Status:")
+                            Spacer()
+                            Picker(
+                                "Status",
+                                selection: $order.status
+                            ) {
+                                ForEach(
+                                    OrderStatus.allCases.filter {
+                                        $0 != .completed && $0 != .done
+                                    },
+                                    id: \.self
+                                ) { status in
+                                    Text(status.nameSE.capitalized)
+                                        .tag(status)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                        }
+                        //MARK: Customer
+                        CustomerDetailCard(customer: order.customer)
+
+                        //MARK: Texts
+                        TextBox(
+                            isExpanded: $descriptionExpanded,
+                            title: "Arbetsbeskrivning:",
+                            text: order.description
+                        )
+                        //MARK: Work performed
+                        VStack {
+                            TextBox(
+                                isExpanded: $workPerformedExpanded,
+                                title: "Utfört:",
+                                text: order.workPerformed,
+                                placeHolderText:
+                                    "Lägg till text för att kunna spara..."
+                            )
+                            HStack {
+                                Spacer()
+                                Button("Ändra/lägg till text") {
+                                    activeSheet = .workDone
+                                }
+                            }
+                        }
+                        //MARK: Time consumption
+                        HStack {
+                            Text("Tidsåtgång:")
+                            Spacer()
+                            Text(order.timeConsumption.formattedAsHours)
+                            Stepper(
+                                value: $order.timeConsumption,
+                                in: 0...Double.infinity,
+                                step: 0.5
+                            ) {
+                                Text("h")
+                            }
+                            .frame(maxWidth: 130)
+                        }
+                        //MARK: Material
+                        VStack {
+                            MaterialDetailList(materials: order.materialConsumption)
+                            HStack {
+                                Spacer()
+                                Button("Ändra/lägg till material") {
+                                    activeSheet = .material
+                                }
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 34)
+                    .padding(.vertical)
                 }
-                .font(.caption)
-                HStack {
-                    Text("Material:")
-                    Spacer()
-                    Text("\(order.totalMaterialCost.formattedAsCurrency) kr")
+                .scrollIndicators(.hidden)
+                Spacer()
+                //MARK: Summary
+                VStack {
+                    Divider()
+                    HStack {
+                        Text("Arbetstid:")
+                        Spacer()
+                        Text("\(order.totalLaborCost.formattedAsCurrency) kr")
+                    }
+                    .font(.caption)
+                    HStack {
+                        Text("Material:")
+                        Spacer()
+                        Text("\(order.totalMaterialCost.formattedAsCurrency) kr")
+                    }
+                    .font(.caption)
+                    HStack {
+                        Text("Summa:")
+                        Spacer()
+                        Text("\(order.totalOrderCost.formattedAsCurrency) kr")
+                    }
+                    Divider()
                 }
-                .font(.caption)
-                HStack {
-                    Text("Summa:")
-                    Spacer()
-                    Text("\(order.totalOrderCost.formattedAsCurrency) kr")
+                .padding(.horizontal)
+                //MARK: Save button
+                Button("Spara") {
+                    do {
+                        try viewModel.updateOrder(order)
+                        dismiss()
+                    } catch {
+                        activeAlert = .error(error)
+                        alertPresent = true
+                    }
                 }
-                Divider()
+                .padding()
+                .buttonStyle(.borderedProminent)
+                .disabled(order.workPerformed.isEmpty)
             }
-            .padding(.horizontal)
-            //MARK: Save button
-            Button("Spara") {
-                do {
-                    try viewModel.updateOrder(order)
-                    dismiss()
-                } catch {
-                    activeAlert = .error(error)
-                    alertPresent = true
-                }
-            }
-            .padding()
-            .buttonStyle(.borderedProminent)
-            .disabled(order.workPerformed.isEmpty)
+            .navigationBarBackButtonHidden(true)
+            .padding(.vertical, 16)
+            .navigationTitle("Arbetsorder: \(order.orderNumber)")
         }
-        .navigationBarBackButtonHidden(true)
-        .padding(.vertical, 16)
-        .navigationTitle("Arbetsorder: \(order.orderNumber)")
         //MARK: Toolbar
         .toolbar(content: {
             //Egen back button för att kunna visa alert
@@ -257,7 +270,6 @@ struct OrderDetailView: View {
         .onDisappear {
             activeAlert = nil
         }
-
     }
 }
 

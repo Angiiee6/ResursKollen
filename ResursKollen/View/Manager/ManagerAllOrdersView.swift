@@ -30,7 +30,7 @@ struct ManagerAllOrdersView: View {
                             NavigationLink(destination: OrderDetailView(order: order)) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white)
+                            .listRowBackground(Color.white.opacity(0.2))
                         }
                     }
                     Section(header: Text("Påbörjade ordrar").foregroundColor(.orange)) {
@@ -38,7 +38,7 @@ struct ManagerAllOrdersView: View {
                             NavigationLink(destination: OrderDetailView(order: order)) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white)
+                            .listRowBackground(Color.white.opacity(0.2))
                         }
                     }
                     Section(header: Text("Försenade ordrar").foregroundColor(.red)) {
@@ -46,7 +46,7 @@ struct ManagerAllOrdersView: View {
                             NavigationLink(destination: OrderDetailView(order: order)) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white)
+                            .listRowBackground(Color.white.opacity(0.2))
                         }
                     }
                     Section(header: Text("Avslutade ordrar").foregroundColor(.green)) {
@@ -54,7 +54,7 @@ struct ManagerAllOrdersView: View {
                             NavigationLink(destination: OrderDetailView(order: order)) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white)
+                            .listRowBackground(Color.white.opacity(0.2))
                         }
                     }
                 }

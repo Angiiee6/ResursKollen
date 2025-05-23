@@ -53,7 +53,7 @@ struct LoginView: View {
                     // Email-fält
                     HStack {
                         Image(systemName: "envelope")
-                            .foregroundColor(.white.opacity(0.7))
+                            .foregroundColor(.orange)
                         TextField("Email", text: $email)
                             .autocapitalization(.none)
                             .keyboardType(.emailAddress)
@@ -64,13 +64,13 @@ struct LoginView: View {
                     .foregroundColor(.white)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                            .stroke(Color.orange.opacity(0.5), lineWidth: 1)
                     )
 
                     // Lösenord-fält
                     HStack {
                         Image(systemName: "lock")
-                            .foregroundColor(.white.opacity(0.7))
+                            .foregroundColor(.orange)
                         //för att inte visa lösenordet
                         SecureField("Lösenord", text: $password)
                     }
@@ -80,7 +80,7 @@ struct LoginView: View {
                     .foregroundColor(.white)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                            .stroke(Color.orange.opacity(0.5), lineWidth: 1)
                     )
 
                     // Logga in-knapp
@@ -120,7 +120,7 @@ struct LoginView: View {
                         .cornerRadius(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(Color.black.opacity(0.9), lineWidth: 1)
+                                .stroke(Color.white.opacity(0.5), lineWidth: 1)
                         )
                     }
                     .disabled(isLoggingIn)
@@ -128,7 +128,7 @@ struct LoginView: View {
                     // Glömt lösenord-knapp
                     Button(action: {}) {
                         Text("Glömt lösenord?")
-                            .foregroundColor(.white)
+                            .foregroundColor(.orange)
                             .font(.footnote)
                     }
                     .padding(.top, 10)

@@ -12,13 +12,16 @@ struct EmployeeMyOrders: View {
 
     var body: some View {
         ZStack {
+            // Gradientbakgrund
             LinearGradient(
                 gradient: Gradient(colors: [
-                    Color(.systemGray6), Color(.systemGray5),
+                    Color(red: 0.11, green: 0.11, blue: 0.15),
+                    Color(red: 0.20, green: 0.20, blue: 0.25),
                 ]),
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            ).edgesIgnoringSafeArea(.all)
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .edgesIgnoringSafeArea(.all)
 
             VStack(alignment: .leading) {
                 Text("Hej, \(viewModel.currentUser.name) 👋")
@@ -29,15 +32,14 @@ struct EmployeeMyOrders: View {
 
                 List {
                     Section(
-                        header: Text("Påbörjade ordrar:").foregroundColor(
-                            .orange
-                        )
+                        header: Text("Påbörjade ordrar:").foregroundColor(.orange)
                     ) {
                         ForEach(viewModel.myOrders) { order in
                             NavigationLink(
                                 destination: OrderDetailView(order: order)
                             ) {
                                 OrderRowMyOrders(order: order)
+                                    .listRowBackground(Color(.systemGray6)) // Light background for list items
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
                                             viewModel.leaveOrder(order)
@@ -50,11 +52,12 @@ struct EmployeeMyOrders: View {
                                         .tint(.red)
                                     }
                             }
-
                         }
                     }
                 }
                 .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden) // Make list background transparent
+                .background(Color.clear) // Clear background for the list
             }
         }
     }
