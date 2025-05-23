@@ -27,7 +27,7 @@ struct ManagerAllOrdersView: View {
                 List {
                     Section(header: Text("Lediga ordrar").foregroundColor(.blue)) {
                         ForEach(filteredOrders(for: .registered)) { order in
-                            NavigationLink(destination: OrderDetailView(order: order)) {
+                            NavigationLink(destination: OrderDetailView(order: order, status: .manager)) {
                                 OrderRowAllOrders(order: order)
                             }
                             .listRowBackground(Color.white.opacity(0.2))
@@ -35,7 +35,7 @@ struct ManagerAllOrdersView: View {
                     }
                     Section(header: Text("Påbörjade ordrar").foregroundColor(.orange)) {
                         ForEach(filteredOrders(for: .started)) { order in
-                            NavigationLink(destination: OrderDetailView(order: order)) {
+                            NavigationLink(destination: OrderDetailView(order: order, status: .manager)) {
                                 OrderRowAllOrders(order: order)
                             }
                             .listRowBackground(Color.white.opacity(0.2))
@@ -43,7 +43,7 @@ struct ManagerAllOrdersView: View {
                     }
                     Section(header: Text("Försenade ordrar").foregroundColor(.red)) {
                         ForEach(filteredOrders(for: .delayed)) { order in
-                            NavigationLink(destination: OrderDetailView(order: order)) {
+                            NavigationLink(destination: OrderDetailView(order: order, status: .manager)) {
                                 OrderRowAllOrders(order: order)
                             }
                             .listRowBackground(Color.white.opacity(0.2))
@@ -51,7 +51,7 @@ struct ManagerAllOrdersView: View {
                     }
                     Section(header: Text("Avslutade ordrar").foregroundColor(.green)) {
                         ForEach(filteredOrders(for: .completed)) { order in
-                            NavigationLink(destination: OrderDetailView(order: order)) {
+                            NavigationLink(destination: OrderDetailView(order: order, status: .manager)) {
                                 OrderRowAllOrders(order: order)
                             }
                             .listRowBackground(Color.white.opacity(0.2))

@@ -10,10 +10,7 @@ import SwiftUI
 struct MaterialDetailList: View {
     let materials: [Material]
     var body: some View {
-        HStack {
-            Text("Förbrukat material:")
-            Spacer()
-        }
+       
         VStack {
             HStack {
                 Text("Namn")

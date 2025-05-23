@@ -11,26 +11,15 @@ struct OrderDetailView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
 
-    //TODO: Varning innan man trycker på back-knapp? (Använd Equatable och jämför ordern som kommer in med den som går ut)
-
-    enum ActiveSheet: Identifiable {
-        case workDone, material
-        var id: Self { self }
-    }
-
-    enum ActiveAlert {
-        case error(Error)
-        case exit, orderDone
-    }
-
     @State var order: Order
-    
     //Används för att jämföra ev. osparade ändringar om man trycker på bakåt-knappen utan att spara
     let orderOriginal: Order
+    let employmentStatus: EmploymentStatus
 
-    init(order: Order) {
+    init(order: Order, status: EmploymentStatus) {
         self.order = order
         self.orderOriginal = order
+        self.employmentStatus = status
     }
 
     //Sheets & alerts
@@ -41,6 +30,17 @@ struct OrderDetailView: View {
     //Text boxes
     @State var workPerformedExpanded: Bool = false
     @State var descriptionExpanded: Bool = false
+
+    enum ActiveSheet: Identifiable {
+        case workDone, material
+        var id: Self { self }
+    }
+
+    enum ActiveAlert {
+        case error(Error)
+        case exit, orderDone
+
+    }
 
     var body: some View {
         ZStack {
@@ -54,7 +54,7 @@ struct OrderDetailView: View {
                 endPoint: .bottom
             )
             .edgesIgnoringSafeArea(.all)
-            
+
             VStack {
                 ScrollView {
                     VStack(spacing: 32) {
@@ -66,29 +66,15 @@ struct OrderDetailView: View {
                             Spacer()
                         }
                         //MARK: Status
-                        HStack {
-                            Text("Status:")
-                            Spacer()
-                            Picker(
-                                "Status",
-                                selection: $order.status
-                            ) {
-                                ForEach(
-                                    OrderStatus.allCases.filter {
-                                        $0 != .completed && $0 != .done
-                                    },
-                                    id: \.self
-                                ) { status in
-                                    Text(status.nameSE.capitalized)
-                                        .tag(status)
-                                }
-                            }
-                            .pickerStyle(.menu)
-                        }
+                        StatusPicker(
+                            status: employmentStatus,
+                            selection: $order.status
+                        )
+
                         //MARK: Customer
                         CustomerDetailCard(customer: order.customer)
-
-                        //MARK: Texts
+                        Divider()
+                        //MARK: Description
                         TextBox(
                             isExpanded: $descriptionExpanded,
                             title: "Arbetsbeskrivning:",
@@ -101,7 +87,7 @@ struct OrderDetailView: View {
                                 title: "Utfört:",
                                 text: order.workPerformed,
                                 placeHolderText:
-                                    "Lägg till text för att kunna spara..."
+                                    "Lägg till text..."
                             )
                             HStack {
                                 Spacer()
@@ -110,9 +96,11 @@ struct OrderDetailView: View {
                                 }
                             }
                         }
+                        Divider()
                         //MARK: Time consumption
                         HStack {
                             Text("Tidsåtgång:")
+                                .font(.headline)
                             Spacer()
                             Text(order.timeConsumption.formattedAsHours)
                             Stepper(
@@ -126,7 +114,21 @@ struct OrderDetailView: View {
                         }
                         //MARK: Material
                         VStack {
-                            MaterialDetailList(materials: order.materialConsumption)
+                            HStack {
+                                Text("Förbrukat material:")
+                                    .font(.headline)
+                                Spacer()
+                            }
+                            if order.materialConsumption.isEmpty {
+                                Text("Inget material tillagt.")
+                                    .font(.callout)
+                                    .italic()
+                                    .padding()
+                            } else {
+                                MaterialDetailList(
+                                    materials: order.materialConsumption
+                                )
+                            }
                             HStack {
                                 Spacer()
                                 Button("Ändra/lägg till material") {
@@ -141,28 +143,9 @@ struct OrderDetailView: View {
                 .scrollIndicators(.hidden)
                 Spacer()
                 //MARK: Summary
-                VStack {
-                    Divider()
-                    HStack {
-                        Text("Arbetstid:")
-                        Spacer()
-                        Text("\(order.totalLaborCost.formattedAsCurrency) kr")
-                    }
-                    .font(.caption)
-                    HStack {
-                        Text("Material:")
-                        Spacer()
-                        Text("\(order.totalMaterialCost.formattedAsCurrency) kr")
-                    }
-                    .font(.caption)
-                    HStack {
-                        Text("Summa:")
-                        Spacer()
-                        Text("\(order.totalOrderCost.formattedAsCurrency) kr")
-                    }
-                    Divider()
-                }
-                .padding(.horizontal)
+                SummaryBox(order: order)
+                
+                
                 //MARK: Save button
                 Button("Spara") {
                     do {
@@ -175,7 +158,6 @@ struct OrderDetailView: View {
                 }
                 .padding()
                 .buttonStyle(.borderedProminent)
-                .disabled(order.workPerformed.isEmpty)
             }
             .navigationBarBackButtonHidden(true)
             .padding(.vertical, 16)
@@ -189,8 +171,7 @@ struct OrderDetailView: View {
                     if order != orderOriginal {
                         activeAlert = .exit
                         alertPresent = true
-                    }
-                    else {
+                    } else {
                         dismiss()
                     }
                 }) {
@@ -202,7 +183,7 @@ struct OrderDetailView: View {
             }
             //Knapp för att utföra en order
             ToolbarItem(placement: .topBarTrailing) {
-                Button("Utför") {
+                Button("\(employmentStatus == .manager ? "Avsluta": "Utför")") {
                     activeAlert = .orderDone
                     alertPresent = true
                 }
@@ -247,15 +228,23 @@ struct OrderDetailView: View {
                         dismiss()
                     }
                 )
-            //När användaren trycker på utför-knappen
+            //När användaren trycker på utför/avsluta-knappen
             case .orderDone:
                 Alert(
-                    title: Text("Utför order?"),
+                    title: Text(
+                        "\(employmentStatus == .manager ? "Avsluta" : "Utför") order?"
+                    ),
                     primaryButton: .default(Text("Nej")),
                     secondaryButton: .destructive(Text("Ja")) {
                         do {
                             var updatedOrder = order
-                            updatedOrder.status = .done
+                            updatedOrder.status =
+                                switch employmentStatus {
+                                case .manager:
+                                    .completed
+                                case .employee:
+                                    .done
+                                }
                             try viewModel.updateOrder(updatedOrder)
                             dismiss()
                         } catch {
@@ -288,5 +277,5 @@ extension OrderDetailView {
 
 //MARK: Preview
 #Preview {
-    OrderDetailView(order: Order.orderMockUpData)
+    OrderDetailView(order: Order.orderMockUpData, status: .manager)
 }

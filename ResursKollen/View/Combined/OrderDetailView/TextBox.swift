@@ -16,6 +16,7 @@ struct TextBox: View {
         VStack {
             HStack {
                 Text(title)
+                    .font(.headline)
                 Spacer()
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
             }

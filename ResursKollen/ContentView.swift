@@ -10,8 +10,6 @@ import SwiftUI
 struct ContentView: View {
 
     @StateObject var viewModel = LoginViewViewmodel()
-    
-    
 
     var body: some View {
         
@@ -21,8 +19,8 @@ struct ContentView: View {
                 ManagerHomeView()
             case .employee:
                 EmployeeHomeView(currentUser: user)
-            case .unknown:
-                Text("Unknown user!")
+//            case .unknown:
+//                Text("Unknown user!")
             }
         } else {
             LoginView(viewModel: viewModel)

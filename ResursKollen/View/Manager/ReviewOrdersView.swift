@@ -19,7 +19,7 @@ struct ReviewOrdersView: View {
                 List {
                     ForEach(orders) { order in
                         NavigationLink(
-                            destination: OrderDetailView(order: order)
+                            destination: OrderDetailView(order: order, status: .manager)
                         ) {
                             OrderRowAllOrders(order: order)
                         }

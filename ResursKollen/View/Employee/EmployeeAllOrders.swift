@@ -9,8 +9,8 @@ import SwiftUI
 
 struct EmployeeAllOrders: View {
     @ObservedObject var viewModel: EmployeeHomeView.ViewModel
-    @State var searchText : String = ""
-    
+    @State var searchText: String = ""
+
     var body: some View {
         ZStack {
             // Gradientbakgrund
@@ -23,10 +23,12 @@ struct EmployeeAllOrders: View {
                 endPoint: .bottom
             )
             .edgesIgnoringSafeArea(.all)
-            
+
             VStack(alignment: .leading, spacing: 16) {
                 List {
-                    Section(header: Text("Lediga ordrar").foregroundColor(.blue)) {
+                    Section(
+                        header: Text("Lediga ordrar").foregroundColor(.blue)
+                    ) {
                         ForEach(
                             filteredOrders(for: .registered).filter {
                                 $0.status == .registered
@@ -34,7 +36,10 @@ struct EmployeeAllOrders: View {
                         ) {
                             order in
                             NavigationLink(
-                                destination: OrderDetailView(order: order)
+                                destination: OrderDetailView(
+                                    order: order,
+                                    status: .employee
+                                )
                             ) {
                                 OrderRowAllOrders(order: order)
                                     .listRowBackground(Color.white)
@@ -53,14 +58,21 @@ struct EmployeeAllOrders: View {
                         }
                     }
                     Section(
-                        header: Text("Påbörjade ordrar").foregroundColor(.orange)
+                        header: Text("Påbörjade ordrar").foregroundColor(
+                            .orange
+                        )
                     ) {
                         ForEach(
-                            viewModel.unassignedOrders.filter { $0.status == .started }
+                            viewModel.unassignedOrders.filter {
+                                $0.status == .started
+                            }
                         ) {
                             order in
                             NavigationLink(
-                                destination: OrderDetailView(order: order)
+                                destination: OrderDetailView(
+                                    order: order,
+                                    status: .employee
+                                )
                             ) {
                                 OrderRowAllOrders(order: order)
                                     .listRowBackground(Color.white)
@@ -78,13 +90,20 @@ struct EmployeeAllOrders: View {
                             }
                         }
                     }
-                    Section(header: Text("Försenade ordrar").foregroundColor(.red)) {
+                    Section(
+                        header: Text("Försenade ordrar").foregroundColor(.red)
+                    ) {
                         ForEach(
-                            viewModel.unassignedOrders.filter { $0.status == .delayed }
+                            viewModel.unassignedOrders.filter {
+                                $0.status == .delayed
+                            }
                         ) {
                             order in
                             NavigationLink(
-                                destination: OrderDetailView(order: order)
+                                destination: OrderDetailView(
+                                    order: order,
+                                    status: .employee
+                                )
                             ) {
                                 OrderRowAllOrders(order: order)
                                     .listRowBackground(Color.white)
@@ -102,7 +121,7 @@ struct EmployeeAllOrders: View {
                             }
                         }
                     }
-                    
+
                     Section(
                         header: Text("Avslutade ordrar").foregroundColor(.green)
                     ) {
@@ -113,7 +132,7 @@ struct EmployeeAllOrders: View {
                         ) {
                             order in
                             NavigationLink(
-                                destination: OrderDetailView(order: order)
+                                destination: OrderDetailView(order: order, status: .employee)
                             ) {
                                 OrderRowAllOrders(order: order)
                                     .listRowBackground(Color.white)
@@ -130,24 +149,29 @@ struct EmployeeAllOrders: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
     }
-    
+
     //
     // tar in en status och filtrerar baserat på status sen använder vi sökordet för att filtrera i listan
     func filteredOrders(for status: OrderStatus) -> [Order] {
         viewModel.unassignedOrders.filter {
-            $0.status == status &&
-            (
-                searchText.isEmpty ||
-                $0.customer.name.lowercased().contains(searchText.lowercased()) ||
-                $0.orderNumber.lowercased().contains(searchText.lowercased())
-            )
+            $0.status == status
+                && (searchText.isEmpty
+                    || $0.customer.name.lowercased().contains(
+                        searchText.lowercased()
+                    )
+                    || $0.orderNumber.lowercased().contains(
+                        searchText.lowercased()
+                    ))
         }
     }
 }
 
-
 #Preview {
     NavigationStack {
-        EmployeeAllOrders(viewModel: EmployeeHomeView.ViewModel(currentUser: UserData(name: "Test user")))
+        EmployeeAllOrders(
+            viewModel: EmployeeHomeView.ViewModel(
+                currentUser: UserData(name: "Test user")
+            )
+        )
     }
 }
