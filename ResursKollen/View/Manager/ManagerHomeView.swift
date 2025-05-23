@@ -20,45 +20,39 @@ struct ManagerHomeView: View {
     )
 
     var body: some View {
-        NavigationStack {
-            TabView {
-                Tab(
-                    "Aktiva ordrar",
-                    systemImage:
-                        "list.bullet.clipboard"
-                ) {
-                    ManagerAllOrdersView()
-                }
-                Tab("Utförda ordrar", systemImage: "text.page.badge.magnifyingglass") {
-                    ReviewOrdersView()
-                }
-                Tab(
-                    "Statistik",
-                    systemImage:
-                        "waveform.badge.magnifyingglass"
-                ) {
-                    SummaryView()
-                }
-
-                Tab("Personal", systemImage: "person.3") {
-                    // StaffView(user: exampleUser)
-                    StaffView()
-                }
+        TabView {
+            NavigationStack {
+                ManagerAllOrdersView()
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        CreateOrderView()
-                    } label: {
-                        Image(systemName: "plus")
-                    }
+            .tabItem {
+                Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
+            }
+            
 
+            NavigationStack {
+                ReviewOrdersView()
+            }
+            .tabItem {
+                Label("Utförda ordrar", systemImage: "text.page.badge.magnifyingglass")
+            }
+
+            NavigationStack {
+                SummaryView()
+            }
+            .tabItem {
+                Label("Statistik", systemImage: "waveform.badge.magnifyingglass")
+            }
+
+            NavigationStack {
+                StaffView()
+            }
+            .tabItem {
+                Label("Personal", systemImage: "person.3")
                 }
-
             }
         }
     }
-}
+
 
 #Preview {
     ManagerHomeView()
