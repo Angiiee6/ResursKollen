@@ -21,31 +21,21 @@ struct ResursKollenApp: App {
         
         var body: some Scene {
             WindowGroup {
-              //  ManagerHomeView()
+//                ManagerHomeView()
                 ContentView()
+                    .environment(\.colorScheme, .dark)
                // StaffView()
             }
         }
         
         private func customizeTabBarAppearance() {
             // Färg för ovalda ikoner
-            UITabBar.appearance().unselectedItemTintColor = UIColor(Color.orange)
+            UITabBar.appearance().unselectedItemTintColor = UIColor(Color.white.opacity(0.6))
             
-            // Färg för vald ikon (kan även sättas med .tint modifier)
-            UITabBar.appearance().tintColor = UIColor(Color.blue)
-        
+
+            
+            //bakgrundsfärg för meny
+            UITabBar.appearance().backgroundColor = UIColor(red: 49/255, green: 50/255, blue: 60/255, alpha: 1.0)
         }
     }
-
-
-  var body: some Scene {
-    WindowGroup {
-      NavigationView {
-          
-    
-          //  LoginView()
-    //ManagerHomeView()
-      }
-    }
-  }
 

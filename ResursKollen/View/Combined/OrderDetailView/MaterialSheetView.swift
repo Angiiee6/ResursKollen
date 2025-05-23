@@ -131,15 +131,18 @@ struct MaterialSheetView: View {
                             from: nil,
                             for: nil
                         )
-                    }
+                    }.background(Color.white.opacity(0.2))
+                        .cornerRadius(10)
                     .buttonStyle(.borderedProminent)
                     .font(.callout)
                     .disabled(name.isEmpty)
+                    
                 }
             }
             .padding(.bottom, 16)
         }
         .padding()
+        .tint(.orange)
     }
 }
 

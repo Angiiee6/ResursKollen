@@ -50,6 +50,7 @@ struct ManagerHomeView: View {
                 Label("Personal", systemImage: "person.3")
                 }
             }
+        .tint(Color.orange)
         }
     }
 
