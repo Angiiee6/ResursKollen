@@ -36,12 +36,14 @@ struct AssignedUserPickerSheet: View {
                         AssignedUserListItem(user: nil, isSelected: selectedUser?.id == nil)
                             .onTapGesture {
                                 selectedUser = nil
+                                print("Tapped ingen, selectedUser = \(selectedUser?.name ?? "nil")")
                                 dismiss()
                             }
                         ForEach(employees) { employee in
                             AssignedUserListItem(user: employee, isSelected: selectedUser?.id == employee.id)
                                 .onTapGesture {
                                     selectedUser = employee
+                                    print("Tapped \(employee.name), selectedUser = \(selectedUser?.name ?? "nil")")
                                     dismiss()
                                 }
                         }
@@ -51,6 +53,7 @@ struct AssignedUserPickerSheet: View {
                             AssignedUserListItem(user: manager, isSelected: selectedUser?.id == manager.id)
                                 .onTapGesture {
                                     selectedUser = manager
+                                    print("Tapped \(manager.name), selectedUser = \(selectedUser?.name ?? "nil")")
                                     dismiss()
                                 }
                         }

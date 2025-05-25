@@ -47,6 +47,7 @@ struct Order: Codable, Identifiable, Equatable {
             && lhs.timeConsumption == rhs.timeConsumption
             && lhs.materialConsumption == rhs.materialConsumption
             && lhs.status == rhs.status
+            && lhs.assignedUser == rhs.assignedUser
     }
 }
 
