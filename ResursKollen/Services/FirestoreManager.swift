@@ -74,6 +74,10 @@ class FirestoreManager {
         }
     }
 
+    
+    /// Listens to any order with status `done`.
+    /// - Parameter onUpdate: Contains a `Result<[Order], Error>` with succesfully fetched orders or `Error` in case of errors.
+    /// - Returns: A listener registration used for closing the listener.
     func listenToDoneOrders(
         onUpdate: @escaping (Result<[Order], Error>) -> Void
     ) -> ListenerRegistration {
@@ -85,32 +89,32 @@ class FirestoreManager {
             error in
             if let error = error {
                 onUpdate(.failure(error))
-                print("Done orders listener error.")
                 return
             }
             guard let documents = snapshot?.documents else {
                 onUpdate(.success([]))
-                print("Done orders listener empty document.")
                 return
             }
             for document in documents {
                 print(document)
             }
             let orders = documents.compactMap { document in
-
                 try? document.data(as: Order.self)
             }
             onUpdate(.success(orders))
-            print("Done orders listener success: \(orders)")
         }
     }
 
-    //Hämtar en user
+    
+    /// Fetches a specific user's data.
+    /// - Parameter userId: The id of the user to fetch.
+    /// - Returns: `UserData` object.
     func fetchUserData(userId: String) async throws -> UserData {
         try await usersRef.document(userId).getDocument(as: UserData.self)
     }
     
-    //Hämtar alla users
+    /// Fetches all users' data from Firestore.
+    /// - Returns: A list of `UserData` objects.
     func fetchUserDataCollection() async throws -> [UserData] {
         try await usersRef.getDocuments().documents.compactMap { document in
             try? document.data(as: UserData.self)

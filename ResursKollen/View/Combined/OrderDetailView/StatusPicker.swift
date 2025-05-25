@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+///Shows a picker with all possible statues (different options for manager/employee)
 struct StatusPicker: View {
     let status: EmploymentStatus
     @Binding var selection: OrderStatus

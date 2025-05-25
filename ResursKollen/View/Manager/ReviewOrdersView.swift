@@ -8,6 +8,7 @@
 import FirebaseFirestore
 import SwiftUI
 
+///Shows a list of orders that need review (manager only).
 struct ReviewOrdersView: View {
     @StateObject var viewModel = ViewModel()
     var body: some View {

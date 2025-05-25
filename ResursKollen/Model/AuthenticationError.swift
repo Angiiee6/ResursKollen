@@ -7,6 +7,8 @@
 
 import Foundation
 
+
+/// For handling error with authentication on Firebase.
 enum AuthenticationError: Error, LocalizedError {
     case currentUserError
     

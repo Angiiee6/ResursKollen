@@ -9,6 +9,7 @@ import SwiftUI
 struct EmployeeHomeView: View {
     @StateObject var viewModel: ViewModel
 
+    //Sends the current user directly to the view model
     init(currentUser: UserData) {
         _viewModel = StateObject(
             wrappedValue: ViewModel(currentUser: currentUser)
@@ -63,6 +64,8 @@ extension EmployeeHomeView {
             }
         }
 
+        
+        ///Sets the order's `assignedUser` to the current user.
         func takeOrder(_ order: Order) {
             var updatedOrder = order
             updatedOrder.assignedUser = currentUser
@@ -73,6 +76,7 @@ extension EmployeeHomeView {
             }
         }
 
+        ///Sets an order's `assignedUser` to `nil`.
         func leaveOrder(_ order: Order) {
             var updatedOrder = order
             updatedOrder.assignedUser = nil

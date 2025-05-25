@@ -63,7 +63,7 @@ extension UserData{
 
 //MARK: MockData för klassen MaterialSheetView
 
-extension MaterialSheetView{
+extension MaterialEditSheetView{
     
     static let premadeMaterialsMockData = [
         Material(name: "Kabelskor", price: 2.50),

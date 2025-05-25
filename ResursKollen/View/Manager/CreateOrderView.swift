@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+///Shows a form for creating a new order.
 struct CreateOrderView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()

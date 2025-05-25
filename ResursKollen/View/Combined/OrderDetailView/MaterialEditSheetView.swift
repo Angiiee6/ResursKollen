@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct MaterialSheetView: View {
+///Shows a list of `Material` with the option to edit them.
+struct MaterialEditSheetView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
     @Binding var materials: [Material]
@@ -118,12 +119,12 @@ struct MaterialSheetView: View {
                             quantity: quantity,
                             price: price
                         )
-                        
+
                         materials.append(newMaterial)
                         name = ""
                         quantity = 1
                         price = 0
-                        
+
                         //Closes keyboard
                         UIApplication.shared.sendAction(
                             #selector(UIResponder.resignFirstResponder),
@@ -133,10 +134,10 @@ struct MaterialSheetView: View {
                         )
                     }.background(Color.white.opacity(0.2))
                         .cornerRadius(10)
-                    .buttonStyle(.borderedProminent)
-                    .font(.callout)
-                    .disabled(name.isEmpty)
-                    
+                        .buttonStyle(.borderedProminent)
+                        .font(.callout)
+                        .disabled(name.isEmpty)
+
                 }
             }
             .padding(.bottom, 16)
@@ -147,17 +148,17 @@ struct MaterialSheetView: View {
 }
 
 //MARK: View Model
-extension MaterialSheetView {
+extension MaterialEditSheetView {
     class ViewModel: ObservableObject {
-        
-        @Published var premadeMaterials = MaterialSheetView.premadeMaterialsMockData
-      
+
+        @Published var premadeMaterials = MaterialEditSheetView
+            .premadeMaterialsMockData
 
     }
 }
 
 #Preview {
-    MaterialSheetView(
+    MaterialEditSheetView(
         materials: .constant([
             Material(name: "Copper Wire", quantity: 50, price: 2.50),
             Material(name: "Oak Plank", quantity: 10, price: 15.00),

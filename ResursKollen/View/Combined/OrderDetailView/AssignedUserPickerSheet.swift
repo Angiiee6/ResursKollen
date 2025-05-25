@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+
+/// Shows a list of registered users, used for updating an orders' `assignedUser`.
 struct AssignedUserPickerSheet: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
@@ -31,6 +33,11 @@ struct AssignedUserPickerSheet: View {
             case .hasData((let employees, let managers)):
                 List {
                     Section("Utförare") {
+                        AssignedUserListItem(user: nil, isSelected: selectedUser?.id == nil)
+                            .onTapGesture {
+                                selectedUser = nil
+                                dismiss()
+                            }
                         ForEach(employees) { employee in
                             AssignedUserListItem(user: employee, isSelected: selectedUser?.id == employee.id)
                                 .onTapGesture {

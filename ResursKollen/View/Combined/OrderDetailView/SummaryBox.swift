@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+///Shows the price summary on an order.
 struct SummaryBox: View {
     let order: Order
     var body: some View {

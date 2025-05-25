@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+///Expandable box for showing text information. Becomes scrollable when expanded.
 struct DetailTextBox: View {
     @Binding var isExpanded: Bool
     let title: String

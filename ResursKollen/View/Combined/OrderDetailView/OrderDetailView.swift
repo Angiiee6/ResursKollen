@@ -7,15 +7,16 @@
 
 import SwiftUI
 
+/// Shows a view of all details on an order.
 struct OrderDetailView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
 
-    //Ta in ordern som ett State-objekt direkt för att kunna editera
     @State var order: Order
-    //Används för att jämföra ev. osparade ändringar om man trycker på bakåt-knappen utan att spara
+
+    //Used to compare changes to an order to be able to show an alert if the user clicks the back button without saving
     let orderOriginal: Order
-    //För att kunna bygga olika UI:n/redigeringsmöjligheter för chef/anställd
+    //To be able to build different UI's depending on the current user's status.
     let employmentStatus: EmploymentStatus
 
     init(order: Order, status: EmploymentStatus) {
@@ -33,13 +34,19 @@ struct OrderDetailView: View {
     @State var workPerformedExpanded: Bool = false
     @State var descriptionExpanded: Bool = false
 
-    //Olika sorters sheets att visa upp
+    //All possible sheets to show
     enum ActiveSheet: Identifiable {
-        case workDone, material, assignedUser
+        ///For entering text about what has been done on an order.
+        case workDone
+        ///For editing any materials on an order.
+        case material
+        ///For updating the assigned user on an order (managers only).
+        case assignedUser
+
         var id: Self { self }
     }
 
-    //Olika sorters alerts att visa upp
+    //All possible alerts to show
     enum ActiveAlert {
         case error(Error)
         case exit, orderDone
@@ -47,7 +54,7 @@ struct OrderDetailView: View {
 
     var body: some View {
         ZStack {
-            // Gradientbakgrund
+            // Gradient backgrund
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(red: 0.11, green: 0.11, blue: 0.15),
@@ -183,7 +190,7 @@ struct OrderDetailView: View {
 
         //MARK: Toolbar
         .toolbar(content: {
-            //Använder egen back button ist för default för att kunna visa alert innan man går tillbaka
+            //Use a custom back button to be able to show an alert if the user presses the back button without saving.
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
                     if order != orderOriginal {
@@ -199,7 +206,7 @@ struct OrderDetailView: View {
                     }
                 }
             }
-            //Knapp för att utföra en order
+            //Button to mark an order as done or completed (depending on user's status)
             if orderOriginal.status != .completed {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(
@@ -214,7 +221,6 @@ struct OrderDetailView: View {
         //MARK: Sheets
         .sheet(item: $activeSheet) { activeSheet in
             switch activeSheet {
-            //För att fylla i text om vad man gjort på en order
             case .workDone:
                 VStack {
                     Text("Utfört arbete: ")
@@ -226,8 +232,7 @@ struct OrderDetailView: View {
                 }
                 .padding()
             case .material:
-                //För att lägga till/ta bort material på en order
-                MaterialSheetView(materials: $order.materialConsumption)
+                MaterialEditSheetView(materials: $order.materialConsumption)
             case .assignedUser:
                 AssignedUserPickerSheet(selectedUser: $order.assignedUser)
             }
@@ -237,13 +242,13 @@ struct OrderDetailView: View {
         .alert(isPresented: $alertPresent) {
             switch activeAlert {
             case .error(let error):
-                //Vid någon form av error
+                //In case of error
                 Alert(
                     title: Text("Ett fel uppstod"),
                     message: Text(error.localizedDescription),
                     dismissButton: .default(Text("OK"))
                 )
-            //När användaren trycker på bakåt-knappen
+            //When the user presses the back button
             case .exit:
                 Alert(
                     title: Text("Avsluta utan att spara?"),
@@ -252,7 +257,7 @@ struct OrderDetailView: View {
                         dismiss()
                     }
                 )
-            //När användaren trycker på utför/avsluta-knappen
+            //When the user presses the done/complete order button
             case .orderDone:
                 Alert(
                     title: Text(

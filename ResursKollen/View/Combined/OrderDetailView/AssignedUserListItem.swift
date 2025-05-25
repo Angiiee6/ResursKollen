@@ -7,15 +7,18 @@
 
 import SwiftUI
 
+///A single user's information.
 struct AssignedUserListItem: View {
-    let user: UserData
+    let user: UserData?
     let isSelected: Bool
     var body: some View {
         HStack {
-            Text(user.name)
+            Text(user?.name ?? "Ingen")
             Spacer()
-            Image(systemName: isSelected ? "checkmark" : "")
-                        
+            if isSelected {
+                Image(systemName: "checkmark")
+            }
+
         }
     }
 }
