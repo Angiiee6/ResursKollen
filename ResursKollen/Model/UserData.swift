@@ -47,7 +47,9 @@ enum EmploymentType: String, Codable, Hashable, CaseIterable, Identifiable{
 
 
 //Basic info om den anställde
-struct UserData: Codable, Identifiable {
+struct UserData: Codable, Identifiable, Equatable {
+    
+    
     var id: String
     var status: EmploymentStatus
     var name: String
@@ -80,7 +82,9 @@ struct UserData: Codable, Identifiable {
         
     }
     
-    
+    static func == (lhs: UserData, rhs: UserData) -> Bool {
+        lhs.id == rhs.id
+    }
  
     
     // Function to generate an uniqe emp. number  ex. ABC123
@@ -102,7 +106,8 @@ struct UserData: Codable, Identifiable {
 }
 
 enum EmploymentStatus:String, Codable, Hashable {
-    case manager, employee, unknown
+    case manager, employee
+         //unknown
 
     var nameSE: String {
         switch self {
@@ -110,8 +115,8 @@ enum EmploymentStatus:String, Codable, Hashable {
             "chef"
         case .employee:
             "anställd"
-        case .unknown:
-            "okändt"
+//        case .unknown:
+//            "okändt"
         }
     }
 }

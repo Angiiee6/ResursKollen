@@ -7,7 +7,8 @@
 
 import SwiftUI
 
-struct TextBox: View {
+///Expandable box for showing text information. Becomes scrollable when expanded.
+struct DetailTextBox: View {
     @Binding var isExpanded: Bool
     let title: String
     let text: String
@@ -16,6 +17,7 @@ struct TextBox: View {
         VStack {
             HStack {
                 Text(title)
+                    .font(.headline)
                 Spacer()
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
             }

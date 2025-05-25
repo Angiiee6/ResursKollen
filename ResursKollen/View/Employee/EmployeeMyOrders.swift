@@ -36,7 +36,7 @@ struct EmployeeMyOrders: View {
                     ) {
                         ForEach(viewModel.myOrders) { order in
                             NavigationLink(
-                                destination: OrderDetailView(order: order)
+                                destination: OrderDetailView(order: order, status: .employee)
                             ) {
                                 OrderRowMyOrders(order: order)
                                     .listRowBackground(Color(.systemGray6)) // Light background for list items

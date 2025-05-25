@@ -8,6 +8,8 @@
 import Foundation
 
 extension Double {
+    
+    /// Formats a double (hours) into a String with 1 decimal, e.g. `10.5000 to "10,5"`
     var formattedAsHours: String {
         let formatter = NumberFormatter()
         formatter.minimumIntegerDigits = 1
@@ -17,6 +19,8 @@ extension Double {
         return formatter.string(from: NSNumber(value: self)) ?? "\(self)"
     }
     
+    
+    /// Formats a double (price) into a String with 2 decimals, e.g. `1000.500 to "1000,50"`
     var formattedAsCurrency: String {
         let formatter = NumberFormatter()
         formatter.minimumIntegerDigits = 1

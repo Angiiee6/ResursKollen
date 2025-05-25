@@ -13,6 +13,7 @@ struct CustomerDetailCard: View {
         HStack {
             VStack(alignment: .leading) {
                 Text(customer.name)
+                    .font(.headline)
                 Group {
                     Text(customer.streetName)
                     Text(customer.postalCode)
@@ -23,6 +24,14 @@ struct CustomerDetailCard: View {
             Spacer()
             Text(customer.phoneNumber)
         }
+        .padding(12)
+       // .background(.secondary.opacity(0.35))
+        .clipShape(RoundedRectangle(cornerRadius: 5))
+        .overlay(
+            RoundedRectangle(cornerRadius: 5)
+                .stroke(.orange.opacity(0.75), lineWidth: 1)
+        )
+        
     }
 }
 

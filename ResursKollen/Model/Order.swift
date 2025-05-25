@@ -21,7 +21,8 @@ struct Order: Codable, Identifiable, Equatable {
     var dueDate: Date
     var customer: Customer
     var assignedUser: UserData?
-    
+
+    /// - Returns sum of the price of all listed materials on the order.
     var totalMaterialCost: Double {
         var sum: Double = 0
         for material in materialConsumption {
@@ -29,27 +30,46 @@ struct Order: Codable, Identifiable, Equatable {
         }
         return sum
     }
-    
+
+    /// - Returns `timeConsumption * labor cost`
     var totalLaborCost: Double {
         timeConsumption * 539
     }
 
+    /// - Returns the sum of all labor and material costs.
     var totalOrderCost: Double {
         totalLaborCost + totalMaterialCost
     }
-    
-    //För att göra ordern Equatable
-    static func ==(lhs: Order, rhs: Order) -> Bool {
-            return lhs.workPerformed == rhs.workPerformed &&
-                   lhs.timeConsumption == rhs.timeConsumption &&
-                   lhs.materialConsumption == rhs.materialConsumption &&
-                   lhs.status == rhs.status
-        }
+
+    //To make Order conform to Equatable
+    static func == (lhs: Order, rhs: Order) -> Bool {
+        return lhs.workPerformed == rhs.workPerformed
+            && lhs.timeConsumption == rhs.timeConsumption
+            && lhs.materialConsumption == rhs.materialConsumption
+            && lhs.status == rhs.status
+            && lhs.assignedUser == rhs.assignedUser
+    }
 }
 
+/// Represents the current status of a work order in the system.
+/// - Note:
+///   - `registered`: No work has been done on the order.
+///   - `delayed`: Delayed due to issues.
+///   - `started`: Actively being worked on.
+///   - `done`: Finished, pending review.
+///   - `completed`: Fully completed, reviewed by managers and closed.
 enum OrderStatus: String, Codable, CaseIterable {
 
-    case registered, delayed, started, done, completed
+    ///No work has been done on the order.
+    case registered
+    ///Delayed due to issues.
+    case delayed
+    ///Actively being worked on.
+    case started
+    ///Finished, pending review.
+    case done
+    ///Fully completed, reviewed by managers and closed.
+    case completed
 
     var nameSE: String {
         switch self {
