@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct TextBox: View {
+struct DetailTextBox: View {
     @Binding var isExpanded: Bool
     let title: String
     let text: String

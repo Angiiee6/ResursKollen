@@ -32,8 +32,13 @@ struct StatusPicker: View {
     private func filterStatuses() -> [OrderStatus] {
         switch status {
         case .manager:
-            OrderStatus.allCases.filter {
-                $0 != .completed
+            if selection == .completed {
+                OrderStatus.allCases
+            }
+            else {
+                OrderStatus.allCases.filter {
+                    $0 != .completed
+                }
             }
         case .employee:
             OrderStatus.allCases.filter {

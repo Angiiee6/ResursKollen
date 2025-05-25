@@ -74,8 +74,13 @@ class FirestoreManager {
         }
     }
 
-    func listenToDoneOrders(onUpdate: @escaping (Result<[Order], Error>) -> Void) -> ListenerRegistration {
-        return orderRef.whereField("status", isEqualTo: OrderStatus.done.rawValue).addSnapshotListener {
+    func listenToDoneOrders(
+        onUpdate: @escaping (Result<[Order], Error>) -> Void
+    ) -> ListenerRegistration {
+        return orderRef.whereField(
+            "status",
+            isEqualTo: OrderStatus.done.rawValue
+        ).addSnapshotListener {
             snapshot,
             error in
             if let error = error {
@@ -92,7 +97,7 @@ class FirestoreManager {
                 print(document)
             }
             let orders = documents.compactMap { document in
-                
+
                 try? document.data(as: Order.self)
             }
             onUpdate(.success(orders))
@@ -100,7 +105,15 @@ class FirestoreManager {
         }
     }
 
+    //Hämtar en user
     func fetchUserData(userId: String) async throws -> UserData {
         try await usersRef.document(userId).getDocument(as: UserData.self)
+    }
+    
+    //Hämtar alla users
+    func fetchUserDataCollection() async throws -> [UserData] {
+        try await usersRef.getDocuments().documents.compactMap { document in
+            try? document.data(as: UserData.self)
+        }
     }
 }

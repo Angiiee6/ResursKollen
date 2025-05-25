@@ -11,9 +11,11 @@ struct OrderDetailView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
 
+    //Ta in ordern som ett State-objekt direkt för att kunna editera
     @State var order: Order
     //Används för att jämföra ev. osparade ändringar om man trycker på bakåt-knappen utan att spara
     let orderOriginal: Order
+    //För att kunna bygga olika UI:n/redigeringsmöjligheter för chef/anställd
     let employmentStatus: EmploymentStatus
 
     init(order: Order, status: EmploymentStatus) {
@@ -31,15 +33,16 @@ struct OrderDetailView: View {
     @State var workPerformedExpanded: Bool = false
     @State var descriptionExpanded: Bool = false
 
+    //Olika sorters sheets att visa upp
     enum ActiveSheet: Identifiable {
-        case workDone, material
+        case workDone, material, assignedUser
         var id: Self { self }
     }
 
+    //Olika sorters alerts att visa upp
     enum ActiveAlert {
         case error(Error)
         case exit, orderDone
-
     }
 
     var body: some View {
@@ -61,7 +64,7 @@ struct OrderDetailView: View {
                         //MARK: Creation date
                         HStack {
                             Text("Skapad: \(order.creationDate.asYYYYMMDD)")
-                                .font(.caption2)
+                                .font(.caption)
                                 .foregroundStyle(.secondary)
                             Spacer()
                         }
@@ -71,18 +74,32 @@ struct OrderDetailView: View {
                             selection: $order.status
                         )
 
+                        //MARK: Assigned user picker
+                        //Manager only
+                        if employmentStatus == .manager {
+                            HStack {
+                                Text("Utförare:")
+                                    .font(.headline)
+                                Spacer()
+                                Button(order.assignedUser?.name ?? "Välj") {
+                                    activeSheet = .assignedUser
+                                }
+                            }
+                        }
+
                         //MARK: Customer
                         CustomerDetailCard(customer: order.customer)
                         Divider()
+
                         //MARK: Description
-                        TextBox(
+                        DetailTextBox(
                             isExpanded: $descriptionExpanded,
                             title: "Arbetsbeskrivning:",
                             text: order.description
                         )
                         //MARK: Work performed
                         VStack {
-                            TextBox(
+                            DetailTextBox(
                                 isExpanded: $workPerformedExpanded,
                                 title: "Utfört:",
                                 text: order.workPerformed,
@@ -144,8 +161,7 @@ struct OrderDetailView: View {
                 Spacer()
                 //MARK: Summary
                 SummaryBox(order: order)
-                
-                
+
                 //MARK: Save button
                 Button("Spara") {
                     do {
@@ -161,11 +177,13 @@ struct OrderDetailView: View {
             }
             .navigationBarBackButtonHidden(true)
             .padding(.vertical, 16)
-            .navigationTitle("Arbetsorder: \(order.orderNumber)")
+            //MARK: Nav title
+            .navigationTitle(order.orderNumber)
         }
+
         //MARK: Toolbar
         .toolbar(content: {
-            //Egen back button för att kunna visa alert
+            //Använder egen back button ist för default för att kunna visa alert innan man går tillbaka
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
                     if order != orderOriginal {
@@ -182,10 +200,14 @@ struct OrderDetailView: View {
                 }
             }
             //Knapp för att utföra en order
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("\(employmentStatus == .manager ? "Avsluta": "Utför")") {
-                    activeAlert = .orderDone
-                    alertPresent = true
+            if orderOriginal.status != .completed {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(
+                        "\(employmentStatus == .manager ? "Avsluta": "Utför")"
+                    ) {
+                        activeAlert = .orderDone
+                        alertPresent = true
+                    }
                 }
             }
         })
@@ -206,6 +228,8 @@ struct OrderDetailView: View {
             case .material:
                 //För att lägga till/ta bort material på en order
                 MaterialSheetView(materials: $order.materialConsumption)
+            case .assignedUser:
+                AssignedUserPickerSheet(selectedUser: $order.assignedUser)
             }
 
         }
