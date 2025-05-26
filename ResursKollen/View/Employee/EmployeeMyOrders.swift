@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EmployeeMyOrders: View {
     @ObservedObject var viewModel: EmployeeHomeView.ViewModel
+    @State var monthlySummarySheetPresent: Bool = false
 
     var body: some View {
         ZStack {
@@ -59,6 +60,17 @@ struct EmployeeMyOrders: View {
                 .scrollContentBackground(.hidden) // Make list background transparent
                 .background(Color.clear) // Clear background for the list
             }
+        }
+        //MARK: Toolbar
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Denna månad"){
+                    monthlySummarySheetPresent = true
+                }
+            }
+        }
+        .sheet(isPresented: $monthlySummarySheetPresent) {
+            MonthlyTimeSummarySheet(timeUnits: viewModel.myTimeUnitsThisMonth)
         }
     }
 }

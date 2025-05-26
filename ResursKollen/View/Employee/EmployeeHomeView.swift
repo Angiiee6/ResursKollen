@@ -18,23 +18,21 @@ struct EmployeeHomeView: View {
 
     var body: some View {
         TabView {
-          
+
             NavigationStack {
                 EmployeeMyOrders(viewModel: viewModel)
             }
             .tabItem {
                 Label("Mina Ordrar", systemImage: "list.bullet.clipboard")
             }
-            
-          
+
             NavigationStack {
                 EmployeeAllOrders(viewModel: viewModel)
             }
             .tabItem {
                 Label("Alla Ordrar", systemImage: "list.bullet.clipboard")
             }
-            
- 
+
             NavigationStack {
                 StaffView(userStatus: .employee)
             }
@@ -46,25 +44,32 @@ struct EmployeeHomeView: View {
 }
 
 extension EmployeeHomeView {
-    
+
     class ViewModel: ObservableObject {
         let currentUser: UserData
         @Published var myOrders: [Order] = []
         @Published var unassignedOrders: [Order] = []
-        
+        @Published var myTimeUnitsThisMonth: [OrderTimeUnit] = []
+
         init(currentUser: UserData) {
             self.currentUser = currentUser
-            
+
             FirestoreManager.shared.listenToOrderCollection { orders in
                 self.myOrders = orders.filter {
                     $0.assignedUser?.id == currentUser.id && $0.status != .done
                         && $0.status != .completed
                 }
                 self.unassignedOrders = orders.filter { $0.assignedUser == nil }
+
+                let allTimeUnits = orders.flatMap { $0.timeUnits }
+                let filteredTimeUnits = allTimeUnits.filter {
+                    $0.user.id == currentUser.id && $0.date.isThisMonth
+                }
+                self.myTimeUnitsThisMonth = filteredTimeUnits
+
             }
         }
 
-        
         ///Sets the order's `assignedUser` to the current user.
         func takeOrder(_ order: Order) {
             var updatedOrder = order
@@ -86,7 +91,7 @@ extension EmployeeHomeView {
                 print("Error leaving order!")
             }
         }
-        
+
     }
 }
 
