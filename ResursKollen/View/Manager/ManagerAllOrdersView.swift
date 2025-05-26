@@ -12,7 +12,7 @@ struct ManagerAllOrdersView: View {
     @State var searchText: String = ""
     
     var body: some View {
-        NavigationView {
+        
             ZStack {
                 LinearGradient(
                     gradient: Gradient(colors: [
@@ -64,7 +64,7 @@ struct ManagerAllOrdersView: View {
                 .toolbarColorScheme(.dark, for: .navigationBar)
                 .searchable(text: $searchText, prompt: "Sök bland ordrar")
             }
-        }
+        
     }
     
     func filteredOrders(for status : OrderStatus) -> [Order] {

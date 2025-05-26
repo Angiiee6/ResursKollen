@@ -99,10 +99,10 @@ struct AddEmployeeView: View {
                                         selection: $viewModel.user.employmentDate,
                                         displayedComponents: .date
                                     )
-                                    .foregroundColor(.black.opacity(0.7))
+                                    .foregroundColor(.white.opacity(0.7))
                                 }
                                 .padding()
-                                .background(Color.white)
+                                .background(Color.white.opacity(0.2))
                                 .cornerRadius(10)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10)
@@ -113,12 +113,12 @@ struct AddEmployeeView: View {
                                     Image(systemName: "number")
                                         .foregroundColor(.orange.opacity(0.7))
                                     Text("Anställningsnummer: \(viewModel.anstNr)")
-                                        .foregroundColor(.black.opacity(0.7))
+                                        .foregroundColor(.white.opacity(0.5))
                                     Spacer()
                                     
                                 }
                                 .padding()
-                                .background(Color.white)
+                                .background(Color.white.opacity(0.2))
                                 .cornerRadius(10)
                                 .overlay(
                                     RoundedRectangle(cornerRadius: 10)
@@ -130,7 +130,7 @@ struct AddEmployeeView: View {
                                         Image(systemName: "star.fill")
                                             .foregroundColor(.orange.opacity(0.7))
                                         Text("Chef eller liknande?")
-                                            .foregroundColor(.black.opacity(0.7))
+                                            .foregroundColor(.white.opacity(0.5))
                                     }
                                     
                                 }
@@ -139,7 +139,7 @@ struct AddEmployeeView: View {
                                     
                                 }
                                 .padding()
-                                .background(Color.white)
+                                .background(Color.white.opacity(0.2))
                                 .cornerRadius(10)
                                 
                                 .overlay(
@@ -195,10 +195,10 @@ struct AddEmployeeView: View {
             Image(systemName: icon)
                 .foregroundColor(.orange.opacity(0.7))
             TextField(placeholder, text: text)
-                .foregroundColor(.black.opacity(0.7))
+                .foregroundColor(.white.opacity(0.5))
         }
         .padding()
-        .background(Color.white)
+        .background(Color.white.opacity(0.2))
         .cornerRadius(10)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
@@ -211,10 +211,10 @@ struct AddEmployeeView: View {
             Image(systemName: icon)
                 .foregroundColor(.orange.opacity(0.7))
             SecureField(placeholder, text: text)
-                .foregroundColor(.black.opacity(0.7))
+                .foregroundColor(.white.opacity(0.5))
         }
         .padding()
-        .background(Color.white)
+        .background(Color.white.opacity(0.2))
         .cornerRadius(10)
         .overlay(
             RoundedRectangle(cornerRadius: 10)
