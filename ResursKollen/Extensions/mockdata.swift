@@ -162,11 +162,11 @@ extension MaterialEditSheet{
                 emailAddress: "saga.andersson@gmail.com"
             ),
             timeUnits: [
-                OrderTimeUnit(time: 2.5, date: Date(timeIntervalSinceNow: -5 * 24 * 3600), user: UserData(id: "1", name: "Alice")), // 5 days ago
-                OrderTimeUnit(time: 3.0, date: Date(timeIntervalSinceNow: -4 * 24 * 3600), user: UserData(id: "2", name: "Bob")),  // 4 days ago
-                OrderTimeUnit(time: 1.5, date: Date(timeIntervalSinceNow: -3 * 24 * 3600), user: UserData(id: "3", name: "Charlie")), // 3 days ago
-                OrderTimeUnit(time: 4.0, date: Date(timeIntervalSinceNow: -2 * 24 * 3600), user: UserData(id: "4", name: "Diana")), // 2 days ago
-                OrderTimeUnit(time: 2.0, date: Date(), user: UserData(id: "5", name: "Eve")) // Today
+                OrderTimeUnit(time: 2.5, date: Date(timeIntervalSinceNow: -5 * 24 * 3600), userId: "1"), // 5 days ago
+                OrderTimeUnit(time: 3.0, date: Date(timeIntervalSinceNow: -4 * 24 * 3600), userId: "2"),  // 4 days ago
+                OrderTimeUnit(time: 1.5, date: Date(timeIntervalSinceNow: -3 * 24 * 3600), userId: "3"), // 3 days ago
+                OrderTimeUnit(time: 4.0, date: Date(timeIntervalSinceNow: -2 * 24 * 3600), userId: "4"), // 2 days ago
+                OrderTimeUnit(time: 2.0, date: Date(), userId: "5") // Today
             ]
         )
         

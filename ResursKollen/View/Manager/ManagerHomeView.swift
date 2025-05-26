@@ -54,6 +54,8 @@ struct ManagerHomeView: View {
         }
     }
 
+//TODO: Fetch all orders here instead of in sub-views
+
 
 #Preview {
     ManagerHomeView()

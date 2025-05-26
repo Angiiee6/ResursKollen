@@ -18,20 +18,20 @@ struct TimeUnitListSheet: View {
                     dismiss()
                 }
             }
-            List {
-                ForEach(timeUnits) { timeUnit in
-                    HStack{
-                        VStack (alignment: .leading) {
-                            Text(timeUnit.date.asYYYYMMDD)
-                                .font(.caption)
-                            Text(timeUnit.user.name)
-                                .font(.caption2)
-                        }
-                        Spacer()
-                        Text("\(timeUnit.time.formattedAsHours) h")
-                    }
-                }
-            }
+//            List {
+//                ForEach(timeUnits) { timeUnit in
+//                    HStack{
+//                        VStack (alignment: .leading) {
+//                            Text(timeUnit.date.asYYYYMMDD)
+//                                .font(.caption)
+//                            Text(timeUnit.user.name)
+//                                .font(.caption2)
+//                        }
+//                        Spacer()
+//                        Text("\(timeUnit.time.formattedAsHours) h")
+//                    }
+//                }
+//            }
         }
         .padding()
     }

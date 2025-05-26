@@ -12,7 +12,7 @@ import SwiftUI
 struct AssignedUserPickerSheet: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
-    @Binding var selectedUser: UserData?
+    @Binding var selectedUserId: String?
     var body: some View {
         VStack {
             switch viewModel.state {
@@ -33,27 +33,24 @@ struct AssignedUserPickerSheet: View {
             case .hasData((let employees, let managers)):
                 List {
                     Section("Utförare") {
-                        AssignedUserListItem(user: nil, isSelected: selectedUser?.id == nil)
+                        AssignedUserListItem(user: nil, isSelected: selectedUserId == nil)
                             .onTapGesture {
-                                selectedUser = nil
-                                print("Tapped ingen, selectedUser = \(selectedUser?.name ?? "nil")")
+                                selectedUserId = nil
                                 dismiss()
                             }
                         ForEach(employees) { employee in
-                            AssignedUserListItem(user: employee, isSelected: selectedUser?.id == employee.id)
+                            AssignedUserListItem(user: employee, isSelected: selectedUserId == employee.id)
                                 .onTapGesture {
-                                    selectedUser = employee
-                                    print("Tapped \(employee.name), selectedUser = \(selectedUser?.name ?? "nil")")
+                                    selectedUserId = employee.id
                                     dismiss()
                                 }
                         }
                     }
                     Section("Arbetsledare") {
                         ForEach(managers) { manager in
-                            AssignedUserListItem(user: manager, isSelected: selectedUser?.id == manager.id)
+                            AssignedUserListItem(user: manager, isSelected: selectedUserId == manager.id)
                                 .onTapGesture {
-                                    selectedUser = manager
-                                    print("Tapped \(manager.name), selectedUser = \(selectedUser?.name ?? "nil")")
+                                    selectedUserId = manager.id
                                     dismiss()
                                 }
                         }
@@ -103,6 +100,6 @@ extension AssignedUserPickerSheet {
 
 #Preview {
     AssignedUserPickerSheet(
-        selectedUser: .constant(UserData(name: "Test user"))
+        selectedUserId: .constant(nil)
     )
 }

@@ -44,7 +44,7 @@ struct EmployeeHomeView: View {
 }
 
 extension EmployeeHomeView {
-
+    
     class ViewModel: ObservableObject {
         let currentUser: UserData
         @Published var myOrders: [Order] = []
@@ -53,27 +53,26 @@ extension EmployeeHomeView {
 
         init(currentUser: UserData) {
             self.currentUser = currentUser
-
             FirestoreManager.shared.listenToOrderCollection { orders in
                 self.myOrders = orders.filter {
-                    $0.assignedUser?.id == currentUser.id && $0.status != .done
+                    $0.assignedUserId == currentUser.id && $0.status != .done
                         && $0.status != .completed
                 }
-                self.unassignedOrders = orders.filter { $0.assignedUser == nil }
+                self.unassignedOrders = orders.filter { $0.assignedUserId == nil }
 
                 let allTimeUnits = orders.flatMap { $0.timeUnits }
                 let filteredTimeUnits = allTimeUnits.filter {
-                    $0.user.id == currentUser.id && $0.date.isThisMonth
+                    $0.userId == currentUser.id && $0.date.isThisMonth
                 }
                 self.myTimeUnitsThisMonth = filteredTimeUnits
 
             }
         }
 
-        ///Sets the order's `assignedUser` to the current user.
+        ///Sets the order's `assignedUserId` to the current user's id.
         func takeOrder(_ order: Order) {
             var updatedOrder = order
-            updatedOrder.assignedUser = currentUser
+            updatedOrder.assignedUserId = currentUser.id
             do {
                 try FirestoreManager.shared.updateOrder(updatedOrder)
             } catch {
@@ -81,10 +80,10 @@ extension EmployeeHomeView {
             }
         }
 
-        ///Sets an order's `assignedUser` to `nil`.
+        ///Sets an order's `assignedUserId` to `nil`.
         func leaveOrder(_ order: Order) {
             var updatedOrder = order
-            updatedOrder.assignedUser = nil
+            updatedOrder.assignedUserId = nil
             do {
                 try FirestoreManager.shared.updateOrder(updatedOrder)
             } catch {

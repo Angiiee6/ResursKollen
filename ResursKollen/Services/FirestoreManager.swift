@@ -113,6 +113,7 @@ class FirestoreManager {
         try await usersRef.document(userId).getDocument(as: UserData.self)
     }
     
+    
     /// Fetches all users' data from Firestore.
     /// - Returns: A list of `UserData` objects.
     func fetchUserDataCollection() async throws -> [UserData] {

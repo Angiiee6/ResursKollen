@@ -27,7 +27,7 @@ struct OrderDetailView: View {
         self.newTimeUnit = OrderTimeUnit(
             time: 0,
             date: Date(),
-            user: order.assignedUser ?? UserData()
+            userId: order.assignedUserId ?? ""
         )
     }
 
@@ -96,8 +96,21 @@ struct OrderDetailView: View {
                                 Text("Utförare:")
                                     .font(.headline)
                                 Spacer()
-                                Button(order.assignedUser?.name ?? "Välj") {
+                                Button(
+                                    order.assignedUserId != nil
+                                        ? viewModel.userName
+                                        : "Välj"
+                                ) {
                                     activeSheet = .assignedUser
+                                }
+                            }
+                            .onAppear {
+                                if let userId = order.assignedUserId {
+                                    Task {
+                                        await viewModel.fetchUserName(
+                                            userId: userId
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -140,7 +153,7 @@ struct OrderDetailView: View {
                                 )
                                 .font(.headline)
                             }
-                            if order.assignedUser == nil {
+                            if order.assignedUserId == nil {
                                 Text(
                                     "Lägg till utförare för att kunna lägga till tid."
                                 )
@@ -149,7 +162,6 @@ struct OrderDetailView: View {
                                 .italic()
                             } else {
                                 VStack(spacing: 24) {
-
                                     HStack {
                                         Text("Lägg till tid:")
                                         Spacer()
@@ -173,7 +185,6 @@ struct OrderDetailView: View {
                                 }
                             }
                         }
-
                         //MARK: Material
                         VStack {
                             HStack {
@@ -237,15 +248,18 @@ struct OrderDetailView: View {
 
         //MARK: onChange
         .onChange(
-            of: order.assignedUser,
+            of: order.assignedUserId,
             { _, newValue in
                 guard let newValue = newValue else {
+                    //Reset the local time state if no assigned user is selected
                     newTimeUnit.time = 0
                     return
                 }
-                newTimeUnit.user = newValue
-                print("newTimeUnit = \(String(describing: newTimeUnit))")
-
+                newTimeUnit.userId = newValue
+                //Fetch new user name if assigned user is changed
+                Task {
+                    await viewModel.fetchUserName(userId: newValue)
+                }
             }
         )
 
@@ -254,7 +268,7 @@ struct OrderDetailView: View {
             //Use a custom back button to be able to show an alert if the user presses the back button without saving.
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
-                    if order != orderOriginal {
+                    if order != orderOriginal || newTimeUnit.time != 0 {
                         activeAlert = .exit
                         alertPresent = true
                     } else {
@@ -287,10 +301,10 @@ struct OrderDetailView: View {
             case .material:
                 MaterialEditSheet(materials: $order.materialConsumption)
             case .assignedUser:
-                AssignedUserPickerSheet(selectedUser: $order.assignedUser)
+                AssignedUserPickerSheet(selectedUserId: $order.assignedUserId)
             case .timeUnits:
                 TimeUnitListSheet(timeUnits: $order.timeUnits)
-                    //Makes sheet cover about 50% of screen
+                    //Makes sheet cover only half the screen
                     .presentationDetents([.medium])
             }
 
@@ -351,11 +365,27 @@ struct OrderDetailView: View {
 //MARK: ViewModel
 extension OrderDetailView {
 
+    @MainActor
     class ViewModel: ObservableObject {
         let firestoreManager = FirestoreManager.shared
 
+        @Published var userName: String = "Unknown"
+
         func updateOrder(_ order: Order) throws {
             try firestoreManager.updateOrder(order)
+        }
+
+        func fetchUserName(userId: String) async {
+            do {
+                let user = try await firestoreManager.fetchUserData(
+                    userId: userId
+                )
+                userName = user.name
+            } catch {
+                //TODO: Error handling
+                print("Could not fetch user name.")
+            }
+
         }
     }
 
