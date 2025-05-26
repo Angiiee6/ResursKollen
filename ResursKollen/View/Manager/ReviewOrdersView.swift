@@ -12,34 +12,46 @@ import SwiftUI
 struct ReviewOrdersView: View {
     @StateObject var viewModel = ViewModel()
     var body: some View {
-        VStack {
-            switch viewModel.state {
-            case .loading:
-                ProgressView()
-            case .hasData(let orders):
-                List {
-                    ForEach(orders) { order in
-                        NavigationLink(
-                            destination: OrderDetailView(order: order, status: .manager)
-                        ) {
-                            OrderRowAllOrders(order: order)
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.11, green: 0.11, blue: 0.15),
+                    Color(red: 0.20, green: 0.20, blue: 0.25),
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .edgesIgnoringSafeArea(.all)
+            
+            VStack {
+                switch viewModel.state {
+                case .loading:
+                    ProgressView()
+                case .hasData(let orders):
+                    List {
+                        ForEach(orders) { order in
+                            NavigationLink(
+                                destination: OrderDetailView(order: order, status: .manager)
+                            ) {
+                                OrderRowAllOrders(order: order)
+                            }
                         }
                     }
+                case .noData:
+                    Text("Just nu finns det inga ordrar som behöver granskas.").foregroundColor(.white)
+                case .error(let error):
+                    Text("Något gick fel: ")
+                    Text(error.localizedDescription)
                 }
-            case .noData:
-                Text("Just nu finns det inga ordrar som behöver granskas.")
-            case .error(let error):
-                Text("Något gick fel: ")
-                Text(error.localizedDescription)
             }
-        }
-        .padding()
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink {
-                    CreateOrderView()
-                } label: {
-                    Image(systemName: "plus")
+            .padding()
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        CreateOrderView()
+                    } label: {
+                        Image(systemName: "plus")
+                    }
                 }
             }
         }

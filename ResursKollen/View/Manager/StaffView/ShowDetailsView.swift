@@ -22,8 +22,8 @@ struct ShowDetailsView: View {
                 DetailRow(icon: "person.2.fill", label: "Närmast anhörig", value: user.detailedInfo.emergencyContact)
                 
                 DetailRow(icon: "ellipsis.circle", label: "Extra info", value: user.detailedInfo.extraInfo)
-                   .listRowBackground(Color.white)
-            }
+                    
+            }.listRowBackground(Color.white.opacity(0.2))
             
         
         }

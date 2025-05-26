@@ -49,15 +49,16 @@ struct StaffDetailView: View {
                 Section(header: Text("Kontaktinformation").foregroundColor(.white)) {
                     DetailRow(icon: "envelope", label: "E-post", value: user.email)
                     DetailRow(icon: "phone", label: "Telefonnummer", value: user.phoneNumber)
-                        .listRowBackground(Color.white)
+                       
                 }
+                .listRowBackground(Color.white.opacity(0.2))
                 
                 Section(header: Text("Anställningsinformation").foregroundColor(.white)) {
                     DetailRow(icon: "person.fill.checkmark", label: "Anställningsform", value: user.detailedInfo.employmentType.employmentTypeSE )
                     DetailRow(icon: "number", label: "Anställningsnummer", value: user.employmentNumber)
                     DetailRow(icon: "calendar", label: "Anställningsdatum", value: formatDate(user.employmentDate))
-                     .listRowBackground(Color.white)
-                }
+                    
+                }.listRowBackground(Color.white.opacity(0.2))
                 
                 
                   
@@ -70,7 +71,7 @@ struct StaffDetailView: View {
                     }label: {
                         DetailRow(icon: "list.bullet.rectangle", label: "Mera information", value: "")
                     }
-                }
+                }.listRowBackground(Color.white.opacity(0.2))
                 
                 if isShowMoreInfo{
                     
@@ -80,7 +81,7 @@ struct StaffDetailView: View {
             }
             .scrollContentBackground(.hidden)
             .background(Color.clear)
-        }.ignoresSafeArea(.all)
+        }
     }
         .toolbar{
             ToolbarItem(placement: .topBarTrailing) {
@@ -121,10 +122,10 @@ struct DetailRow: View {
                 .foregroundColor(.orange)
                 .frame(width: 25)
             Text(label)
-                .foregroundColor(.black.opacity(0.7))
+                .foregroundColor(.white)
             Spacer()
             Text(value)
-                .foregroundColor(.black.opacity(0.5))
+                .foregroundColor(.white.opacity(0.5))
         }
     }
 }
