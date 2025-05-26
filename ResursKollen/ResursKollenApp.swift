@@ -24,6 +24,7 @@ struct ResursKollenApp: App {
 //                ManagerHomeView()
                 ContentView()
                     .environment(\.colorScheme, .dark)
+                    .preferredColorScheme(.dark) // Säkerställer att sheets också får dark mode
                // StaffView()
             }
         }
