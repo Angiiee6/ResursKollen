@@ -41,7 +41,7 @@ struct EmployeeHomeView: View {
             .tabItem {
                 Label("Personal", systemImage: "person.3")
             }
-        }
+        }.tint(Color.orange)
     }
 }
 

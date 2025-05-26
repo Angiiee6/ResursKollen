@@ -23,63 +23,65 @@ struct SummaryView: View {
                 endPoint: .bottom
             ).edgesIgnoringSafeArea(.all)
             // Titel
-            VStack {
-                Text("Orderöversikt")
-                    .font(.title)
-                    .foregroundColor(.white)
-                    .bold()
-                
-                // Chart
-                Chart {
-                    ForEach(vm.chartData) {data in
-                        BarMark(
-                            x: .value("Status", data.status),
-                            y: .value("Antal", data.count)
-                        )
-                        .foregroundStyle(.blue)
+            ScrollView {
+                VStack {
+                    Text("Orderöversikt")
+                        .font(.title)
+                        .foregroundColor(.white)
+                        .bold()
+                    
+                    // Chart
+                    Chart {
+                        ForEach(vm.chartData) {data in
+                            BarMark(
+                                x: .value("Status", data.status),
+                                y: .value("Antal", data.count)
+                            )
+                            .foregroundStyle(.blue)
+                            
+                        }
+                    }
+                    // X Led
+                    .chartXAxis {
+                        AxisMarks {
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel()
+                                .foregroundStyle(.white)
+                                .font(.caption)
+                        }
+                    }
+                    // Y led
+                    .chartYAxis {
+                        AxisMarks {
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel()
+                                .foregroundStyle(.white)
+                        }
+                    }
+                    .frame(height: 200)
+                    .padding()
+                    VStack(alignment: .leading) {
+                        Text("Månadens Statistik")
+                            .foregroundColor(.white)
+                    }
+                    
+                    // 4 lådorna i botten, behöver fyllas med info
+                    HStack(spacing: 50) {
+                        ShowCaseView(title: "MaterialKostnad", value: vm.totalMaterialCost, iconName: "cube.box")
+                        ShowCaseView(title: "Arbetade timmar", value: vm.totalHoursString, iconName: "clock")
+                    }
+                    
+                    HStack(spacing: 50) {
+                        ShowCaseView(title: "Arbetskostnad", value: vm.totalLaborCost, iconName: "hammer")
+                        ShowCaseView(title: "Total orderkostnad", value: vm.totalOrderCost, iconName: "hammer")
                         
                     }
+                    ShowCaseView(title: "Profit", value: vm.ProfitThisMonth, iconName: "creditcard")
+                    Spacer()
                 }
-                // X Led
-                .chartXAxis {
-                    AxisMarks {
-                        AxisGridLine()
-                        AxisTick()
-                        AxisValueLabel()
-                            .foregroundStyle(.white)
-                            .font(.caption)
-                    }
-                }
-                // Y led
-                .chartYAxis {
-                    AxisMarks {
-                        AxisGridLine()
-                        AxisTick()
-                        AxisValueLabel()
-                            .foregroundStyle(.white)
-                    }
-                }
-                .frame(height: 200)
-                .padding()
-                VStack(alignment: .leading) {
-                    Text("Månadens Statistik")
-                        .foregroundColor(.white)
-                }
-                
-                // 4 lådorna i botten, behöver fyllas med info
-                HStack(spacing: 50) {
-                    ShowCaseView(title: "MaterialKostnad", value: vm.totalMaterialCost, iconName: "cube.box")
-                    ShowCaseView(title: "Arbetade timmar", value: vm.totalHoursString, iconName: "clock")
-                }
-                
-                HStack(spacing: 50) {
-                    ShowCaseView(title: "Arbetskostnad", value: vm.totalLaborCost, iconName: "hammer")
-                    ShowCaseView(title: "Total orderkostnad", value: vm.totalOrderCost, iconName: "hammer")
-                    
-                    }
-                ShowCaseView(title: "Profit", value: vm.ProfitThisMonth, iconName: "creditcard")
-                Spacer()
-                }
+            }
             }
         }
     }

@@ -49,7 +49,7 @@ struct StaffView: View {
                                     } label: {
                                         StaffRowView(user: user)
                                     }
-                                    .listRowBackground(Color.white.opacity(0.6))
+                                    .listRowBackground(Color.white.opacity(0.2))
                                 }
                             }
                         }
@@ -66,7 +66,7 @@ struct StaffView: View {
                                 } label: {
                                     StaffRowView(user: user)
                                 }
-                                .listRowBackground(Color.white.opacity(0.6))
+                                .listRowBackground(Color.white.opacity(0.2))
                             }
                         }
                     }
@@ -115,7 +115,7 @@ struct StaffRowView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(user.name)
                 .font(.headline)
-                .foregroundColor(.black.opacity(0.7))
+                .foregroundColor(.white)
 
         }
         .padding(.vertical, 4)
