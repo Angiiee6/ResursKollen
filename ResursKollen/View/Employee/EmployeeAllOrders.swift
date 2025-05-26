@@ -54,7 +54,7 @@ struct EmployeeAllOrders: View {
                                         }
                                         .tint(.yellow)
                                     }
-                            }
+                            }.listRowBackground(Color.white.opacity(0.2))
                         }
                     }
                     Section(
@@ -87,7 +87,7 @@ struct EmployeeAllOrders: View {
                                         }
                                         .tint(.yellow)
                                     }
-                            }
+                            }.listRowBackground(Color.white.opacity(0.2))
                         }
                     }
                     Section(
@@ -118,7 +118,7 @@ struct EmployeeAllOrders: View {
                                         }
                                         .tint(.yellow)
                                     }
-                            }
+                            }.listRowBackground(Color.white.opacity(0.2))
                         }
                     }
 
@@ -136,7 +136,7 @@ struct EmployeeAllOrders: View {
                             ) {
                                 OrderRowAllOrders(order: order)
                                     .listRowBackground(Color.white)
-                            }
+                            }.listRowBackground(Color.white.opacity(0.2))
                         }
                     }
                 }

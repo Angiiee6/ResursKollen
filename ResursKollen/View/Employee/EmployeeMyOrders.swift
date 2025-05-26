@@ -39,7 +39,7 @@ struct EmployeeMyOrders: View {
                                 destination: OrderDetailView(order: order, status: .employee)
                             ) {
                                 OrderRowMyOrders(order: order)
-//                                    .listRowBackground(Color(.white.opacity(0.5))) // Light background for list items
+
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
                                             viewModel.leaveOrder(order)
@@ -51,7 +51,7 @@ struct EmployeeMyOrders: View {
                                         }
                                         .tint(.red)
                                     }
-                            }
+                            }.listRowBackground(Color.white.opacity(0.2))
                         }
                     }
                 }
