@@ -5,92 +5,100 @@ struct StaffDetailView: View {
     @State private var isEditUser = false
     @State var user: UserData
     @State private var isShowMoreInfo = false
+    @StateObject var vm = StaffDetailViewModel()
+    
     
     
     
     var body: some View {
         
         NavigationStack{
-        ZStack {
-            // Bakgrund
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.11, green: 0.11, blue: 0.15),
-                    Color(red: 0.20, green: 0.20, blue: 0.25),
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .edgesIgnoringSafeArea(.all)
-            
-            List {
-                Section {
-                    HStack {
-                        Spacer()
-                        VStack(alignment: .center, spacing: 8) {
-                            Image(systemName: "person.crop.circle.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 80, height: 80)
-                                .foregroundColor(.orange)
-                            Text(user.name)
-                                .font(.title)
-                                .fontWeight(.semibold)
-                                .foregroundColor(.white)
-                            Text(user.employmentNumber)
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
+            ZStack {
+                // Bakgrund
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(red: 0.11, green: 0.11, blue: 0.15),
+                        Color(red: 0.20, green: 0.20, blue: 0.25),
+                    ]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .edgesIgnoringSafeArea(.all)
+                
+                List {
+                    Section {
+                        HStack {
+                            Spacer()
+                            VStack(alignment: .center, spacing: 8) {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 80)
+                                    .foregroundColor(.orange)
+                                Text(user.name)
+                                    .font(.title)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white)
+                                Text(user.employmentNumber)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+                            }
+                            Spacer()
                         }
-                        Spacer()
+                        .padding(.vertical)
+                        .listRowBackground(Color.clear)
                     }
-                    .padding(.vertical)
-                    .listRowBackground(Color.clear)
-                }
-                Section(header: Text("Kontaktinformation").foregroundColor(.white)) {
-                    DetailRow(icon: "envelope", label: "E-post", value: user.email)
-                    DetailRow(icon: "phone", label: "Telefonnummer", value: user.phoneNumber)
-                       
-                }
-                .listRowBackground(Color.white.opacity(0.2))
-                
-                Section(header: Text("Anställningsinformation").foregroundColor(.white)) {
-                    DetailRow(icon: "person.fill.checkmark", label: "Anställningsform", value: user.detailedInfo.employmentType.employmentTypeSE )
-                    DetailRow(icon: "number", label: "Anställningsnummer", value: user.employmentNumber)
-                    DetailRow(icon: "calendar", label: "Anställningsdatum", value: formatDate(user.employmentDate))
+                    Section(header: Text("Kontaktinformation").foregroundColor(.white)) {
+                        DetailRow(icon: "envelope", label: "E-post", value: user.email)
+                        DetailRow(icon: "phone", label: "Telefonnummer", value: user.phoneNumber)
+                        
+                    }
+                    .listRowBackground(Color.white.opacity(0.2))
                     
-                }.listRowBackground(Color.white.opacity(0.2))
-                
-                
-                  
-//NOTE: här har jag lagt till logik för en listan med mer information, @Angie, @Vivanne plocka bort om ni tycker jag kladdat för mycket /Da
-                Section{
-                    Button{
-                        withAnimation{
-                            isShowMoreInfo.toggle()
+                    Section(header: Text("Anställningsinformation").foregroundColor(.white)) {
+                        DetailRow(icon: "person.fill.checkmark", label: "Anställningsform", value: user.detailedInfo.employmentType.employmentTypeSE )
+                        DetailRow(icon: "number", label: "Anställningsnummer", value: user.employmentNumber)
+                        DetailRow(icon: "calendar", label: "Anställningsdatum", value: formatDate(user.employmentDate))
+                        
+                    }.listRowBackground(Color.white.opacity(0.2))
+                    
+                    
+                    
+                    //NOTE: här har jag lagt till logik för en listan med mer information, @Angie, @Vivanne plocka bort om ni tycker jag kladdat för mycket /Da
+                    if vm.currentUser?.status == .manager {
+                        Section{
+                            Button{
+                                withAnimation{
+                                    isShowMoreInfo.toggle()
+                                }
+                            }label: {
+                                DetailRow(icon: "list.bullet.rectangle", label: "Mera information", value: "")
+                            }
+                        }.listRowBackground(Color.white.opacity(0.2))
+                        
+                        if isShowMoreInfo{
+                            
+                            ShowDetailsView(user: user)
+                            
                         }
-                    }label: {
-                        DetailRow(icon: "list.bullet.rectangle", label: "Mera information", value: "")
                     }
-                }.listRowBackground(Color.white.opacity(0.2))
-                
-                if isShowMoreInfo{
                     
-                        ShowDetailsView(user: user)
-                    
-                    }
+                }
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
             }
-            .scrollContentBackground(.hidden)
-            .background(Color.clear)
-        }
     }
+        
         .toolbar{
-            ToolbarItem(placement: .topBarTrailing) {
-                
-                Button{
-                    isEditUser = true
-                }label: {
-                    Label("Redigera", systemImage: "pencil")
-                        .foregroundColor(.white)
+            if vm.currentUser?.status == .manager {
+                ToolbarItem(placement: .topBarTrailing) {
+                    
+                    Button{
+                        isEditUser = true
+                    }label: {
+                        Label("Redigera", systemImage: "pencil")
+                            .foregroundColor(.white)
+                    }
                 }
             }
             
@@ -98,7 +106,11 @@ struct StaffDetailView: View {
             EditStaffView(user: $user)
                 .presentationDragIndicator(.visible)
         }
-        
+        .onAppear {
+            Task {
+                await vm.loadCurrentUser()
+            }
+        }
         
     }
     
@@ -136,4 +148,30 @@ struct DetailRow: View {
         StaffDetailView(user: UserData.UserDataMockData as UserData)
        
     }
+}
+
+extension StaffDetailView {
+    
+    class StaffDetailViewModel: ObservableObject {
+        @Published var currentUser : UserData?
+        
+        // Hämta current User
+        func loadCurrentUser() async {
+                do {
+                    // Hämta den autentiserade användaren
+                    let authenticatedUser = try AuthenticationManager.shared.getAuthenticatedUser()
+                    let uid = authenticatedUser.uid
+                    
+                    // Hämta användardata från Firestore
+                    let userData = try await FirestoreManager.shared.fetchUserData(userId: uid)
+                    
+                    // Uppdatera currentUser på huvudtråden
+                    DispatchQueue.main.async {
+                        self.currentUser = userData
+                    }
+                } catch {
+                    print("Error getting user: \(error.localizedDescription)")
+                }
+            }
+        }
 }
