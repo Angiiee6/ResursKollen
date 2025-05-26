@@ -138,7 +138,6 @@ extension MaterialEditSheetView{
             description:
                 "Dynastin styrdes av mycket vidskepliga kungar från den mytologiska stammen Shang. Dynastin grundades efter att kung Cheng Tang störtat den föregående Xiadynastin. Dynastin präglades av många krig och oroligheter, men även av stora tekniska framsteg, inte minst inom bronsgjutning som upplevde en guldålder under Shangdynastin. Shangdynastins guldålder var under kung Wu Dings regeringstid. Wu Ding bedrev många militära kampanjer mot de omgivande stammarna såsom Tufang (土方) och Guifang (鬼方) vilket resulterade i territoriella erövringar. Efter Wu Ding följde flera kungar som prioriterade nöje före stadsaffärer, vilket gjorde att kungamakten blev alltmer isolerad och tidigare underlydande grupper blev självständiga och aggressiva. Den långlivade dynastin föll slutligen efter slaget vid Muye då huset Zhou tog makten och bildade Zhoudynastin. Shangdynastin är den äldsta kinesiska dynastin med samtida skriftliga källor",
             orderNumber: "244-2359-12",
-            timeConsumption: 3.5,
             materialConsumption: [
                 Material(name: "Copper Wire", quantity: 50, price: 2.50),
                 Material(name: "Oak Plank", quantity: 10, price: 15.00),
@@ -161,7 +160,14 @@ extension MaterialEditSheetView{
                 city: "Uppsala",
                 postalCode: "75579",
                 emailAddress: "saga.andersson@gmail.com"
-            )
+            ),
+            workHours: [
+                WorkHour(time: 2.5, date: Date(timeIntervalSinceNow: -5 * 24 * 3600), user: UserData(id: "1", name: "Alice")), // 5 days ago
+                WorkHour(time: 3.0, date: Date(timeIntervalSinceNow: -4 * 24 * 3600), user: UserData(id: "2", name: "Bob")),  // 4 days ago
+                WorkHour(time: 1.5, date: Date(timeIntervalSinceNow: -3 * 24 * 3600), user: UserData(id: "3", name: "Charlie")), // 3 days ago
+                WorkHour(time: 4.0, date: Date(timeIntervalSinceNow: -2 * 24 * 3600), user: UserData(id: "4", name: "Diana")), // 2 days ago
+                WorkHour(time: 2.0, date: Date(), user: UserData(id: "5", name: "Eve")) // Today
+            ]
         )
         
     

@@ -13,6 +13,7 @@ struct OrderDetailView: View {
     @StateObject var viewModel = ViewModel()
 
     @State var order: Order
+    @State var newWorkHour: WorkHour?
 
     //Used to compare changes to an order to be able to show an alert if the user clicks the back button without saving
     let orderOriginal: Order
@@ -23,6 +24,11 @@ struct OrderDetailView: View {
         self.order = order
         self.orderOriginal = order
         self.employmentStatus = status
+        guard let assignedUser = order.assignedUser else {
+            self.newWorkHour = nil
+            return
+        }
+        self.newWorkHour = WorkHour(time: 0, date: Date(), user: assignedUser)
     }
 
     //Sheets & alerts
@@ -122,20 +128,9 @@ struct OrderDetailView: View {
                         }
                         Divider()
                         //MARK: Time consumption
-                        HStack {
-                            Text("Tidsåtgång:")
-                                .font(.headline)
-                            Spacer()
-                            Text(order.timeConsumption.formattedAsHours)
-                            Stepper(
-                                value: $order.timeConsumption,
-                                in: 0...Double.infinity,
-                                step: 0.5
-                            ) {
-                                Text("h")
-                            }
-                            .frame(maxWidth: 130)
-                        }
+                        
+                        
+                        
                         //MARK: Material
                         VStack {
                             HStack {

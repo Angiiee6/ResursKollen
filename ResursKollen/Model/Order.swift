@@ -15,12 +15,18 @@ struct Order: Codable, Identifiable, Equatable {
     var workPerformed: String = ""
     var creationDate = Date()
     var orderNumber: String
-    var timeConsumption: Double = 0
     var materialConsumption: [Material] = []
     var status: OrderStatus
     var dueDate: Date
     var customer: Customer
     var assignedUser: UserData?
+    var workHours: [WorkHour] = []
+
+    
+    /// - Returns sum of hours worked on an order.
+    var totalTimeWorked: Double {
+        workHours.map { $0.time }.reduce(0, +)
+    }
 
     /// - Returns sum of the price of all listed materials on the order.
     var totalMaterialCost: Double {
@@ -33,7 +39,7 @@ struct Order: Codable, Identifiable, Equatable {
 
     /// - Returns `timeConsumption * labor cost`
     var totalLaborCost: Double {
-        timeConsumption * 539
+        totalTimeWorked * 539
     }
 
     /// - Returns the sum of all labor and material costs.
@@ -44,7 +50,7 @@ struct Order: Codable, Identifiable, Equatable {
     //To make Order conform to Equatable
     static func == (lhs: Order, rhs: Order) -> Bool {
         return lhs.workPerformed == rhs.workPerformed
-            && lhs.timeConsumption == rhs.timeConsumption
+            && lhs.totalTimeWorked == rhs.totalTimeWorked
             && lhs.materialConsumption == rhs.materialConsumption
             && lhs.status == rhs.status
             && lhs.assignedUser == rhs.assignedUser

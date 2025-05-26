@@ -1,19 +1,24 @@
-
-
 import FirebaseAuth
 import SwiftUI
 
 struct StaffView: View {
     @StateObject private var viewModel = StaffViewViewModel()
     @State private var isAddNewEmployeePresented = false
-    
-   // Sorterar namnen på chefer
+    let userStatus: EmploymentStatus
+
+    // Sorterar namnen på chefer
     private var managers: [UserData] {
-        viewModel.user.filter { $0.status == .manager }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        viewModel.user.filter { $0.status == .manager }.sorted {
+            $0.name.localizedCaseInsensitiveCompare($1.name)
+                == .orderedAscending
+        }
     }
     // Sorterar namnen på anställda
     private var employees: [UserData] {
-        viewModel.user.filter { $0.status == .employee }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        viewModel.user.filter { $0.status == .employee }.sorted {
+            $0.name.localizedCaseInsensitiveCompare($1.name)
+                == .orderedAscending
+        }
     }
 
     var body: some View {
@@ -28,12 +33,16 @@ struct StaffView: View {
                     endPoint: .bottom
                 )
                 .edgesIgnoringSafeArea(.all)
-                
+
                 VStack(alignment: .leading, spacing: 16) {
                     List {
-                        // Avdelning för chefer
+                        //MARK: Manager
                         if !managers.isEmpty {
-                            Section(header: Text(EmploymentStatus.manager.nameSE.capitalized).foregroundColor(.orange)) {
+                            Section(
+                                header: Text(
+                                    EmploymentStatus.manager.nameSE.capitalized
+                                ).foregroundColor(.orange)
+                            ) {
                                 ForEach(managers, id: \.id) { user in
                                     NavigationLink {
                                         StaffDetailView(user: user)
@@ -44,9 +53,13 @@ struct StaffView: View {
                                 }
                             }
                         }
-                        
-                        // Avdelning för anställda
-                        Section(header: Text(EmploymentStatus.employee.nameSE.capitalized).foregroundColor(.orange)) {
+
+                        //MARK: Staff
+                        Section(
+                            header: Text(
+                                EmploymentStatus.employee.nameSE.capitalized
+                            ).foregroundColor(.orange)
+                        ) {
                             ForEach(employees, id: \.id) { user in
                                 NavigationLink {
                                     StaffDetailView(user: user)
@@ -62,26 +75,29 @@ struct StaffView: View {
                     .scrollContentBackground(.hidden)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbarColorScheme(.dark, for: .navigationBar)
-                    
-                    Button(action: {
-                        isAddNewEmployeePresented = true
-                    }) {
-                        HStack {
-                            Image(systemName: "plus.circle.fill")
-                            Text("Lägg till anställd")
+
+                    //MARK: Add employee button
+                    if userStatus == .manager {
+                        Button(action: {
+                            isAddNewEmployeePresented = true
+                        }) {
+                            HStack {
+                                Image(systemName: "plus.circle.fill")
+                                Text("Lägg till anställd")
+                            }
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.orange)
+                            .cornerRadius(12)
+                            .padding(.horizontal)
+                            .padding(20)
                         }
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.orange)
-                        .cornerRadius(12)
-                        .padding(.horizontal)
-                        .padding(20)
-                    }
-                    .sheet(isPresented: $isAddNewEmployeePresented) {
-                        AddEmployeeView()
-                            .presentationDragIndicator(.visible)
+                        .sheet(isPresented: $isAddNewEmployeePresented) {
+                            AddEmployeeView()
+                                .presentationDragIndicator(.visible)
+                        }
                     }
                 }
             }
@@ -94,7 +110,7 @@ struct StaffView: View {
 
 struct StaffRowView: View {
     let user: UserData
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(user.name)
@@ -113,16 +129,15 @@ final class StaffViewViewModel: ObservableObject {
     func loadUsers() async throws {
         self.user = try await UsersManager.shared.getAllUser()
     }
-    
+
     func updateStaff(user: UserData) throws {
         try? UsersManager.shared.updateUser(user: user)
     }
-    
-    
+
 }
 
 #Preview {
     NavigationStack {
-        StaffView()
+        StaffView(userStatus: .manager)
     }
 }
