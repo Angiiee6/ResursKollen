@@ -20,12 +20,13 @@ struct Order: Codable, Identifiable, Equatable {
     var dueDate: Date
     var customer: Customer
     var assignedUser: UserData?
-    var workHours: [WorkHour] = []
+    var timeUnits: [OrderTimeUnit] = []
+    
 
     
     /// - Returns sum of hours worked on an order.
     var totalTimeWorked: Double {
-        workHours.map { $0.time }.reduce(0, +)
+        timeUnits.map { $0.time }.reduce(0, +)
     }
 
     /// - Returns sum of the price of all listed materials on the order.
@@ -39,6 +40,7 @@ struct Order: Codable, Identifiable, Equatable {
 
     /// - Returns `timeConsumption * labor cost`
     var totalLaborCost: Double {
+        //TODO: Find a good solution for storing the cost per hour
         totalTimeWorked * 539
     }
 
@@ -46,11 +48,12 @@ struct Order: Codable, Identifiable, Equatable {
     var totalOrderCost: Double {
         totalLaborCost + totalMaterialCost
     }
+    
 
     //To make Order conform to Equatable
     static func == (lhs: Order, rhs: Order) -> Bool {
         return lhs.workPerformed == rhs.workPerformed
-            && lhs.totalTimeWorked == rhs.totalTimeWorked
+            && lhs.timeUnits == rhs.timeUnits
             && lhs.materialConsumption == rhs.materialConsumption
             && lhs.status == rhs.status
             && lhs.assignedUser == rhs.assignedUser

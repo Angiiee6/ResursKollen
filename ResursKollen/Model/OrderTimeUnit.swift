@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct WorkHour : Codable {
+struct OrderTimeUnit : Codable, Equatable, Identifiable {
+    var id = UUID().uuidString
     var time: Double
     var date: Date
     var user: UserData

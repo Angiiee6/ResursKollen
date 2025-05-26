@@ -13,7 +13,7 @@ struct OrderDetailView: View {
     @StateObject var viewModel = ViewModel()
 
     @State var order: Order
-    @State var newWorkHour: WorkHour?
+    @State var newTimeUnit: OrderTimeUnit
 
     //Used to compare changes to an order to be able to show an alert if the user clicks the back button without saving
     let orderOriginal: Order
@@ -24,11 +24,11 @@ struct OrderDetailView: View {
         self.order = order
         self.orderOriginal = order
         self.employmentStatus = status
-        guard let assignedUser = order.assignedUser else {
-            self.newWorkHour = nil
-            return
-        }
-        self.newWorkHour = WorkHour(time: 0, date: Date(), user: assignedUser)
+        self.newTimeUnit = OrderTimeUnit(
+            time: 0,
+            date: Date(),
+            user: order.assignedUser ?? UserData()
+        )
     }
 
     //Sheets & alerts
@@ -43,11 +43,13 @@ struct OrderDetailView: View {
     //All possible sheets to show
     enum ActiveSheet: Identifiable {
         ///For entering text about what has been done on an order.
-        case workDone
+        case workPerformedText
         ///For editing any materials on an order.
         case material
         ///For updating the assigned user on an order (managers only).
         case assignedUser
+        ///For showing a list of an order's time units.
+        case timeUnits
 
         var id: Self { self }
     }
@@ -122,15 +124,56 @@ struct OrderDetailView: View {
                             HStack {
                                 Spacer()
                                 Button("Ändra/lägg till text") {
-                                    activeSheet = .workDone
+                                    activeSheet = .workPerformedText
                                 }
                             }
                         }
                         Divider()
                         //MARK: Time consumption
-                        
-                        
-                        
+                        VStack(spacing: 24) {
+                            HStack {
+                                Text("Total tid på order:")
+                                    .font(.headline)
+                                Spacer()
+                                Text(
+                                    "\((newTimeUnit.time + order.totalTimeWorked).formattedAsHours) h"
+                                )
+                                .font(.headline)
+                            }
+                            if order.assignedUser == nil {
+                                Text(
+                                    "Lägg till utförare för att kunna lägga till tid."
+                                )
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                                .italic()
+                            } else {
+                                VStack(spacing: 24) {
+
+                                    HStack {
+                                        Text("Lägg till tid:")
+                                        Spacer()
+                                        Text(newTimeUnit.time.formattedAsHours)
+                                        Stepper(
+                                            value: $newTimeUnit.time,
+                                            in: 0...Double.infinity,
+                                            step: 0.5
+                                        ) {
+                                            Text("h")
+                                        }
+                                        .frame(maxWidth: 130)
+                                    }
+                                }
+
+                            }
+                            HStack {
+                                Spacer()
+                                Button("Detaljer") {
+                                    activeSheet = .timeUnits
+                                }
+                            }
+                        }
+
                         //MARK: Material
                         VStack {
                             HStack {
@@ -162,11 +205,20 @@ struct OrderDetailView: View {
                 .scrollIndicators(.hidden)
                 Spacer()
                 //MARK: Summary
-                SummaryBox(order: order)
+                PriceSummaryBox(
+                    totalLaborCost: (order.totalLaborCost
+                        + (newTimeUnit.time
+                            //TODO: Replace with real hourly cost when implemented
+                            * 539)),
+                    totalMaterialCost: order.totalMaterialCost
+                )
 
                 //MARK: Save button
                 Button("Spara") {
                     do {
+                        if newTimeUnit.time > 0 {
+                            order.timeUnits.append(newTimeUnit)
+                        }
                         try viewModel.updateOrder(order)
                         dismiss()
                     } catch {
@@ -183,8 +235,22 @@ struct OrderDetailView: View {
             .navigationTitle(order.orderNumber)
         }
 
+        //MARK: onChange
+        .onChange(
+            of: order.assignedUser,
+            { _, newValue in
+                guard let newValue = newValue else {
+                    newTimeUnit.time = 0
+                    return
+                }
+                newTimeUnit.user = newValue
+                print("newTimeUnit = \(String(describing: newTimeUnit))")
+
+            }
+        )
+
         //MARK: Toolbar
-        .toolbar(content: {
+        .toolbar {
             //Use a custom back button to be able to show an alert if the user presses the back button without saving.
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
@@ -212,24 +278,20 @@ struct OrderDetailView: View {
                     }
                 }
             }
-        })
+        }
         //MARK: Sheets
         .sheet(item: $activeSheet) { activeSheet in
             switch activeSheet {
-            case .workDone:
-                VStack {
-                    Text("Utfört arbete: ")
-                    TextEditor(text: $order.workPerformed)
-                    Spacer()
-                    Button("Klar") {
-                        self.activeSheet = nil
-                    }
-                }
-                .padding()
+            case .workPerformedText:
+                WorkPerformedTextSheet(workPerformedText: $order.workPerformed)
             case .material:
-                MaterialEditSheetView(materials: $order.materialConsumption)
+                MaterialEditSheet(materials: $order.materialConsumption)
             case .assignedUser:
                 AssignedUserPickerSheet(selectedUser: $order.assignedUser)
+            case .timeUnits:
+                TimeUnitListSheet(timeUnits: $order.timeUnits)
+                    //Makes sheet cover about 50% of screen
+                    .presentationDetents([.medium])
             }
 
         }
