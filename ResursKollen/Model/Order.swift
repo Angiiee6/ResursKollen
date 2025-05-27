@@ -22,9 +22,7 @@ struct Order: Codable, Identifiable, Equatable {
     var customer: Customer
     var assignedUserId: String?
     var timeUnits: [OrderTimeUnit] = []
-    
 
-    
     /// - Returns sum of hours worked on an order.
     var totalTimeWorked: Double {
         timeUnits.map { $0.time }.reduce(0, +)
@@ -32,11 +30,7 @@ struct Order: Codable, Identifiable, Equatable {
 
     /// - Returns sum of the price of all listed materials on the order.
     var totalMaterialCost: Double {
-        var sum: Double = 0
-        for material in materialConsumption {
-            sum += material.totalPrice
-        }
-        return sum
+        materialConsumption.map { $0.totalPrice }.reduce(0, +)
     }
 
     /// - Returns `timeConsumption * labor cost`
@@ -49,7 +43,6 @@ struct Order: Codable, Identifiable, Equatable {
     var totalOrderCost: Double {
         totalLaborCost + totalMaterialCost
     }
-    
 
     //To make Order conform to Equatable
     static func == (lhs: Order, rhs: Order) -> Bool {

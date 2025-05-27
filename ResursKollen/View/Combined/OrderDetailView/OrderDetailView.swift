@@ -97,9 +97,7 @@ struct OrderDetailView: View {
                                     .font(.headline)
                                 Spacer()
                                 Button(
-                                    order.assignedUserId != nil
-                                        ? viewModel.userName
-                                        : "Välj"
+                                    viewModel.currentUserInfo?.name ?? "Välj"
                                 ) {
                                     activeSheet = .assignedUser
                                 }
@@ -107,9 +105,14 @@ struct OrderDetailView: View {
                             .onAppear {
                                 if let userId = order.assignedUserId {
                                     Task {
-                                        await viewModel.fetchUserName(
-                                            userId: userId
-                                        )
+                                        do {
+                                            try await viewModel.fetchUserName(
+                                                userId: userId
+                                            )
+                                        } catch {
+                                            activeAlert = .error(error)
+                                            alertPresent = true
+                                        }
                                     }
                                 }
                             }
@@ -245,21 +248,19 @@ struct OrderDetailView: View {
             //MARK: Nav title
             .navigationTitle(order.orderNumber)
         }
-
+        
         //MARK: onChange
         .onChange(
-            of: order.assignedUserId,
+            //Update the local state of assignedUser and newTimeUnit depending on new selected user
+            of: viewModel.currentUserInfo?.id,
             { _, newValue in
-                guard let newValue = newValue else {
-                    //Reset the local time state if no assigned user is selected
+                guard let existinUserId = newValue else {
                     newTimeUnit.time = 0
+                    order.assignedUserId = nil
                     return
                 }
-                newTimeUnit.userId = newValue
-                //Fetch new user name if assigned user is changed
-                Task {
-                    await viewModel.fetchUserName(userId: newValue)
-                }
+                newTimeUnit.userId = existinUserId
+                order.assignedUserId = existinUserId
             }
         )
 
@@ -301,7 +302,7 @@ struct OrderDetailView: View {
             case .material:
                 MaterialEditSheet(materials: $order.materialConsumption)
             case .assignedUser:
-                AssignedUserPickerSheet(selectedUserId: $order.assignedUserId)
+                AssignedUserPickerSheet(viewModel: viewModel)
             case .timeUnits:
                 TimeUnitListSheet(timeUnits: $order.timeUnits)
                     //Makes sheet cover only half the screen
@@ -369,23 +370,40 @@ extension OrderDetailView {
     class ViewModel: ObservableObject {
         let firestoreManager = FirestoreManager.shared
 
-        @Published var userName: String = "Unknown"
+        @Published var currentUserInfo: (id: String, name: String)?
+        @Published var allUsersDataState: AllUsersDataState = .loading
+
+        private(set) var allUsersNotFetched = true
+
+        enum AllUsersDataState {
+            case loading
+            case noData
+            case hasData(employees: [UserData], managers: [UserData])
+            case error(Error)
+        }
 
         func updateOrder(_ order: Order) throws {
             try firestoreManager.updateOrder(order)
         }
 
-        func fetchUserName(userId: String) async {
-            do {
-                let user = try await firestoreManager.fetchUserData(
-                    userId: userId
-                )
-                userName = user.name
-            } catch {
-                //TODO: Error handling
-                print("Could not fetch user name.")
-            }
+        func fetchUserName(userId: String) async throws {
+            let user = try await firestoreManager.fetchUserData(userId: userId)
+            currentUserInfo = (id: user.id, name: user.name)
+        }
 
+        func fetchAllUsers() async {
+            allUsersDataState = .loading
+            do {
+                let allUsers = try await FirestoreManager.shared
+                    .fetchUserDataCollection()
+                allUsersDataState = .hasData(
+                    employees: allUsers.filter { $0.status == .employee },
+                    managers: allUsers.filter { $0.status == .manager }
+                )
+                allUsersNotFetched = false
+            } catch {
+                allUsersDataState = .error(error)
+            }
         }
     }
 
