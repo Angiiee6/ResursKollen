@@ -49,16 +49,16 @@ struct StaffDetailView: View {
                         .listRowBackground(Color.clear)
                     }
                     Section(header: Text("Kontaktinformation").foregroundColor(.white)) {
-                        DetailRow(icon: "envelope", label: "E-post", value: user.email)
-                        DetailRow(icon: "phone", label: "Telefonnummer", value: user.phoneNumber)
+                        DetailRow(icon: "envelope", label: "E-post", value: user.email, isPhoneNumber: false)
+                        DetailRow(icon: "phone", label: "Telefonnummer", value: user.phoneNumber, isPhoneNumber: true)
                         
                     }
                     .listRowBackground(Color.white.opacity(0.2))
                     
                     Section(header: Text("Anställningsinformation").foregroundColor(.white)) {
-                        DetailRow(icon: "person.fill.checkmark", label: "Anställningsform", value: user.detailedInfo.employmentType.employmentTypeSE )
-                        DetailRow(icon: "number", label: "Anställningsnummer", value: user.employmentNumber)
-                        DetailRow(icon: "calendar", label: "Anställningsdatum", value: formatDate(user.employmentDate))
+                        DetailRow(icon: "person.fill.checkmark", label: "Anställningsform", value: user.detailedInfo.employmentType.employmentTypeSE,isPhoneNumber: false )
+                        DetailRow(icon: "number", label: "Anställningsnummer", value: user.employmentNumber, isPhoneNumber: false)
+                        DetailRow(icon: "calendar", label: "Anställningsdatum", value: formatDate(user.employmentDate), isPhoneNumber: false)
                         
                     }.listRowBackground(Color.white.opacity(0.2))
                     
@@ -72,7 +72,7 @@ struct StaffDetailView: View {
                                     isShowMoreInfo.toggle()
                                 }
                             }label: {
-                                DetailRow(icon: "list.bullet.rectangle", label: "Mera information", value: "")
+                                DetailRow(icon: "list.bullet.rectangle", label: "Mera information", value: "", isPhoneNumber: false)
                             }
                         }.listRowBackground(Color.white.opacity(0.2))
                         
@@ -127,6 +127,7 @@ struct DetailRow: View {
     let icon: String
     let label: String
     let value: String
+    let isPhoneNumber: Bool
     
     var body: some View {
         HStack {
@@ -136,8 +137,16 @@ struct DetailRow: View {
             Text(label)
                 .foregroundColor(.white)
             Spacer()
-            Text(value)
-                .foregroundColor(.white.opacity(0.5))
+            if isPhoneNumber, let url = URL(string: "tel://\(value.filter {$0.isNumber})") {
+                Link(value, destination: url)
+                    .foregroundColor(.blue)
+            }
+            else {
+                Text(value)
+                    .foregroundColor(.white.opacity(0.5))
+            }
+            
+            
         }
     }
 }
@@ -157,21 +166,24 @@ extension StaffDetailView {
         
         // Hämta current User
         func loadCurrentUser() async {
-                do {
-                    // Hämta den autentiserade användaren
-                    let authenticatedUser = try AuthenticationManager.shared.getAuthenticatedUser()
-                    let uid = authenticatedUser.uid
-                    
-                    // Hämta användardata från Firestore
-                    let userData = try await FirestoreManager.shared.fetchUserData(userId: uid)
-                    
-                    // Uppdatera currentUser på huvudtråden
-                    DispatchQueue.main.async {
-                        self.currentUser = userData
-                    }
-                } catch {
-                    print("Error getting user: \(error.localizedDescription)")
+            do {
+                // Hämta den autentiserade användaren
+                let authenticatedUser = try AuthenticationManager.shared.getAuthenticatedUser()
+                let uid = authenticatedUser.uid
+                
+                // Hämta användardata från Firestore
+                let userData = try await FirestoreManager.shared.fetchUserData(userId: uid)
+                
+                // Uppdatera currentUser på huvudtråden
+                DispatchQueue.main.async {
+                    self.currentUser = userData
                 }
+            } catch {
+                print("Error getting user: \(error.localizedDescription)")
             }
         }
+        func startPhone() {
+            
+        }
+    }
 }
