@@ -9,31 +9,35 @@ import SwiftUI
 
 struct CustomerDetailCard: View {
     let customer: Customer
-    var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
+    
+        var body: some View {
+            VStack(alignment: .leading, spacing: 8) {
                 Text(customer.name)
                     .font(.headline)
-                Group {
-                    Text(customer.streetName)
-                    Text(customer.postalCode)
-                    Text(customer.city)
+                //Klickbar address
+                Button(action: {
+                    customer.openInMaps()
+                }) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(customer.streetName)
+                        Text("\(customer.postalCode) \(customer.city)")
+                    }
+                    .foregroundColor(.blue)
+                    .underline() // Understruket för tydlighet
                 }
-                .font(.subheadline)
+                Text(customer.phoneNumber)
             }
-            Spacer()
-            Text(customer.phoneNumber)
+            .padding(12)
+            // .background(.secondary.opacity(0.35))
+            .clipShape(RoundedRectangle(cornerRadius: 5))
+            .overlay(
+                RoundedRectangle(cornerRadius: 5)
+                    .stroke(.orange.opacity(0.75), lineWidth: 1)
+            )
+            
         }
-        .padding(12)
-       // .background(.secondary.opacity(0.35))
-        .clipShape(RoundedRectangle(cornerRadius: 5))
-        .overlay(
-            RoundedRectangle(cornerRadius: 5)
-                .stroke(.orange.opacity(0.75), lineWidth: 1)
-        )
-        
     }
-}
+
 
 #Preview {
     CustomerDetailCard(customer: Customer(name: "Anna Andersson", phoneNumber: "070123456", orders: [], streetName: "Kungsgatan 27", city: "Uppsala", postalCode: "75621", emailAddress: "annaandersson@gmail.com"))
