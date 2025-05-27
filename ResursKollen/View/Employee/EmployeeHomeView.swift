@@ -33,9 +33,8 @@ struct EmployeeHomeView: View {
                         .tabItem {
                             Label(
                                 "Mina Ordrar",
-                                systemImage: "list.bullet.clipboard"
-                            )
-                        }
+                                systemImage: "list.bullet.clipboard")
+                        }.badge(viewModel.myOrders.count)
                 
                     EmployeeAllOrders(viewModel: viewModel)
                         .tabItem {
@@ -43,7 +42,7 @@ struct EmployeeHomeView: View {
                                 "Alla Ordrar",
                                 systemImage: "list.bullet.clipboard"
                             )
-                        }
+                        }.badge(viewModel.unassignedOrders.count)
                     
                     StaffView()
                         .tabItem {
