@@ -7,42 +7,94 @@
 
 import SwiftUI
 
-struct MessagesView: View {
-    @State private var messageText = ""
-    @State private var messages: [String] = []
+
+
+@MainActor
+final class MessageViewViewModel: ObservableObject {
+   
     
-    var body: some View {
-        VStack {
-            List(messages, id: \.self) { message in
-                Text(message)
-                    .padding()
-                    .background(Color.blue.opacity(0.2))
-                    .cornerRadius(8)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-            
-            HStack {
-                TextField("Skriv meddelande...", text: $messageText)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                
-                Button(action: {
-                    // sendMessage()
-                }) {
-                    Text("Skicka")
-                        .padding(.horizontal)
-                        .padding(.vertical, 8)
-                        .background(messageText.isEmpty ? Color.gray : Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
-                }
-                .disabled(messageText.isEmpty)
-            }
-            .padding()
+    func saveMessage(message: Message)async throws{
+        guard !message.title.isEmpty && !message.text.isEmpty else {
+            print("Saknar titel och text")
+            return
         }
-        .navigationTitle("Meddelanden till anställda")
+        
+        do {
+            try await MessagesManger.shared.writeNewMessage(message: message)
+        } catch let error {
+            print("Fel vi skrivande av meddallnde \(error)")
+        }
+        
     }
     
 }
+
+
+struct MessagesView: View {
+    
+    
+    @ObservedObject var viewmodel: MessageViewViewModel = MessageViewViewModel()
+    @State private var title = ""
+    @State private var text = ""
+    @State private var category: MessagesCategory = .general
+       
+       var body: some View {
+           NavigationView {
+               Form {
+                   Section(header: Text("Rubrik")) {
+                       TextField("Ange rubrik", text: $title)
+                   }
+                   
+                   Section(header: Text("Meddelande")) {
+                       TextEditor(text: $text)
+                           .frame(height: 150)
+                   }
+                   
+                   Section(header: Text("Kategori")) {
+                       Picker("Kategori", selection: $category) {
+                           ForEach(MessagesCategory.allCases, id: \.self) { category in
+                               Text(category.MessagesCategorySE)
+                                   .tag(category)
+                           }
+                       }
+                   }
+                   
+                   Section {
+                       Button(action: submitMessage) {
+                           Text("Skicka meddelande")
+                               .frame(maxWidth: .infinity, alignment: .center)
+                               .foregroundColor(.white)
+                               .padding()
+                               .cornerRadius(10)
+                       }
+                       .disabled(title.isEmpty || text.isEmpty)
+                   }
+               }
+               .navigationTitle("Nytt Meddelande")
+           }
+       }
+
+       private func submitMessage() {
+           let newMessage = Message(
+            title: title,
+            text: text,
+           category: category)
+           
+           Task{
+               try? await  viewmodel.saveMessage(message: newMessage)
+               
+           }
+          
+           print("Meddelande skickat:", newMessage)
+           
+           // Nollställ formuläret
+          title = ""
+         text = ""
+           category = .general
+       }
+   }
+    
+
 #Preview {
-    MessagesView()
+   // MessagesView()
 }
