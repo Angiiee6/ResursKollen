@@ -61,7 +61,7 @@ struct NewMessageEditView: View {
                    
                    Section {
                        Button(action: submitMessage) {
-                           Text("Skicka meddelande")
+                           Text("publicera")
                                .frame(maxWidth: .infinity, alignment: .center)
                                .foregroundColor(.white)
                                .padding()

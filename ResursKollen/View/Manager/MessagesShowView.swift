@@ -35,7 +35,7 @@ struct MessagesShowView: View {
                         Text(message.text)
                             .font(.subheadline)
                             .foregroundColor(.white.opacity(0.8))
-                            .lineLimit(2)
+                            .lineLimit(4)
                             .fixedSize(horizontal: false, vertical: true)
                         
                         Spacer()
@@ -45,7 +45,7 @@ struct MessagesShowView: View {
                             .foregroundColor(.white.opacity(0.6))
                     }
                     .padding()
-                    .frame(width: 250, height: 140) // <- garanterad storlek
+                    .frame(width: 250, height: 160)
                     .background(message.category.color)
                     .cornerRadius(20)
                 }
