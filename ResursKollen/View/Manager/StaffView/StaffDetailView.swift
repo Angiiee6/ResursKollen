@@ -10,6 +10,7 @@ struct StaffDetailView: View {
     
     
     
+    
     var body: some View {
         
         NavigationStack{
@@ -128,6 +129,9 @@ struct DetailRow: View {
     let label: String
     let value: String
     let isPhoneNumber: Bool
+    @State private var showOptions = false
+    
+    @ObservedObject private var vm = StaffViewViewModel()
     
     var body: some View {
         HStack {
@@ -137,25 +141,56 @@ struct DetailRow: View {
             Text(label)
                 .foregroundColor(.white)
             Spacer()
-            if isPhoneNumber, let url = URL(string: "tel://\(value.filter {$0.isNumber})") {
-                Link(value, destination: url)
-                    .foregroundColor(.blue)
-            }
-            else {
+            if isPhoneNumber {
+                Button(action: {
+                    showOptions = true
+                }) {
+                    Text(value)
+                        .foregroundColor(.blue)
+                }
+                .confirmationDialog("Vad vill du göra?", isPresented: $showOptions, titleVisibility: .visible) {
+                    Button("Ringa") {
+                        callNumber(value)
+                    }
+                    
+                    Button("Skicka SMS") {
+                        sendSMS(value)
+                    }
+                    Button("Avbryt", role: .cancel) {}
+                }
+            } else {
                 Text(value)
-                    .foregroundColor(.white.opacity(0.5))
+                    .foregroundColor(.white)
             }
-            
-            
         }
     }
 }
+// funktion för att ringa
+private func callNumber(_ number: String) {
+    let cleaned = number.filter { $0.isNumber }
+    if let url = URL(string: "tel://\(cleaned)"),
+       UIApplication.shared.canOpenURL(url) {
+        UIApplication.shared.open(url)
+    } else {
+        print(" Kunde inte ringa numret: \(number)")
+    }
+}
 
+    //  Funktion för att skicka sms
+private func sendSMS(_ number: String) {
+    let cleaned = number.filter { $0.isNumber }
+    if let url = URL(string: "sms:\(cleaned)"),
+       UIApplication.shared.canOpenURL(url) {
+        UIApplication.shared.open(url)
+    } else {
+        print(" Kunde inte öppna SMS till: \(number)")
+    }
+}
 #Preview {
     NavigationStack {
         
         StaffDetailView(user: UserData.UserDataMockData as UserData)
-       
+        
     }
 }
 
@@ -181,9 +216,6 @@ extension StaffDetailView {
             } catch {
                 print("Error getting user: \(error.localizedDescription)")
             }
-        }
-        func startPhone() {
-            
         }
     }
 }
