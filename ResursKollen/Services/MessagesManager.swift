@@ -8,9 +8,9 @@
 import Foundation
 import FirebaseFirestore
 
-final class MessagesManger{
+final class MessagesManager{
     
-    static let shared = MessagesManger()
+    static let shared = MessagesManager()
     private init() {}
     
     private let messagesCollection = Firestore.firestore().collection("messages")

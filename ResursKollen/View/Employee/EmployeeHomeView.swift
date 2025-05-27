@@ -20,36 +20,36 @@ struct EmployeeHomeView: View {
     var body: some View {
 
         NavigationStack {
-
-            NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true), isActive: $isLoggedOut) {
+            
+            NavigationLink(
+                destination: ContentView().navigationBarBackButtonHidden(true),
+                isActive: $isLoggedOut
+            ) {
                 EmptyView()
             }
-
+            
             TabView {
-
-                EmployeeMyOrders(viewModel: viewModel)
-                    .tabItem {
-                        Label(
-                            "Mina Ordrar",
-                            systemImage: "list.bullet.clipboard"
-                        )
-                    }
-
-                EmployeeAllOrders(viewModel: viewModel)
-
-                    .tabItem {
-                        Label(
-                            "Alla Ordrar",
-                            systemImage: "list.bullet.clipboard"
-                        )
-                    }
-
-                StaffView()
-
-                    .tabItem {
-                        Label("Personal", systemImage: "person.3")
-                    }
-            }.tint(Color.orange)
+                    EmployeeMyOrders(viewModel: viewModel)
+                        .tabItem {
+                            Label(
+                                "Mina Ordrar",
+                                systemImage: "list.bullet.clipboard"
+                            )
+                        }
+                
+                    EmployeeAllOrders(viewModel: viewModel)
+                        .tabItem {
+                            Label(
+                                "Alla Ordrar",
+                                systemImage: "list.bullet.clipboard"
+                            )
+                        }
+                    
+                    StaffView()
+                        .tabItem {
+                            Label("Personal", systemImage: "person.3")
+                        }
+                }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
@@ -67,16 +67,19 @@ struct EmployeeHomeView: View {
                         }
                     }
                 }
+            }.tint(Color.orange)
+        
         }
-    }
 }
 
-extension EmployeeHomeView {
 
+extension EmployeeHomeView {
+    
     class ViewModel: ObservableObject {
         let currentUser: UserData
         @Published var myOrders: [Order] = []
         @Published var unassignedOrders: [Order] = []
+        @Published var messages: [Message] = []
 
         init(currentUser: UserData) {
             self.currentUser = currentUser
@@ -89,7 +92,8 @@ extension EmployeeHomeView {
                 self.unassignedOrders = orders.filter { $0.assignedUser == nil }
             }
         }
-
+                
+        
         ///Sets the order's `assignedUser` to the current user.
         func takeOrder(_ order: Order) {
             var updatedOrder = order

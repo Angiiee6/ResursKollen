@@ -20,7 +20,7 @@ final class MessageViewViewModel: ObservableObject {
         }
         
         do {
-            try await MessagesManger.shared.writeNewMessage(message: message)
+            try await MessagesManager.shared.writeNewMessage(message: message)
         } catch let error {
             print("Fel vi skrivande av meddallnde \(error)")
         }
@@ -30,7 +30,7 @@ final class MessageViewViewModel: ObservableObject {
 }
 
 
-struct MessagesView: View {
+struct NewMessageEditView: View {
     
     
     @ObservedObject var viewmodel: MessageViewViewModel = MessageViewViewModel()
