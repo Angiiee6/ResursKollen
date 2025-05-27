@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ManagerHomeView: View {
 
+    @State private var isLoggedOut = false
     ///EXEMPEL USER
     let exampleUser = UserData(
         id: "1",
@@ -20,40 +21,67 @@ struct ManagerHomeView: View {
     )
 
     var body: some View {
-        TabView {
-            NavigationStack {
-                ManagerAllOrdersView()
-            }
-            .tabItem {
-                Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
-            }
+        NavigationStack{
             
-
-            NavigationStack {
+            NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true), isActive: $isLoggedOut){
+                EmptyView()
+            }.navigationBarBackButtonHidden(true)
+            
+            TabView {
+                
+                ManagerAllOrdersView()
+                
+                    .tabItem {
+                        Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
+                    }
+                
                 ReviewOrdersView()
-            }
-            .tabItem {
-                Label("Utförda ordrar", systemImage: "text.page.badge.magnifyingglass")
-            }
-
-            NavigationStack {
+                
+                    .tabItem {
+                        Label(
+                            "Utförda ordrar",
+                            systemImage: "text.page.badge.magnifyingglass"
+                        )
+                    }
+                
                 SummaryView()
-            }
-            .tabItem {
-                Label("Statistik", systemImage: "waveform.badge.magnifyingglass")
-            }
-
-            NavigationStack {
+                
+                    .tabItem {
+                        Label(
+                            "Statistik",
+                            systemImage: "waveform.badge.magnifyingglass"
+                        )
+                    }
+                
                 StaffView()
+                
+                    .tabItem {
+                        Label("Personal", systemImage: "person.3")
+                    }
+                
+               
             }
-            .tabItem {
-                Label("Personal", systemImage: "person.3")
+            .tint(Color.orange)
+            .toolbar{
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button{
+                        do{
+                            try AuthenticationManager.shared.signOut()
+                            isLoggedOut = true
+                        }catch {
+                            print("Kunde inte logga ut användaren")
+                        }
+                    }label: {
+                     Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .tint(.orange)
+                    }
                 }
             }
-        .tint(Color.orange)
         }
+       
     }
-
+    
+}
 
 #Preview {
     ManagerHomeView()
