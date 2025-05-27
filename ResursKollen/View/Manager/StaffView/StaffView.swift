@@ -1,24 +1,19 @@
+
+
 import FirebaseAuth
 import SwiftUI
 
 struct StaffView: View {
     @StateObject private var viewModel = StaffViewViewModel()
     @State private var isAddNewEmployeePresented = false
-    let userStatus: EmploymentStatus
-
-    // Sorterar namnen på chefer
+    
+   // Sorterar namnen på chefer
     private var managers: [UserData] {
-        viewModel.user.filter { $0.status == .manager }.sorted {
-            $0.name.localizedCaseInsensitiveCompare($1.name)
-                == .orderedAscending
-        }
+        viewModel.user.filter { $0.status == .manager }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
     // Sorterar namnen på anställda
     private var employees: [UserData] {
-        viewModel.user.filter { $0.status == .employee }.sorted {
-            $0.name.localizedCaseInsensitiveCompare($1.name)
-                == .orderedAscending
-        }
+        viewModel.user.filter { $0.status == .employee }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
 
     var body: some View {
@@ -33,16 +28,12 @@ struct StaffView: View {
                     endPoint: .bottom
                 )
                 .edgesIgnoringSafeArea(.all)
-
+                
                 VStack(alignment: .leading, spacing: 16) {
                     List {
-                        //MARK: Manager
+                        // Avdelning för chefer
                         if !managers.isEmpty {
-                            Section(
-                                header: Text(
-                                    EmploymentStatus.manager.nameSE.capitalized
-                                ).foregroundColor(.orange)
-                            ) {
+                            Section(header: Text(EmploymentStatus.manager.nameSE.capitalized).foregroundColor(.orange)) {
                                 ForEach(managers, id: \.id) { user in
                                     NavigationLink {
                                         StaffDetailView(user: user)
@@ -53,13 +44,9 @@ struct StaffView: View {
                                 }
                             }
                         }
-
-                        //MARK: Staff
-                        Section(
-                            header: Text(
-                                EmploymentStatus.employee.nameSE.capitalized
-                            ).foregroundColor(.orange)
-                        ) {
+                        
+                        // Avdelning för anställda
+                        Section(header: Text(EmploymentStatus.employee.nameSE.capitalized).foregroundColor(.orange)) {
                             ForEach(employees, id: \.id) { user in
                                 NavigationLink {
                                     StaffDetailView(user: user)
@@ -75,9 +62,8 @@ struct StaffView: View {
                     .scrollContentBackground(.hidden)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbarColorScheme(.dark, for: .navigationBar)
-
-                    //MARK: Add employee button
-                    if userStatus == .manager {
+                    
+                    if viewModel.currentUser?.status == .manager {
                         Button(action: {
                             isAddNewEmployeePresented = true
                         }) {
@@ -94,6 +80,7 @@ struct StaffView: View {
                             .padding(.horizontal)
                             .padding(20)
                         }
+                    
                         .sheet(isPresented: $isAddNewEmployeePresented) {
                             AddEmployeeView()
                                 .presentationDragIndicator(.visible)
@@ -102,7 +89,10 @@ struct StaffView: View {
                 }
             }
             .onAppear {
-                Task { try? await viewModel.loadUsers() }
+                Task {
+                    try? await viewModel.loadUsers()
+                    try? await viewModel.loadCurrentUser()
+                }
             }
         }
     }
@@ -110,7 +100,7 @@ struct StaffView: View {
 
 struct StaffRowView: View {
     let user: UserData
-
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(user.name)
@@ -125,19 +115,38 @@ struct StaffRowView: View {
 @MainActor
 final class StaffViewViewModel: ObservableObject {
     @Published private(set) var user: [UserData] = []
+    @Published var currentUser : UserData?
 
     func loadUsers() async throws {
         self.user = try await UsersManager.shared.getAllUser()
     }
-
+    
     func updateStaff(user: UserData) throws {
         try? UsersManager.shared.updateUser(user: user)
     }
-
+    // Kopierade denna från staffdetailView viewmodeln, borde göra en som man kan använda överallt
+    func loadCurrentUser() async {
+            do {
+                // Hämta den autentiserade användaren
+                let authenticatedUser = try AuthenticationManager.shared.getAuthenticatedUser()
+                let uid = authenticatedUser.uid
+                
+                // Hämta användardata från Firestore
+                let userData = try await FirestoreManager.shared.fetchUserData(userId: uid)
+                
+                // Uppdatera currentUser på huvudtråden
+                DispatchQueue.main.async {
+                    self.currentUser = userData
+                }
+            } catch {
+                print("Error getting user: \(error.localizedDescription)")
+            }
+        }
+    
 }
 
 #Preview {
     NavigationStack {
-        StaffView(userStatus: .manager)
+        StaffView()
     }
 }
