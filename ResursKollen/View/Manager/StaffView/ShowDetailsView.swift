@@ -14,14 +14,14 @@ struct ShowDetailsView: View {
     var body: some View {
         
             Section(header: Text("Övrig information").foregroundColor(.white)) {
-                DetailRow(icon: "person.text.rectangle", label: "Personnummer", value: user.detailedInfo.personNummer)
-                DetailRow(icon: "banknote", label: "Månadslön", value: String(user.detailedInfo.salary))
-                DetailRow(icon: "creditcard", label: "Kontonummer", value: user.detailedInfo.bankkonto)
+                DetailRow(icon: "person.text.rectangle", label: "Personnummer", value: user.detailedInfo.personNummer, isPhoneNumber: false)
+                DetailRow(icon: "banknote", label: "Månadslön", value: String(user.detailedInfo.salary), isPhoneNumber: false)
+                DetailRow(icon: "creditcard", label: "Kontonummer", value: user.detailedInfo.bankkonto, isPhoneNumber: false)
                 
              
-                DetailRow(icon: "person.2.fill", label: "Närmast anhörig", value: user.detailedInfo.emergencyContact)
+                DetailRow(icon: "person.2.fill", label: "Närmast anhörig", value: user.detailedInfo.emergencyContact, isPhoneNumber: false)
                 
-                DetailRow(icon: "ellipsis.circle", label: "Extra info", value: user.detailedInfo.extraInfo)
+                DetailRow(icon: "ellipsis.circle", label: "Extra info", value: user.detailedInfo.extraInfo, isPhoneNumber: false)
                     
             }.listRowBackground(Color.white.opacity(0.2))
             

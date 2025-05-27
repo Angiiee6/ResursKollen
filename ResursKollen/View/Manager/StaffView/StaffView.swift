@@ -63,30 +63,36 @@ struct StaffView: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbarColorScheme(.dark, for: .navigationBar)
                     
-                    Button(action: {
-                        isAddNewEmployeePresented = true
-                    }) {
-                        HStack {
-                            Image(systemName: "plus.circle.fill")
-                            Text("Lägg till anställd")
+                    if viewModel.currentUser?.status == .manager {
+                        Button(action: {
+                            isAddNewEmployeePresented = true
+                        }) {
+                            HStack {
+                                Image(systemName: "plus.circle.fill")
+                                Text("Lägg till anställd")
+                            }
+                            .font(.headline)
+                            .foregroundColor(.white)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.orange)
+                            .cornerRadius(12)
+                            .padding(.horizontal)
+                            .padding(20)
                         }
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.orange)
-                        .cornerRadius(12)
-                        .padding(.horizontal)
-                        .padding(20)
-                    }
-                    .sheet(isPresented: $isAddNewEmployeePresented) {
-                        AddEmployeeView()
-                            .presentationDragIndicator(.visible)
+                    
+                        .sheet(isPresented: $isAddNewEmployeePresented) {
+                            AddEmployeeView()
+                                .presentationDragIndicator(.visible)
+                        }
                     }
                 }
             }
             .onAppear {
-                Task { try? await viewModel.loadUsers() }
+                Task {
+                    try? await viewModel.loadUsers()
+                    try? await viewModel.loadCurrentUser()
+                }
             }
         }
     }
@@ -109,6 +115,7 @@ struct StaffRowView: View {
 @MainActor
 final class StaffViewViewModel: ObservableObject {
     @Published private(set) var user: [UserData] = []
+    @Published var currentUser : UserData?
 
     func loadUsers() async throws {
         self.user = try await UsersManager.shared.getAllUser()
@@ -117,7 +124,24 @@ final class StaffViewViewModel: ObservableObject {
     func updateStaff(user: UserData) throws {
         try? UsersManager.shared.updateUser(user: user)
     }
-    
+    // Kopierade denna från staffdetailView viewmodeln, borde göra en som man kan använda överallt
+    func loadCurrentUser() async {
+            do {
+                // Hämta den autentiserade användaren
+                let authenticatedUser = try AuthenticationManager.shared.getAuthenticatedUser()
+                let uid = authenticatedUser.uid
+                
+                // Hämta användardata från Firestore
+                let userData = try await FirestoreManager.shared.fetchUserData(userId: uid)
+                
+                // Uppdatera currentUser på huvudtråden
+                DispatchQueue.main.async {
+                    self.currentUser = userData
+                }
+            } catch {
+                print("Error getting user: \(error.localizedDescription)")
+            }
+        }
     
 }
 
