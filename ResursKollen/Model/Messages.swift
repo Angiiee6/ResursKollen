@@ -23,13 +23,13 @@ enum MessagesCategory: CaseIterable, Codable{
     var MessagesCategorySE: String {
         switch self{
         case .general:
-            return "Allmänt – Viktiga nyheter och information till alla"
+            return "Allmänt – Viktiga nyheter och information"
         case .personal:
             return "Personal – Information om personalfrågor"
         case .finance:
-            return "Ekonomi – Budget, utlägg och löneinformation"
+            return "Ekonomi – Budget och löneinformation"
         case .companyEvents:
-            return "Företagsevent – Sociala aktiviteter, kickoff, personalfeste"
+            return "Företagsevent – Sociala aktiviteter, kickoff, personalfester"
         case .meetings:
             return "Möten – Kallelser"
         case .saftey:
@@ -46,7 +46,7 @@ enum MessagesCategory: CaseIterable, Codable{
         case .finance:
             return .orange
         case .companyEvents:
-            return .white
+            return .gray
         case .meetings:
             return .blue
         case .saftey:

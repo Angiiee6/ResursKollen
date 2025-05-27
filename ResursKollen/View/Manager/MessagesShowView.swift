@@ -36,7 +36,7 @@ struct MessagesShowView: View {
                             .font(.subheadline)
                             .foregroundColor(.white.opacity(0.8))
                             .lineLimit(4)
-                            .fixedSize(horizontal: false, vertical: true)
+                            .fixedSize(horizontal: false, vertical: false)
                             .padding(.bottom, 16)
                         
                         
@@ -44,12 +44,12 @@ struct MessagesShowView: View {
                             .font(.caption2)
                             .foregroundColor(.white.opacity(0.6))
                         
-                        Text("\(message.category)")
+                        Text("\(message.category.MessagesCategorySE)")
                             .font(.caption2)
-                            .foregroundColor(.white.opacity(0.6))
+                            .foregroundColor(.black)
                     }
                     .padding()
-                    .frame(width: 250, height: 160)
+                    .frame(width: 300, height: 160)
                     .background(message.category.color)
                     .cornerRadius(20)
                 }
