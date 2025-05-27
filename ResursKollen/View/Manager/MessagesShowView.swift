@@ -37,10 +37,14 @@ struct MessagesShowView: View {
                             .foregroundColor(.white.opacity(0.8))
                             .lineLimit(4)
                             .fixedSize(horizontal: false, vertical: true)
+                            .padding(.bottom, 16)
                         
-                        Spacer()
                         
                         Text("\(formattedDate(message.date))")
+                            .font(.caption2)
+                            .foregroundColor(.white.opacity(0.6))
+                        
+                        Text("\(message.category)")
                             .font(.caption2)
                             .foregroundColor(.white.opacity(0.6))
                     }
@@ -52,12 +56,13 @@ struct MessagesShowView: View {
             }
             .padding(.horizontal)
         }
-        .onAppear {
-            Task {
-                try? await viewModel.readMessages()
-            }
+        
+        .task {
+            try? await viewModel.readMessages()
         }
     }
+    
+    
         
 
             func formattedDate(_ date: Date) -> String {

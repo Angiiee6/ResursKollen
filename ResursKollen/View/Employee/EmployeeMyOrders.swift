@@ -59,9 +59,13 @@ struct EmployeeMyOrders: View {
                 .scrollContentBackground(.hidden) // Make list background transparent
                 .background(Color.clear) // Clear background for the list
                 // Spacer()
-                MessagesShowView()
-                    .padding(.bottom)
+               
+                Section(header: Text("Information mm.").foregroundColor(.orange)) {
+                    MessagesShowView()
+                }
+                
             }
+               
         }
     }
 }
