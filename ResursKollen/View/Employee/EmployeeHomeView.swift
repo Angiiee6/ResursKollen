@@ -34,7 +34,7 @@ struct EmployeeHomeView: View {
             }
 
             NavigationStack {
-                StaffView(userStatus: .employee)
+                EmployeeStaffView(viewModel: viewModel)
             }
             .tabItem {
                 Label("Personal", systemImage: "person.3")
@@ -44,7 +44,7 @@ struct EmployeeHomeView: View {
 }
 
 extension EmployeeHomeView {
-    
+
     class ViewModel: ObservableObject {
         let currentUser: UserData
         @Published var myOrders: [Order] = []
@@ -58,7 +58,9 @@ extension EmployeeHomeView {
                     $0.assignedUserId == currentUser.id && $0.status != .done
                         && $0.status != .completed
                 }
-                self.unassignedOrders = orders.filter { $0.assignedUserId == nil }
+                self.unassignedOrders = orders.filter {
+                    $0.assignedUserId == nil
+                }
 
                 let allTimeUnits = orders.flatMap { $0.timeUnits }
                 let filteredTimeUnits = allTimeUnits.filter {

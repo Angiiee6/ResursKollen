@@ -61,17 +61,6 @@ struct EmployeeMyOrders: View {
                 .background(Color.clear) // Clear background for the list
             }
         }
-        //MARK: Toolbar
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Denna månad"){
-                    monthlySummarySheetPresent = true
-                }
-            }
-        }
-        .sheet(isPresented: $monthlySummarySheetPresent) {
-            MonthlyTimeSummarySheet(timeUnits: viewModel.myTimeUnitsThisMonth)
-        }
     }
 }
 

@@ -1,18 +1,16 @@
 import SwiftUI
 
 struct StaffDetailView: View {
-    
+
     @State private var isEditUser = false
     @State var user: UserData
     @State private var isShowMoreInfo = false
     @StateObject var vm = StaffDetailViewModel()
-    
-    
-    
-    
+    let currentUser: UserData
+
     var body: some View {
-        
-        NavigationStack{
+
+        NavigationStack {
             ZStack {
                 // Bakgrund
                 LinearGradient(
@@ -24,7 +22,7 @@ struct StaffDetailView: View {
                     endPoint: .bottom
                 )
                 .edgesIgnoringSafeArea(.all)
-                
+
                 List {
                     Section {
                         HStack {
@@ -48,72 +46,109 @@ struct StaffDetailView: View {
                         .padding(.vertical)
                         .listRowBackground(Color.clear)
                     }
-                    Section(header: Text("Kontaktinformation").foregroundColor(.white)) {
-                        DetailRow(icon: "envelope", label: "E-post", value: user.email, isPhoneNumber: false)
-                        DetailRow(icon: "phone", label: "Telefonnummer", value: user.phoneNumber, isPhoneNumber: true)
-                        
+                    Section(
+                        header: Text("Kontaktinformation").foregroundColor(
+                            .white
+                        )
+                    ) {
+                        DetailRow(
+                            icon: "envelope",
+                            label: "E-post",
+                            value: user.email,
+                            isPhoneNumber: false
+                        )
+                        DetailRow(
+                            icon: "phone",
+                            label: "Telefonnummer",
+                            value: user.phoneNumber,
+                            isPhoneNumber: true
+                        )
+
                     }
                     .listRowBackground(Color.white.opacity(0.2))
-                    
-                    Section(header: Text("Anställningsinformation").foregroundColor(.white)) {
-                        DetailRow(icon: "person.fill.checkmark", label: "Anställningsform", value: user.detailedInfo.employmentType.employmentTypeSE,isPhoneNumber: false )
-                        DetailRow(icon: "number", label: "Anställningsnummer", value: user.employmentNumber, isPhoneNumber: false)
-                        DetailRow(icon: "calendar", label: "Anställningsdatum", value: formatDate(user.employmentDate), isPhoneNumber: false)
-                        
+
+                    Section(
+                        header: Text("Anställningsinformation").foregroundColor(
+                            .white
+                        )
+                    ) {
+                        DetailRow(
+                            icon: "person.fill.checkmark",
+                            label: "Anställningsform",
+                            value: user.detailedInfo.employmentType
+                                .employmentTypeSE,
+                            isPhoneNumber: false
+                        )
+                        DetailRow(
+                            icon: "number",
+                            label: "Anställningsnummer",
+                            value: user.employmentNumber,
+                            isPhoneNumber: false
+                        )
+                        DetailRow(
+                            icon: "calendar",
+                            label: "Anställningsdatum",
+                            value: formatDate(user.employmentDate),
+                            isPhoneNumber: false
+                        )
+
                     }.listRowBackground(Color.white.opacity(0.2))
-                    
-                    
-                    
+
                     //NOTE: här har jag lagt till logik för en listan med mer information, @Angie, @Vivanne plocka bort om ni tycker jag kladdat för mycket /Da
-                    if vm.currentUser?.status == .manager {
-                        Section{
-                            Button{
-                                withAnimation{
+                    if currentUser.status == .manager {
+                        Section {
+                            Button {
+                                withAnimation {
                                     isShowMoreInfo.toggle()
                                 }
-                            }label: {
-                                DetailRow(icon: "list.bullet.rectangle", label: "Mera information", value: "", isPhoneNumber: false)
+                            } label: {
+                                DetailRow(
+                                    icon: "list.bullet.rectangle",
+                                    label: "Mera information",
+                                    value: "",
+                                    isPhoneNumber: false
+                                )
                             }
                         }.listRowBackground(Color.white.opacity(0.2))
-                        
-                        if isShowMoreInfo{
-                            
+
+                        if isShowMoreInfo {
+
                             ShowDetailsView(user: user)
-                            
+
                         }
                     }
-                    
+
                 }
                 .scrollContentBackground(.hidden)
                 .background(Color.clear)
             }
-    }
-        
-        .toolbar{
-            if vm.currentUser?.status == .manager {
+        }
+
+        .toolbar {
+            if currentUser.status == .manager {
                 ToolbarItem(placement: .topBarTrailing) {
-                    
-                    Button{
+
+                    Button {
                         isEditUser = true
-                    }label: {
+                    } label: {
                         Label("Redigera", systemImage: "pencil")
                             .foregroundColor(.white)
                     }
                 }
             }
-            
+
         }.sheet(isPresented: $isEditUser) {
             EditStaffView(user: $user)
                 .presentationDragIndicator(.visible)
         }
-        .onAppear {
-            Task {
-                await vm.loadCurrentUser()
-            }
-        }
-        
+        //        .onAppear {
+        //            Task {
+        //                await vm.loadCurrentUser()
+        //            }
+        //        }
+
     }
-    
+
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
@@ -128,7 +163,7 @@ struct DetailRow: View {
     let label: String
     let value: String
     let isPhoneNumber: Bool
-    
+
     var body: some View {
         HStack {
             Image(systemName: icon)
@@ -137,53 +172,53 @@ struct DetailRow: View {
             Text(label)
                 .foregroundColor(.white)
             Spacer()
-            if isPhoneNumber, let url = URL(string: "tel://\(value.filter {$0.isNumber})") {
+            if isPhoneNumber,
+                let url = URL(string: "tel://\(value.filter {$0.isNumber})")
+            {
                 Link(value, destination: url)
                     .foregroundColor(.blue)
-            }
-            else {
+            } else {
                 Text(value)
                     .foregroundColor(.white.opacity(0.5))
             }
-            
-            
+
         }
     }
 }
 
 #Preview {
     NavigationStack {
-        
-        StaffDetailView(user: UserData.UserDataMockData as UserData)
-       
+
+        StaffDetailView(user: UserData.UserDataMockData as UserData, currentUser: UserData(status: .manager, name: "Test user"))
+
     }
 }
 
 extension StaffDetailView {
-    
+
     class StaffDetailViewModel: ObservableObject {
-        @Published var currentUser : UserData?
-        
+        //        @Published var currentUser : UserData?
+
         // Hämta current User
-        func loadCurrentUser() async {
-            do {
-                // Hämta den autentiserade användaren
-                let authenticatedUser = try AuthenticationManager.shared.getAuthenticatedUser()
-                let uid = authenticatedUser.uid
-                
-                // Hämta användardata från Firestore
-                let userData = try await FirestoreManager.shared.fetchUserData(userId: uid)
-                
-                // Uppdatera currentUser på huvudtråden
-                DispatchQueue.main.async {
-                    self.currentUser = userData
-                }
-            } catch {
-                print("Error getting user: \(error.localizedDescription)")
-            }
-        }
+        //        func loadCurrentUser() async {
+        //            do {
+        //                // Hämta den autentiserade användaren
+        //                let authenticatedUser = try AuthenticationManager.shared.getAuthenticatedUser()
+        //                let uid = authenticatedUser.uid
+        //
+        //                // Hämta användardata från Firestore
+        //                let userData = try await FirestoreManager.shared.fetchUserData(userId: uid)
+        //
+        //                // Uppdatera currentUser på huvudtråden
+        //                DispatchQueue.main.async {
+        //                    self.currentUser = userData
+        //                }
+        //            } catch {
+        //                print("Error getting user: \(error.localizedDescription)")
+        //            }
+        //        }
         func startPhone() {
-            
+
         }
     }
 }

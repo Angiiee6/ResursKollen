@@ -30,6 +30,7 @@ final class LoginViewViewmodel: ObservableObject {
          
          
          print("Användaren inloggad")
+             print("Användare: \(String(describing: currentUser))")
          isUserLoggedIn = true
          
          

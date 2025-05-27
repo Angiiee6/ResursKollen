@@ -16,7 +16,7 @@ struct ContentView: View {
         if let user = viewModel.currentUser {
             switch user.status {
             case .manager:
-                ManagerHomeView()
+                ManagerHomeView(currentUser: user)
             case .employee:
                 EmployeeHomeView(currentUser: user)
 //            case .unknown:
