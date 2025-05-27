@@ -13,6 +13,7 @@ struct OrderDetailView: View {
     @StateObject var viewModel = ViewModel()
 
     @State var order: Order
+    @State var newTimeUnit: OrderTimeUnit
 
     //Used to compare changes to an order to be able to show an alert if the user clicks the back button without saving
     let orderOriginal: Order
@@ -23,6 +24,11 @@ struct OrderDetailView: View {
         self.order = order
         self.orderOriginal = order
         self.employmentStatus = status
+        self.newTimeUnit = OrderTimeUnit(
+            time: 0,
+            date: Date(),
+            userId: order.assignedUserId ?? ""
+        )
     }
 
     //Sheets & alerts
@@ -37,11 +43,13 @@ struct OrderDetailView: View {
     //All possible sheets to show
     enum ActiveSheet: Identifiable {
         ///For entering text about what has been done on an order.
-        case workDone
+        case workPerformedText
         ///For editing any materials on an order.
         case material
         ///For updating the assigned user on an order (managers only).
         case assignedUser
+        ///For showing a list of an order's time units.
+        case timeUnits
 
         var id: Self { self }
     }
@@ -88,8 +96,24 @@ struct OrderDetailView: View {
                                 Text("Utförare:")
                                     .font(.headline)
                                 Spacer()
-                                Button(order.assignedUser?.name ?? "Välj") {
+                                Button(
+                                    viewModel.currentUserInfo?.name ?? "Välj"
+                                ) {
                                     activeSheet = .assignedUser
+                                }
+                            }
+                            .onAppear {
+                                if let userId = order.assignedUserId {
+                                    Task {
+                                        do {
+                                            try await viewModel.fetchUserName(
+                                                userId: userId
+                                            )
+                                        } catch {
+                                            activeAlert = .error(error)
+                                            alertPresent = true
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -116,25 +140,53 @@ struct OrderDetailView: View {
                             HStack {
                                 Spacer()
                                 Button("Ändra/lägg till text") {
-                                    activeSheet = .workDone
+                                    activeSheet = .workPerformedText
                                 }
                             }
                         }
                         Divider()
                         //MARK: Time consumption
-                        HStack {
-                            Text("Tidsåtgång:")
+                        VStack(spacing: 24) {
+                            HStack {
+                                Text("Total tid på order:")
+                                    .font(.headline)
+                                Spacer()
+                                Text(
+                                    "\((newTimeUnit.time + order.totalTimeWorked).formattedAsHours) h"
+                                )
                                 .font(.headline)
-                            Spacer()
-                            Text(order.timeConsumption.formattedAsHours)
-                            Stepper(
-                                value: $order.timeConsumption,
-                                in: 0...Double.infinity,
-                                step: 0.5
-                            ) {
-                                Text("h")
                             }
-                            .frame(maxWidth: 130)
+                            if order.assignedUserId == nil {
+                                Text(
+                                    "Lägg till utförare för att kunna lägga till tid."
+                                )
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                                .italic()
+                            } else {
+                                VStack(spacing: 24) {
+                                    HStack {
+                                        Text("Lägg till tid:")
+                                        Spacer()
+                                        Text(newTimeUnit.time.formattedAsHours)
+                                        Stepper(
+                                            value: $newTimeUnit.time,
+                                            in: 0...Double.infinity,
+                                            step: 0.5
+                                        ) {
+                                            Text("h")
+                                        }
+                                        .frame(maxWidth: 130)
+                                    }
+                                }
+
+                            }
+                            HStack {
+                                Spacer()
+                                Button("Detaljer") {
+                                    activeSheet = .timeUnits
+                                }
+                            }
                         }
                         //MARK: Material
                         VStack {
@@ -167,11 +219,20 @@ struct OrderDetailView: View {
                 .scrollIndicators(.hidden)
                 Spacer()
                 //MARK: Summary
-                SummaryBox(order: order)
+                PriceSummaryBox(
+                    totalLaborCost: (order.totalLaborCost
+                        + (newTimeUnit.time
+                            //TODO: Replace with real hourly cost when implemented
+                            * 539)),
+                    totalMaterialCost: order.totalMaterialCost
+                )
 
                 //MARK: Save button
                 Button("Spara") {
                     do {
+                        if newTimeUnit.time > 0 {
+                            order.timeUnits.append(newTimeUnit)
+                        }
                         try viewModel.updateOrder(order)
                         dismiss()
                     } catch {
@@ -187,13 +248,28 @@ struct OrderDetailView: View {
             //MARK: Nav title
             .navigationTitle(order.orderNumber)
         }
+        
+        //MARK: onChange
+        .onChange(
+            //Update the local state of assignedUser and newTimeUnit depending on new selected user
+            of: viewModel.currentUserInfo?.id,
+            { _, newValue in
+                guard let existinUserId = newValue else {
+                    newTimeUnit.time = 0
+                    order.assignedUserId = nil
+                    return
+                }
+                newTimeUnit.userId = existinUserId
+                order.assignedUserId = existinUserId
+            }
+        )
 
         //MARK: Toolbar
-        .toolbar(content: {
+        .toolbar {
             //Use a custom back button to be able to show an alert if the user presses the back button without saving.
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
-                    if order != orderOriginal {
+                    if order != orderOriginal || newTimeUnit.time != 0 {
                         activeAlert = .exit
                         alertPresent = true
                     } else {
@@ -217,24 +293,20 @@ struct OrderDetailView: View {
                     }
                 }
             }
-        })
+        }
         //MARK: Sheets
         .sheet(item: $activeSheet) { activeSheet in
             switch activeSheet {
-            case .workDone:
-                VStack {
-                    Text("Utfört arbete: ")
-                    TextEditor(text: $order.workPerformed)
-                    Spacer()
-                    Button("Klar") {
-                        self.activeSheet = nil
-                    }
-                }
-                .padding()
+            case .workPerformedText:
+                WorkPerformedTextSheet(workPerformedText: $order.workPerformed)
             case .material:
-                MaterialEditSheetView(materials: $order.materialConsumption)
+                MaterialEditSheet(materials: $order.materialConsumption)
             case .assignedUser:
-                AssignedUserPickerSheet(selectedUser: $order.assignedUser)
+                AssignedUserPickerSheet(viewModel: viewModel)
+            case .timeUnits:
+                TimeUnitListSheet(timeUnits: $order.timeUnits)
+                    //Makes sheet cover only half the screen
+                    .presentationDetents([.medium])
             }
 
         }
@@ -294,11 +366,44 @@ struct OrderDetailView: View {
 //MARK: ViewModel
 extension OrderDetailView {
 
+    @MainActor
     class ViewModel: ObservableObject {
         let firestoreManager = FirestoreManager.shared
 
+        @Published var currentUserInfo: (id: String, name: String)?
+        @Published var allUsersDataState: AllUsersDataState = .loading
+
+        private(set) var allUsersNotFetched = true
+
+        enum AllUsersDataState {
+            case loading
+            case noData
+            case hasData(employees: [UserData], managers: [UserData])
+            case error(Error)
+        }
+
         func updateOrder(_ order: Order) throws {
             try firestoreManager.updateOrder(order)
+        }
+
+        func fetchUserName(userId: String) async throws {
+            let user = try await firestoreManager.fetchUserData(userId: userId)
+            currentUserInfo = (id: user.id, name: user.name)
+        }
+
+        func fetchAllUsers() async {
+            allUsersDataState = .loading
+            do {
+                let allUsers = try await FirestoreManager.shared
+                    .fetchUserDataCollection()
+                allUsersDataState = .hasData(
+                    employees: allUsers.filter { $0.status == .employee },
+                    managers: allUsers.filter { $0.status == .manager }
+                )
+                allUsersNotFetched = false
+            } catch {
+                allUsersDataState = .error(error)
+            }
         }
     }
 

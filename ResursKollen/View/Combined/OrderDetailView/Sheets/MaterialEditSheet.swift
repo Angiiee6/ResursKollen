@@ -8,7 +8,7 @@
 import SwiftUI
 
 ///Shows a list of `Material` with the option to edit them.
-struct MaterialEditSheetView: View {
+struct MaterialEditSheet: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
     @Binding var materials: [Material]
@@ -148,17 +148,17 @@ struct MaterialEditSheetView: View {
 }
 
 //MARK: View Model
-extension MaterialEditSheetView {
+extension MaterialEditSheet {
     class ViewModel: ObservableObject {
 
-        @Published var premadeMaterials = MaterialEditSheetView
+        @Published var premadeMaterials = MaterialEditSheet
             .premadeMaterialsMockData
 
     }
 }
 
 #Preview {
-    MaterialEditSheetView(
+    MaterialEditSheet(
         materials: .constant([
             Material(name: "Copper Wire", quantity: 50, price: 2.50),
             Material(name: "Oak Plank", quantity: 10, price: 15.00),

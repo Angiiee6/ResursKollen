@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
+    let currentUser: UserData
 
     ///EXEMPEL USER
     let exampleUser = UserData(
@@ -44,7 +45,7 @@ struct ManagerHomeView: View {
             }
 
             NavigationStack {
-                StaffView()
+                StaffView(currentUser: currentUser )
             }
             .tabItem {
                 Label("Personal", systemImage: "person.3")
@@ -55,6 +56,9 @@ struct ManagerHomeView: View {
     }
 
 
+//TODO: Fetch all orders here instead of in sub-views
+
+
 #Preview {
-    ManagerHomeView()
+    ManagerHomeView(currentUser: UserData(name: "Test user"))
 }

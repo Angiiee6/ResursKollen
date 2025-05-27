@@ -9,6 +9,7 @@ import SwiftUI
 
 struct EmployeeMyOrders: View {
     @ObservedObject var viewModel: EmployeeHomeView.ViewModel
+    @State var monthlySummarySheetPresent: Bool = false
 
     var body: some View {
         ZStack {
