@@ -15,25 +15,28 @@ struct Order: Codable, Identifiable, Equatable {
     var workPerformed: String = ""
     var creationDate = Date()
     var orderNumber: String
-    var timeConsumption: Double = 0
     var materialConsumption: [Material] = []
     var status: OrderStatus
     var dueDate: Date
+    //TODO: Replace customer with only customer id
     var customer: Customer
-    var assignedUser: UserData?
+    var assignedUserId: String?
+    var timeUnits: [OrderTimeUnit] = []
+
+    /// - Returns sum of hours worked on an order.
+    var totalTimeWorked: Double {
+        timeUnits.map { $0.time }.reduce(0, +)
+    }
 
     /// - Returns sum of the price of all listed materials on the order.
     var totalMaterialCost: Double {
-        var sum: Double = 0
-        for material in materialConsumption {
-            sum += material.totalPrice
-        }
-        return sum
+        materialConsumption.map { $0.totalPrice }.reduce(0, +)
     }
 
     /// - Returns `timeConsumption * labor cost`
     var totalLaborCost: Double {
-        timeConsumption * 539
+        //TODO: Find a good solution for storing the cost per hour
+        totalTimeWorked * 539
     }
 
     /// - Returns the sum of all labor and material costs.
@@ -44,10 +47,10 @@ struct Order: Codable, Identifiable, Equatable {
     //To make Order conform to Equatable
     static func == (lhs: Order, rhs: Order) -> Bool {
         return lhs.workPerformed == rhs.workPerformed
-            && lhs.timeConsumption == rhs.timeConsumption
+            && lhs.timeUnits == rhs.timeUnits
             && lhs.materialConsumption == rhs.materialConsumption
             && lhs.status == rhs.status
-            && lhs.assignedUser == rhs.assignedUser
+            && lhs.assignedUserId == rhs.assignedUserId
     }
 }
 

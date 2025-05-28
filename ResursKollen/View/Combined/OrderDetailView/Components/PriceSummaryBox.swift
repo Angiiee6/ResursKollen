@@ -8,29 +8,30 @@
 import SwiftUI
 
 ///Shows the price summary on an order.
-struct SummaryBox: View {
-    let order: Order
+struct PriceSummaryBox: View {
+    let totalLaborCost: Double
+    let totalMaterialCost: Double
     var body: some View {
         VStack {
             Divider()
             HStack {
                 Text("Arbetstid:")
                 Spacer()
-                Text("\(order.totalLaborCost.formattedAsCurrency) kr")
+                Text("\(totalLaborCost.formattedAsCurrency) kr")
             }
             .font(.caption)
             HStack {
                 Text("Material:")
                 Spacer()
                 Text(
-                    "\(order.totalMaterialCost.formattedAsCurrency) kr"
+                    "\(totalMaterialCost.formattedAsCurrency) kr"
                 )
             }
             .font(.caption)
             HStack {
                 Text("Summa:")
                 Spacer()
-                Text("\(order.totalOrderCost.formattedAsCurrency) kr")
+                Text("\((totalLaborCost + totalMaterialCost).formattedAsCurrency) kr")
             }
             Divider()
         }
@@ -39,5 +40,5 @@ struct SummaryBox: View {
 }
 
 #Preview {
-    SummaryBox(order: Order.orderMockUpData)
+    PriceSummaryBox(totalLaborCost: 1239, totalMaterialCost: 238)
 }
