@@ -8,10 +8,16 @@
 import SwiftUI
 
 struct EmployeeMyOrders: View {
-    @EnvironmentObject var appData: AppData
-    @StateObject var viewModel = ViewModel()
+    @ObservedObject var dataProvider: AppData
+    @StateObject var viewModel: ViewModel
     @State var monthlySummarySheetPresent: Bool = false
 
+    init(dataProvider: AppData) {
+        self.dataProvider = dataProvider
+        _viewModel = StateObject(
+            wrappedValue: ViewModel(dataProvider: dataProvider)
+        )
+    }
 
     var body: some View {
         ZStack {
@@ -27,7 +33,7 @@ struct EmployeeMyOrders: View {
             .edgesIgnoringSafeArea(.all)
 
             VStack(alignment: .leading) {
-                Text("Hej, \(appData.currentUser.name) 👋")
+                Text("Hej, \(dataProvider.currentUser.name) 👋")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.top)
@@ -50,7 +56,7 @@ struct EmployeeMyOrders: View {
 
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
-                                            viewModel.leaveOrder(order)
+                                            self.viewModel.leaveOrder(order)
                                         } label: {
                                             Label(
                                                 "Lämna order",
@@ -68,9 +74,6 @@ struct EmployeeMyOrders: View {
                 .background(Color.clear)  // Clear background for the list
             }
         }
-        .onAppear {
-            viewModel.setup(appData: appData)
-        }
     }
 }
 
@@ -79,10 +82,10 @@ extension EmployeeMyOrders {
     class ViewModel: ObservableObject {
 
         @Published var myOrders: [Order] = []
-        
-        func setup(appData:AppData){
-            appData.$allOrders.map { orders in
-                orders.filter { $0.assignedUserId == appData.currentUser.id }
+
+        init(dataProvider: AppData) {
+            dataProvider.$allOrders.map { orders in
+                orders.filter { $0.assignedUserId == dataProvider.currentUser.id }
             }
             .assign(to: &$myOrders)
         }

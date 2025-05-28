@@ -5,13 +5,20 @@
 //  Created by Magnus Freidenfelt on 2025-05-21.
 //
 
-import SwiftUI
 import Combine
+import SwiftUI
 
 struct EmployeeAllOrders: View {
-    @EnvironmentObject var appData: AppData
+    @ObservedObject var dataProvider: AppData
     @State var searchText: String = ""
-    @StateObject var viewModel = ViewModel()
+    @StateObject var viewModel: ViewModel
+
+    init(dataProvider: AppData) {
+        self.dataProvider = dataProvider
+        _viewModel = StateObject(
+            wrappedValue: ViewModel(dataProvider: dataProvider, currentUserId: dataProvider.currentUser.id)
+        )
+    }
 
     var body: some View {
         ZStack {
@@ -44,7 +51,9 @@ struct EmployeeAllOrders: View {
                                     .listRowBackground(Color.white)
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
-                                            self.viewModel.takeOrder(order: order, userId: appData.currentUser.id)
+                                            self.viewModel.takeOrder(
+                                                order: order
+                                            )
                                         } label: {
                                             Label(
                                                 "Ta order",
@@ -75,7 +84,9 @@ struct EmployeeAllOrders: View {
                                     .listRowBackground(Color.white)
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
-                                            self.viewModel.takeOrder(order:order, userId: appData.currentUser.id)
+                                            self.viewModel.takeOrder(
+                                                order: order
+                                            )
                                         } label: {
                                             Label(
                                                 "Ta order",
@@ -104,7 +115,9 @@ struct EmployeeAllOrders: View {
                                     .listRowBackground(Color.white)
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
-                                            self.viewModel.takeOrder(order: order, userId: appData.currentUser.id)
+                                            self.viewModel.takeOrder(
+                                                order: order
+                                            )
                                         } label: {
                                             Label(
                                                 "Ta order",
@@ -141,9 +154,6 @@ struct EmployeeAllOrders: View {
                 .scrollContentBackground(.hidden)
             }
         }
-        .onAppear{
-            viewModel.setup(appData: appData)
-        }
         .searchable(text: $searchText, prompt: "Sök bland ordrar")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
@@ -172,14 +182,17 @@ extension EmployeeAllOrders {
         @Published var startedOrders: [Order] = []
         @Published var delayedOrders: [Order] = []
         @Published var completedOrders: [Order] = []
+        let currentUserId :String
 
         private var cancellables = Set<AnyCancellable>()
 
-        
-        func setup(appData:AppData){
-            appData.$allOrders
+        init(dataProvider: AppData, currentUserId: String) {
+            self.currentUserId = dataProvider.currentUser.id
+            dataProvider.$allOrders
                 .sink { [weak self] allOrders in
-                   let unassignedOrders = allOrders.filter{ $0.assignedUserId == nil}
+                    let unassignedOrders = allOrders.filter {
+                        $0.assignedUserId == nil
+                    }
                     self?.registeredOrders = unassignedOrders.filter {
                         $0.status == .registered
                     }
@@ -195,17 +208,17 @@ extension EmployeeAllOrders {
                 }
                 .store(in: &cancellables)
         }
-        
-                ///Sets the order's `assignedUserId` to the current user's id.
-        func takeOrder(order: Order, userId: String) {
-                    var updatedOrder = order
-                    updatedOrder.assignedUserId = userId
-                    do {
-                        try FirestoreManager.shared.updateOrder(updatedOrder)
-                    } catch {
-                        print("Error taking order!")
-                    }
-                }
+
+        ///Sets the order's `assignedUserId` to the current user's id.
+        func takeOrder(order: Order) {
+            var updatedOrder = order
+            updatedOrder.assignedUserId = currentUserId
+            do {
+                try FirestoreManager.shared.updateOrder(updatedOrder)
+            } catch {
+                print("Error taking order!")
+            }
+        }
 
         deinit {
             cancellables.forEach { $0.cancel() }

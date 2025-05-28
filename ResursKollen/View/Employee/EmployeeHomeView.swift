@@ -7,19 +7,20 @@
 import SwiftUI
 
 struct EmployeeHomeView: View {
+    @ObservedObject var dataProvider: AppData
 
     var body: some View {
         TabView {
 
             NavigationStack {
-                EmployeeMyOrders()
+                EmployeeMyOrders(dataProvider: dataProvider)
             }
             .tabItem {
                 Label("Mina Ordrar", systemImage: "list.bullet.clipboard")
             }
 
             NavigationStack {
-                EmployeeAllOrders()
+                EmployeeAllOrders(dataProvider: dataProvider)
 
             }
             .tabItem {
@@ -27,7 +28,7 @@ struct EmployeeHomeView: View {
             }
 
             NavigationStack {
-                EmployeeStaffView()
+                EmployeeStaffView(dataProvider: dataProvider)
 
             }
             .tabItem {

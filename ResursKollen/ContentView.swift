@@ -17,11 +17,9 @@ struct ContentView: View {
             let appdataProvider = AppData(currentUser: user)
             switch user.status {
             case .manager:
-                ManagerHomeView()
-                    .environmentObject(appdataProvider)
+                ManagerHomeView(dataProvider: appdataProvider)
             case .employee:
-                EmployeeHomeView()
-                    .environmentObject(appdataProvider)
+                EmployeeHomeView(dataProvider: appdataProvider)
 
             //            case .unknown:
             //                Text("Unknown user!")

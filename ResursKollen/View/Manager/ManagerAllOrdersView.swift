@@ -9,10 +9,14 @@ import SwiftUI
 import Combine
 
 struct ManagerAllOrdersView: View {
-    @EnvironmentObject var appData: AppData
-    @StateObject var viewModel = ViewModel()
+    @ObservedObject var dataProvider: AppData
+    @StateObject var viewModel : ViewModel
     @State var searchText: String = ""
     
+    init(dataProvider: AppData) {
+        self.dataProvider = dataProvider
+        _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
+    }
    
 
     var body: some View {
@@ -92,9 +96,6 @@ struct ManagerAllOrdersView: View {
             .toolbarColorScheme(.dark, for: .navigationBar)
             .searchable(text: $searchText, prompt: "Sök bland ordrar")
         }
-        .onAppear {
-            viewModel.setup(appData: appData)
-        }
     }
 
     func filteredOrders(for orders: [Order]) -> [Order] {
@@ -121,8 +122,8 @@ extension ManagerAllOrdersView {
 
         private var cancellables = Set<AnyCancellable>()
 
-        func setup(appData: AppData) {
-            appData.$allOrders
+        init(dataProvider: AppData) {
+            dataProvider.$allOrders
                 .sink { [weak self] allOrders in
                     self?.registeredOrders = allOrders.filter {
                         $0.status == .registered
