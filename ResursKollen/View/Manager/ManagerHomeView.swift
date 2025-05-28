@@ -46,7 +46,7 @@ struct ManagerHomeView: View {
                     }
                 
                 SummaryView()
-
+                
                 
                     .tabItem {
                         Label(
@@ -65,15 +65,6 @@ struct ManagerHomeView: View {
                         Label("Meddlanden", systemImage: "message")
                     }
                 
-         
-            }
-            .tabItem {
-                Label("Statistik", systemImage: "waveform.badge.magnifyingglass")
-            }
-
-            NavigationStack {
-                StaffView(currentUser: currentUser )
-
             }
             .tint(Color.orange)
             .toolbar{
