@@ -21,9 +21,9 @@ final class MessagesManager{
     
     
     //Radera ett meddlande
-    func deleteMessages(id: String)async throws{
+    func deleteMessages(message: Message)async throws{
         
-        try await messagesCollection.document(id).delete()
+        try await messagesCollection.document(message.id).delete()
         
     }
     

@@ -10,7 +10,7 @@ import SwiftUI
 
 
 @MainActor
-final class MessagesManagerView: ObservableObject {
+final class MessagesManagerViewModel: ObservableObject {
    
     @Published var messages: [Message] = []
     
@@ -20,7 +20,7 @@ final class MessagesManagerView: ObservableObject {
     
     func deleteMessage(message: Message) async throws {
         
-        try await MessagesManager.shared.deleteMessages(id: message.id)
+        try await MessagesManager.shared.deleteMessages(message: message)
         
     }
     
@@ -44,7 +44,7 @@ final class MessagesManagerView: ObservableObject {
 struct NewMessageEditView: View {
     
     
-    @ObservedObject var viewmodel: MessagesManagerView = MessagesManagerView()
+    @ObservedObject var viewmodel: MessagesManagerViewModel = MessagesManagerViewModel()
     @State private var showingEditor = false
     @State private var editingMessage: Message?
     
@@ -65,6 +65,7 @@ struct NewMessageEditView: View {
                             Button("Ändra"){
                                 editingMessage = message
                                 showingEditor = true
+                              
                             }
                             Button("Radera", role: .destructive){
                                 Task{
@@ -77,7 +78,7 @@ struct NewMessageEditView: View {
                     .padding(.vertical, 8)
                 }
             }
-            .navigationTitle("Meddlandecenter")
+            .navigationTitle("Meddelanden ")
             .toolbar{
                 Button(action: {
                     editingMessage = nil
@@ -87,7 +88,7 @@ struct NewMessageEditView: View {
                 }
             }
             .sheet(isPresented: $showingEditor){
-                // editor av medd
+                EditMessagesView(messageToEdit: editingMessage)
             }
         }
         .task {
@@ -95,78 +96,7 @@ struct NewMessageEditView: View {
         }
         
     }
-    
-    
-    /*   @State private var title = ""
-     @State private var text = ""
-     @State private var category: MessagesCategory = .general
-     
-     @Environment(\.dismiss) var dismiss
-     
-     var messageToEdit: Message?
-     
-     var body: some View {
-     NavigationView {
-     Form {
-     Section(header: Text("Rubrik")) {
-     TextField("Ange rubrik", text: $title)
-     }
-     
-     Section(header: Text("Meddelande")) {
-     TextEditor(text: $text).frame(height: 150)
-     }
-     
-     Section(header: Text("Kategori")) {
-     Picker("Kategori", selection: $category) {
-     ForEach(MessagesCategory.allCases, id: \.self) { cat in
-     Text(cat.MessagesCategorySE).tag(cat)
-     }
-     }
-     }
-     
-     Section {
-     Button(action: submitMessage) {
-     Text(messageToEdit == nil ? "Publicera" : "Uppdatera")
-     }
-     .disabled(title.isEmpty || text.isEmpty)
-     }
-     
-     if messageToEdit != nil {
-     Section {
-     Button("Radera", role: .destructive) {
-     Task {
-     try? await viewmodel.deleteMessage(message: messageToEdit!)
-     dismiss()
-     }
-     }
-     }
-     }
-     }
-     .navigationTitle(messageToEdit == nil ? "Nytt Meddelande" : "Redigera Meddelande")
-     .onAppear {
-     if let msg = messageToEdit {
-     title = msg.title
-     text = msg.text
-     category = msg.category
-     }
-     }
-     }
-     }
-     
-     private func submitMessage() {
-     var message = messageToEdit ?? Message(title: "", text: "", category: .general)
-     message.title = title
-     message.text = text
-     message.category = category
-     
-     Task {
-     try? await viewmodel.saveMessage(message: message)
-     dismiss()
-     }
-     }
-     }
-     
-     */
+   
 }
 #Preview {
     NewMessageEditView()
