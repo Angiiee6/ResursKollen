@@ -10,41 +10,33 @@ import SwiftUI
 struct ManagerHomeView: View {
     @ObservedObject var dataProvider: AppData
     @State private var isLoggedOut = false
+    
+    var body: some View {
         NavigationStack{
-            
             NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true), isActive: $isLoggedOut){
                 EmptyView()
             }.navigationBarBackButtonHidden(true)
             
             TabView {
-                
-                ManagerAllOrdersView()
-                
+                ManagerAllOrdersView(dataProvider: dataProvider)
                     .tabItem {
                         Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
                     }
-                
-                ReviewOrdersView()
-                
+                ReviewOrdersView(dataProvider: dataProvider)
                     .tabItem {
                         Label(
                             "Utförda ordrar",
                             systemImage: "text.page.badge.magnifyingglass"
                         )
                     }
-                
-                SummaryView()
-                
-                
+                SummaryView(dataProvider: dataProvider)
                     .tabItem {
                         Label(
                             "Statistik",
                             systemImage: "waveform.badge.magnifyingglass"
                         )
                     }
-                
-                StaffView(currentUser: currentUser)
-                
+                StaffView(currentUser: dataProvider.currentUser)
                     .tabItem {
                         Label("Personal", systemImage: "person.3")
                     }
@@ -52,8 +44,8 @@ struct ManagerHomeView: View {
                     .tabItem{
                         Label("Meddlanden", systemImage: "message")
                     }
-                
-            NavigationStack {
+            }
+            //            NavigationStack {
             .tint(Color.orange)
             .toolbar{
                 ToolbarItem(placement: .topBarTrailing) {
@@ -65,16 +57,19 @@ struct ManagerHomeView: View {
                             print("Kunde inte logga ut användaren")
                         }
                     }label: {
-                     Image(systemName: "rectangle.portrait.and.arrow.right")
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
                             .tint(.orange)
                     }
                 }
-            .tabItem {
-                Label("Personal", systemImage: "person.3")
-       
+                //            .tabItem {
+                //                Label("Personal", systemImage: "person.3")
+                //
+                //        }
+                //        .tint(Color.orange)
+            }
         }
-        .tint(Color.orange)
     }
+}
 
 //TODO: Fetch all orders here instead of in sub-views
 

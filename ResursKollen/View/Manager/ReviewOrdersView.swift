@@ -104,6 +104,6 @@ extension ReviewOrdersView {
     }
 
 
-//#Preview {
-//    ReviewOrdersView()
-//}
+#Preview {
+    ReviewOrdersView(dataProvider: AppData(currentUser: UserData(name: "Test user")))
+}

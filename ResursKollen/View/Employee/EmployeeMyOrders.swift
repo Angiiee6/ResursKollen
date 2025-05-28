@@ -10,7 +10,6 @@ import SwiftUI
 struct EmployeeMyOrders: View {
     @ObservedObject var dataProvider: AppData
     @StateObject var viewModel: ViewModel
-    @State var monthlySummarySheetPresent: Bool = false
 
     init(dataProvider: AppData) {
         self.dataProvider = dataProvider
@@ -76,24 +75,15 @@ struct EmployeeMyOrders: View {
                 
             MessagesShowView()
             }
-           
         }
        // MessagesShowView()
     }
 }
 
 #Preview {
-    EmployeeMyOrders(
-        viewModel: EmployeeHomeView.ViewModel(
-            currentUser: UserData(name: "Test user")
-        )
+    EmployeeMyOrders(dataProvider: AppData(currentUser: UserData(name: "Test user")
+       )
     )
-}
-                .scrollContentBackground(.hidden)  // Make list background transparent
-                .background(Color.clear)  // Clear background for the list
-            }
-        }
-    }
 }
 
 extension EmployeeMyOrders {
@@ -104,7 +94,9 @@ extension EmployeeMyOrders {
 
         init(dataProvider: AppData) {
             dataProvider.$allOrders.map { orders in
-                orders.filter { $0.assignedUserId == dataProvider.currentUser.id }
+                orders.filter { $0.assignedUserId == dataProvider.currentUser.id
+                    && $0.status != .completed
+                    && $0.status != .done}
             }
             .assign(to: &$myOrders)
         }
@@ -119,15 +111,5 @@ extension EmployeeMyOrders {
                 print("Error leaving order!")
             }
         }
-
     }
-
 }
-
-//#Preview {
-//    EmployeeMyOrders(
-//        viewModel: EmployeeHomeView.ViewModel(
-//            currentUser: UserData(name: "Test user")
-//        )
-//    )
-//}

@@ -10,13 +10,13 @@ import SwiftUI
 struct EmployeeStaffView: View {
     @ObservedObject var dataProvider: AppData
     @StateObject var viewModel : ViewModel
-
+    
     init(dataProvider: AppData) {
         self.dataProvider = dataProvider
         _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
     }
     
-
+    
     var body: some View {
         ZStack {
             // Gradientbakgrund
@@ -29,14 +29,12 @@ struct EmployeeStaffView: View {
                 endPoint: .bottom
             )
             .ignoresSafeArea()
-
             VStack {
-                StaffView(currentUser: viewModel.currentUser)
+                StaffView(currentUser: dataProvider.currentUser)
                 EmployeeMonthlySummaryDisplay(
-                    hoursWorkedThisMonth: viewModel.myTimeUnitsThisMonth.map {
-                        $0.time
-                    }.reduce(0, +)
+                    hoursWorkedThisMonth: viewModel.hoursWorkedThisMonth
                 )
+            }
         }
     }
 }
@@ -49,7 +47,7 @@ extension EmployeeStaffView {
         init(dataProvider: AppData) {
             dataProvider.$allOrders.map { orders in
                 orders
-                    //Put all orders lists of time units into one list
+                    //Put all order lists of time units into one list
                     .flatMap { $0.timeUnits }
                     //Selected only time added this month and for the current user
                     .filter {
@@ -68,10 +66,6 @@ extension EmployeeStaffView {
 
 #Preview {
     NavigationStack {
-        EmployeeStaffView(
-            viewModel: EmployeeHomeView.ViewModel(
-                currentUser: UserData(name: "Test user")
-            )
-        )
+        EmployeeStaffView(dataProvider: AppData(currentUser: UserData(name: "Test user")))
     }
 }

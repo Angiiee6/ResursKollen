@@ -150,11 +150,7 @@ extension ManagerAllOrdersView {
     
 }
 
-//#Preview {
-//    ManagerAllOrdersView(
-//        viewModel: ManagerHomeView.ViewModel(
-//            currentUser: UserData(name: "Test user")
-//        )
-//    )
-//}
+#Preview {
+    ManagerAllOrdersView(dataProvider: AppData(currentUser: UserData(name: "Test user")))
+}
 

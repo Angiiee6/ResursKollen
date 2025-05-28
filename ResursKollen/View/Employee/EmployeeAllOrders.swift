@@ -229,12 +229,8 @@ extension EmployeeAllOrders {
 
 }
 
-//#Preview {
-//    NavigationStack {
-//        EmployeeAllOrders(
-//            viewModel: EmployeeHomeView.ViewModel(
-//                currentUser: UserData(name: "Test user")
-//            )
-//        )
-//    }
-//}
+#Preview {
+    NavigationStack {
+        EmployeeAllOrders(dataProvider: AppData(currentUser: UserData(name: "Test user")))
+    }
+}
