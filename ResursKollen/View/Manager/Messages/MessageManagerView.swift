@@ -44,13 +44,12 @@ final class MessagesManagerViewModel: ObservableObject {
 struct NewMessageEditView: View {
     
     
-    @ObservedObject var viewmodel: MessagesManagerViewModel = MessagesManagerViewModel()
+    @StateObject var viewmodel: MessagesManagerViewModel = MessagesManagerViewModel()
     @State private var showingEditor = false
     @State private var editingMessage: Message?
     
     var body: some View {
-        NavigationView {
-            
+        VStack{
             List{
                 ForEach(viewmodel.messages){ message in
                     VStack(alignment: .leading,spacing: 4){
@@ -65,39 +64,78 @@ struct NewMessageEditView: View {
                             Button("Ändra"){
                                 editingMessage = message
                                 showingEditor = true
-                              
                             }
+                            .buttonStyle(.borderless)
+                            
+                            Spacer()
+                            
                             Button("Radera", role: .destructive){
-                                Task{
-                                    try? await viewmodel.deleteMessage(message: message)
-                                }
+                                deleteMessage(message: message)
                             }
+                            .buttonStyle(.borderless)
                         }
                         .font(.caption)
                     }
                     .padding(.vertical, 8)
                 }
+                
             }
+            Button(action: {
+               editingMessage = nil
+                showingEditor = true
+            }) {
+                HStack {
+                    Image(systemName: "plus.circle.fill")
+                    Text("Nytt meddlande")
+                }
+                .font(.headline)
+                .foregroundColor(.white)
+                .padding()
+                .frame(maxWidth: .infinity)
+                .background(Color.orange)
+                .cornerRadius(12)
+                .padding(.horizontal)
+                .padding(.bottom,20)
+            }
+            
+    }
             .navigationTitle("Meddelanden ")
-            .toolbar{
-                Button(action: {
-                    editingMessage = nil
-                    showingEditor = true
-                }) {
-                    Label("Nytt meddelande", systemImage: "plus")
+            .sheet(isPresented: $showingEditor){
+                EditMessagesView(viewmodel: viewmodel, messageToEdit:  editingMessage)
+                
+            
+            }
+        
+            .onAppear{
+                Task{
+                    
+                        try? await viewmodel.readMessages()
+                    
                 }
             }
-            .sheet(isPresented: $showingEditor){
-                EditMessagesView(messageToEdit: editingMessage)
-            }
-        }
-        .task {
-            try? await viewmodel.readMessages()
-        }
+        
+        
         
     }
-   
+    
+    
+    //Rdera ett meddelande
+    func deleteMessage(message: Message){
+        Task{
+            try? await viewmodel.deleteMessage(message: message)
+        }
+    }
 }
 #Preview {
     NewMessageEditView()
 }
+
+
+/*.toolbar{
+ Button(action: {
+     editingMessage = nil
+     showingEditor = true
+ }) {
+     Label("Nytt meddelande", systemImage: "plus")
+ }
+}*/

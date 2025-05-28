@@ -61,6 +61,7 @@ struct EmployeeMyOrders: View {
                 .scrollContentBackground(.hidden) // Make list background transparent
                 .background(Color.clear) // Clear background for the list
                 
+                //fejka lite fördröjning för att fåt meddlande lista i sync
             MessagesShowView()
             }
            
