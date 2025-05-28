@@ -302,7 +302,7 @@ struct OrderDetailView: View {
             case .assignedUser:
                 AssignedUserPickerSheet(viewModel: viewModel)
             case .timeUnits:
-                TimeUnitListSheet(timeUnits: $order.timeUnits)
+                TimeUnitListSheet(timeUnits: order.timeUnits)
                     //Makes sheet cover only half the screen
                     .presentationDetents([.medium])
             }
