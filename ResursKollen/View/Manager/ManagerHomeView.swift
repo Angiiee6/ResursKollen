@@ -55,7 +55,7 @@ struct ManagerHomeView: View {
                         )
                     }
                 
-                StaffView()
+                StaffView(currentUser: currentUser)
                 
                     .tabItem {
                         Label("Personal", systemImage: "person.3")

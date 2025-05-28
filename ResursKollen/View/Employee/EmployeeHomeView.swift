@@ -9,13 +9,14 @@ import SwiftUI
 struct EmployeeHomeView: View {
     @StateObject var viewModel: ViewModel
     @State private var isLoggedOut = false
-
+    
     //Sends the current user directly to the view model
     init(currentUser: UserData) {
         _viewModel = StateObject(
             wrappedValue: ViewModel(currentUser: currentUser)
         )
     }
+
 
     var body: some View {
 
@@ -45,7 +46,7 @@ struct EmployeeHomeView: View {
                             )
                         }.badge(viewModel.unassignedOrders.count)
                     
-                    StaffView()
+                    EmployeeStaffView(viewModel: viewModel)
                         .tabItem {
                             Label("Personal", systemImage: "person.3")
                         }
@@ -80,16 +81,10 @@ extension EmployeeHomeView {
         let currentUser: UserData
         @Published var myOrders: [Order] = []
         @Published var unassignedOrders: [Order] = []
-
-
-        init(currentUser: UserData) {
-            self.currentUser = currentUser
-
         @Published var myTimeUnitsThisMonth: [OrderTimeUnit] = []
 
         init(currentUser: UserData) {
             self.currentUser = currentUser
-
             FirestoreManager.shared.listenToOrderCollection { orders in
                 self.myOrders = orders.filter {
                     $0.assignedUserId == currentUser.id && $0.status != .done
@@ -108,13 +103,7 @@ extension EmployeeHomeView {
             }
         }
 
-                
-        
-        ///Sets the order's `assignedUser` to the current user.
-
-
         ///Sets the order's `assignedUserId` to the current user's id.
-       Developer
         func takeOrder(_ order: Order) {
             var updatedOrder = order
             updatedOrder.assignedUserId = currentUser.id
