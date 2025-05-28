@@ -18,6 +18,15 @@ final class MessagesManager{
     func messagesDocuments()-> DocumentReference{
         return messagesCollection.document()
     }
+    //Radera ett meddlande
+    
+    func deleteMessages(id: String)async throws{
+        
+        try await messagesCollection.document(id).delete()
+        
+    }
+    
+    
     
     //Spara ett nytt medd.
     func writeNewMessage(message: Message) async throws{

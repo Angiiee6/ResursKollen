@@ -12,6 +12,17 @@ import SwiftUI
 @MainActor
 final class MessageViewViewModel: ObservableObject {
    
+    @Published var messages: [Message] = []
+    
+    func readMessages()async throws  {
+        self.messages = try await MessagesManager.shared.readAllmessages()
+    }
+    
+    func deleteMessage(message: Message) async throws {
+        
+    //   try await MessagesManager.shared.deleteMessages(id: <#T##String#>)
+        
+    }
     
     func saveMessage(message: Message)async throws{
         guard !message.title.isEmpty && !message.text.isEmpty else {
@@ -96,5 +107,5 @@ struct NewMessageEditView: View {
     
 
 #Preview {
-   // MessagesView()
+    NewMessageEditView()
 }
