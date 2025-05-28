@@ -113,7 +113,7 @@ extension ManagerAllOrdersView {
         
         func takeOrder(order: Order, currentUser: UserData) {
             var updatedOrder = order
-            updatedOrder.assignedUser = currentUser
+            updatedOrder.assignedUserId = currentUser.id
             do{
                 try FirestoreManager.shared.updateOrder(updatedOrder)
             } catch {

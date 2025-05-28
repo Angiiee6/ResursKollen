@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
+    let currentUser: UserData
 
     @State private var isLoggedOut = false
     ///EXEMPEL USER
@@ -45,6 +46,7 @@ struct ManagerHomeView: View {
                     }
                 
                 SummaryView()
+
                 
                     .tabItem {
                         Label(
@@ -63,7 +65,15 @@ struct ManagerHomeView: View {
                         Label("Meddlanden", systemImage: "message")
                     }
                 
-               
+         
+            }
+            .tabItem {
+                Label("Statistik", systemImage: "waveform.badge.magnifyingglass")
+            }
+
+            NavigationStack {
+                StaffView(currentUser: currentUser )
+
             }
             .tint(Color.orange)
             .toolbar{
@@ -87,6 +97,9 @@ struct ManagerHomeView: View {
     
 }
 
+//TODO: Fetch all orders here instead of in sub-views
+
+
 #Preview {
-    ManagerHomeView()
+    ManagerHomeView(currentUser: UserData(name: "Test user"))
 }

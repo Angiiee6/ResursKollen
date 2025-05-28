@@ -24,5 +24,14 @@ extension Date {
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: self)
     }
+    
+    /// Checks if the date is in the current month.
+        var isThisMonth: Bool {
+            let calendar = Calendar.current
+            let now = Date()
+            let dateComponents = calendar.dateComponents([.year, .month], from: self)
+            let nowComponents = calendar.dateComponents([.year, .month], from: now)
+            return dateComponents.year == nowComponents.year && dateComponents.month == nowComponents.month
+        }
 
 }

@@ -107,7 +107,7 @@ extension SummaryView {
                 .filter {
                     calendar.isDate($0.creationDate, equalTo: now, toGranularity: .month)
                 }
-                .compactMap { Int($0.timeConsumption) }
+                .compactMap { Int($0.totalTimeWorked) }
                 .reduce(0, +)
 
             return "\(total) h"
