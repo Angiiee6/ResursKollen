@@ -29,6 +29,7 @@ struct CustomerDetailCard: View {
             Button(action: {
                 showOptions = true
             }) {
+                
                 Text(customer.phoneNumber)
                     .foregroundColor(.blue)
             }
@@ -44,11 +45,12 @@ struct CustomerDetailCard: View {
             }
         }
         .padding(12)
-        // .background(.secondary.opacity(0.35))
-        .clipShape(RoundedRectangle(cornerRadius: 5))
+        .frame(maxWidth: .infinity)
+        .background(.ultraThinMaterial)
+        .cornerRadius(8)
         .overlay(
-            RoundedRectangle(cornerRadius: 5)
-                .stroke(.orange.opacity(0.75), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.orange, lineWidth: 2)
         )
         
     }
