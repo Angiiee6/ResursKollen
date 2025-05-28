@@ -23,46 +23,52 @@ struct MessagesShowView: View {
    
 
     var body: some View {
-        
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 16) {
-                ForEach(viewModel.messages, id: \.id) { message in
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(message.title)
-                            .font(.headline)
-                            .foregroundColor(.white)
-                        
-                        Text(message.text)
-                            .font(.subheadline)
-                            .foregroundColor(.white.opacity(0.8))
-                            .lineLimit(4)
-                            .fixedSize(horizontal: false, vertical: false)
-                            .padding(.bottom, 16)
-                        
-                        
-                        Text("\(formattedDate(message.date))")
-                            .font(.caption2)
-                            .foregroundColor(.white.opacity(0.6))
-                        
-                        Text("\(message.category.MessagesCategorySE)")
-                            .font(.caption2)
-                            .foregroundColor(.black)
+        VStack(alignment: .leading){
+            Text("Meddelanden och information:")
+                .foregroundStyle(Color.orange)
+            
+            
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 16){
+                    
+                    ForEach(viewModel.messages, id: \.id) { message in
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(message.title)
+                                .font(.headline)
+                                .foregroundColor(.white)
+                            
+                            Text(message.text)
+                                .font(.subheadline)
+                                .foregroundColor(.white.opacity(0.8))
+                                .lineLimit(4)
+                                .fixedSize(horizontal: false, vertical: false)
+                                .padding(.bottom, 16)
+                            
+                            
+                            Text("\(formattedDate(message.date))")
+                                .font(.caption2)
+                                .foregroundColor(.white.opacity(0.6))
+                            
+                            Text("\(message.category.MessagesCategorySE)")
+                                .font(.caption2)
+                                .foregroundColor(.black)
+                        }
+                        .padding()
+                        .frame(width: 300, height: 160)
+                        .background(message.category.color)
+                        .cornerRadius(20)
                     }
-                    .padding()
-                    .frame(width: 300, height: 160)
-                    .background(message.category.color)
-                    .cornerRadius(20)
                 }
+                .padding(8)
             }
-            .padding(.horizontal)
+            
+            .task {
+                try? await viewModel.readMessages()
+            }
+            
         }
         
-        .task {
-            try? await viewModel.readMessages()
-        }
     }
-    
-    
         
 
             func formattedDate(_ date: Date) -> String {

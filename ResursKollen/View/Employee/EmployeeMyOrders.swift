@@ -10,6 +10,7 @@ import SwiftUI
 struct EmployeeMyOrders: View {
     @ObservedObject var viewModel: EmployeeHomeView.ViewModel
     @State var monthlySummarySheetPresent: Bool = false
+    @State var isLoading = true
 
     var body: some View {
         ZStack {
@@ -61,14 +62,40 @@ struct EmployeeMyOrders: View {
                 .scrollContentBackground(.hidden) // Make list background transparent
                 .background(Color.clear) // Clear background for the list
                 
-                //fejka lite fördröjning för att fåt meddlande lista i sync
-            MessagesShowView()
+                //fejka lite fördröjning för att fåt meddelande listan i sync
+                
+              
+                    
+                        Group {
+                            if isLoading {
+                                VStack {
+                                    ProgressView("Laddar...")
+                                        .progressViewStyle(CircularProgressViewStyle())
+                                        .padding()
+                                }
+                                .onAppear {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {  // <--- ändra antalet sekunder här
+                                        isLoading = false
+                                    }
+                                }
+                            } else {
+                                MessagesShowView()
+                            }
+                        }
+                        .animation(.easeInOut, value: isLoading)
+                        .transition(.opacity)
+                    }
+                
+                
+                
+                
+           
             }
            
         }
        // MessagesShowView()
     }
-}
+
 
 #Preview {
     EmployeeMyOrders(
