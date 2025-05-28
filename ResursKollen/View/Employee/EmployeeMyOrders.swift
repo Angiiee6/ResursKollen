@@ -64,28 +64,27 @@ struct EmployeeMyOrders: View {
                 
                 //fejka lite fördröjning för att fåt meddelande listan i sync
                 
-              
-                    
-                        Group {
-                            if isLoading {
-                                VStack {
-                                    ProgressView("Laddar...")
-                                        .progressViewStyle(CircularProgressViewStyle())
-                                        .padding()
-                                }
-                                .onAppear {
-                                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {  // <--- ändra antalet sekunder här
-                                        isLoading = false
-                                    }
-                                }
-                            } else {
-                                MessagesShowView()
-                            }
-                        }
-                        .animation(.easeInOut, value: isLoading)
-                        .transition(.opacity)
-                    }
                 
+                    Group{
+                        if isLoading {
+                            HStack(alignment: .center) {
+                                ProgressView("Laddar...")
+                                    .progressViewStyle(CircularProgressViewStyle())
+                                    .padding()
+                            }
+                            .onAppear {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {  // <--- ändra antalet sekunder här
+                                    isLoading = false
+                                }
+                            }
+                        } else {
+                            MessagesShowView()
+                        }
+                    }
+                    .animation(.easeInOut, value: isLoading)
+                    .transition(.opacity)
+                }
+            
                 
                 
                 
