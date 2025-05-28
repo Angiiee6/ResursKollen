@@ -8,19 +8,12 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
-    @StateObject var viewModel: ViewModel
-
-    //Passes the current user directly into the view model
-    init(currentUser: UserData) {
-        _viewModel = StateObject(
-            wrappedValue: ViewModel(currentUser: currentUser)
-        )
-    }
+    @EnvironmentObject var appData: AppData
 
     var body: some View {
         TabView {
             NavigationStack {
-                ManagerAllOrdersView(viewModel: viewModel)
+                ManagerAllOrdersView()
             }
             .tabItem {
                 Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
@@ -47,7 +40,7 @@ struct ManagerHomeView: View {
             }
 
             NavigationStack {
-                StaffView(currentUser: viewModel.currentUser)
+                StaffView(currentUser: appData.currentUser)
             }
             .tabItem {
                 Label("Personal", systemImage: "person.3")
@@ -57,38 +50,38 @@ struct ManagerHomeView: View {
     }
 }
 
-extension ManagerHomeView {
-
-    class ViewModel: ObservableObject {
-        let currentUser: UserData
-        
-        @Published var registeredOrders: [Order] = []
-        @Published var startedOrders: [Order] = []
-        @Published var delayedOrders: [Order] = []
-        @Published var completedOrders: [Order] = []
-
-        init(currentUser: UserData) {
-            self.currentUser = currentUser
-            listenToOrderCollection()
-        }
-        
-        func listenToOrderCollection() {
-            FirestoreManager.shared.listenToOrderCollection { [weak self] newOrders in
-                DispatchQueue.main.async {
-                    self?.registeredOrders = newOrders.filter {$0.status == .registered}
-                    self?.startedOrders = newOrders.filter {$0.status == .started}
-                    self?.delayedOrders = newOrders.filter {$0.status == .delayed}
-                    self?.completedOrders = newOrders.filter {$0.status == .completed}
-                    
-                }
-            }
-        }
-        
-        
-    }
-
-}
+//extension ManagerHomeView {
+//
+//    class ViewModel: ObservableObject {
+//        let currentUser: UserData
+//        
+//        @Published var registeredOrders: [Order] = []
+//        @Published var startedOrders: [Order] = []
+//        @Published var delayedOrders: [Order] = []
+//        @Published var completedOrders: [Order] = []
+//
+//        init(currentUser: UserData) {
+//            self.currentUser = currentUser
+//            listenToOrderCollection()
+//        }
+//        
+//        func listenToOrderCollection() {
+//            FirestoreManager.shared.listenToOrderCollection { [weak self] newOrders in
+//                DispatchQueue.main.async {
+//                    self?.registeredOrders = newOrders.filter {$0.status == .registered}
+//                    self?.startedOrders = newOrders.filter {$0.status == .started}
+//                    self?.delayedOrders = newOrders.filter {$0.status == .delayed}
+//                    self?.completedOrders = newOrders.filter {$0.status == .completed}
+//                    
+//                }
+//            }
+//        }
+//        
+//        
+//    }
+//
+//}
 
 #Preview {
-    ManagerHomeView(currentUser: UserData(name: "Test user"))
+    ManagerHomeView()
 }

@@ -48,8 +48,8 @@ struct OrderRowAllOrders: View {
     }
 }
 // Förhandsvisning med mockdata
-#Preview {
-    EmployeeHomeView(
-        currentUser: UserData(name: "Test user")
-    )
-}
+//#Preview {
+//    EmployeeHomeView(
+//        currentUser: UserData(name: "Test user")
+//    )
+//}

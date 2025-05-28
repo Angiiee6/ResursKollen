@@ -6,10 +6,14 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ManagerAllOrdersView: View {
-    @ObservedObject var viewModel: ManagerHomeView.ViewModel
+    @EnvironmentObject var appData: AppData
+    @StateObject var viewModel = ViewModel()
     @State var searchText: String = ""
+    
+   
 
     var body: some View {
         ZStack {
@@ -88,6 +92,9 @@ struct ManagerAllOrdersView: View {
             .toolbarColorScheme(.dark, for: .navigationBar)
             .searchable(text: $searchText, prompt: "Sök bland ordrar")
         }
+        .onAppear {
+            viewModel.setup(appData: appData)
+        }
     }
 
     func filteredOrders(for orders: [Order]) -> [Order] {
@@ -103,11 +110,50 @@ struct ManagerAllOrdersView: View {
     }
 }
 
-#Preview {
-    ManagerAllOrdersView(
-        viewModel: ManagerHomeView.ViewModel(
-            currentUser: UserData(name: "Test user")
-        )
-    )
+extension ManagerAllOrdersView {
+    
+    class ViewModel: ObservableObject {
+        
+        @Published var registeredOrders: [Order] = []
+        @Published var startedOrders: [Order] = []
+        @Published var delayedOrders: [Order] = []
+        @Published var completedOrders: [Order] = []
+
+        private var cancellables = Set<AnyCancellable>()
+
+        func setup(appData: AppData) {
+            appData.$allOrders
+                .sink { [weak self] allOrders in
+                    self?.registeredOrders = allOrders.filter {
+                        $0.status == .registered
+                    }
+                    self?.startedOrders = allOrders.filter {
+                        $0.status == .started
+                    }
+                    self?.delayedOrders = allOrders.filter {
+                        $0.status == .delayed
+                    }
+                    self?.completedOrders = allOrders.filter {
+                        $0.status == .completed
+                    }
+                }
+                .store(in: &cancellables)
+        }
+
+        deinit {
+            cancellables.forEach { $0.cancel() }
+            cancellables.removeAll()
+        }
+        
+    }
+    
 }
+
+//#Preview {
+//    ManagerAllOrdersView(
+//        viewModel: ManagerHomeView.ViewModel(
+//            currentUser: UserData(name: "Test user")
+//        )
+//    )
+//}
 

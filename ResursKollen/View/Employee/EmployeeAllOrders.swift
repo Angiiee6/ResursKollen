@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import Combine
 
 struct EmployeeAllOrders: View {
-    @ObservedObject var viewModel: EmployeeHomeView.ViewModel
+    @EnvironmentObject var appData: AppData
     @State var searchText: String = ""
+    @StateObject var viewModel = ViewModel()
 
     var body: some View {
         ZStack {
@@ -29,11 +31,8 @@ struct EmployeeAllOrders: View {
                     Section(
                         header: Text("Lediga ordrar").foregroundColor(.blue)
                     ) {
-                        ForEach(
-                            filteredOrders(for: .registered).filter {
-                                $0.status == .registered
-                            }
-                        ) {
+                        ForEach(filteredOrders(for: viewModel.registeredOrders))
+                        {
                             order in
                             NavigationLink(
                                 destination: OrderDetailView(
@@ -45,7 +44,7 @@ struct EmployeeAllOrders: View {
                                     .listRowBackground(Color.white)
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
-                                            viewModel.takeOrder(order)
+                                            self.viewModel.takeOrder(order: order, userId: appData.currentUser.id)
                                         } label: {
                                             Label(
                                                 "Ta order",
@@ -63,9 +62,7 @@ struct EmployeeAllOrders: View {
                         )
                     ) {
                         ForEach(
-                            viewModel.unassignedOrders.filter {
-                                $0.status == .started
-                            }
+                            filteredOrders(for: viewModel.startedOrders)
                         ) {
                             order in
                             NavigationLink(
@@ -78,7 +75,7 @@ struct EmployeeAllOrders: View {
                                     .listRowBackground(Color.white)
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
-                                            viewModel.takeOrder(order)
+                                            self.viewModel.takeOrder(order:order, userId: appData.currentUser.id)
                                         } label: {
                                             Label(
                                                 "Ta order",
@@ -94,9 +91,7 @@ struct EmployeeAllOrders: View {
                         header: Text("Försenade ordrar").foregroundColor(.red)
                     ) {
                         ForEach(
-                            viewModel.unassignedOrders.filter {
-                                $0.status == .delayed
-                            }
+                            filteredOrders(for: viewModel.delayedOrders)
                         ) {
                             order in
                             NavigationLink(
@@ -109,7 +104,7 @@ struct EmployeeAllOrders: View {
                                     .listRowBackground(Color.white)
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
-                                            viewModel.takeOrder(order)
+                                            self.viewModel.takeOrder(order: order, userId: appData.currentUser.id)
                                         } label: {
                                             Label(
                                                 "Ta order",
@@ -126,13 +121,14 @@ struct EmployeeAllOrders: View {
                         header: Text("Avslutade ordrar").foregroundColor(.green)
                     ) {
                         ForEach(
-                            viewModel.unassignedOrders.filter {
-                                $0.status == .completed
-                            }
+                            filteredOrders(for: viewModel.completedOrders)
                         ) {
                             order in
                             NavigationLink(
-                                destination: OrderDetailView(order: order, status: .employee)
+                                destination: OrderDetailView(
+                                    order: order,
+                                    status: .employee
+                                )
                             ) {
                                 OrderRowAllOrders(order: order)
                                     .listRowBackground(Color.white)
@@ -145,33 +141,87 @@ struct EmployeeAllOrders: View {
                 .scrollContentBackground(.hidden)
             }
         }
+        .onAppear{
+            viewModel.setup(appData: appData)
+        }
         .searchable(text: $searchText, prompt: "Sök bland ordrar")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
     }
 
     //
-    // tar in en status och filtrerar baserat på status sen använder vi sökordet för att filtrera i listan
-    func filteredOrders(for status: OrderStatus) -> [Order] {
-        viewModel.unassignedOrders.filter {
-            $0.status == status
-                && (searchText.isEmpty
-                    || $0.customer.name.lowercased().contains(
-                        searchText.lowercased()
-                    )
-                    || $0.orderNumber.lowercased().contains(
-                        searchText.lowercased()
-                    ))
+    // tar in en status och filtrerar sökordet för att filtrera i listan
+    func filteredOrders(for orders: [Order]) -> [Order] {
+        orders.filter {
+            searchText.isEmpty
+                || $0.customer.name.lowercased().contains(
+                    searchText.lowercased()
+                )
+                || $0.orderNumber.lowercased().contains(
+                    searchText.lowercased()
+                )
         }
     }
 }
 
-#Preview {
-    NavigationStack {
-        EmployeeAllOrders(
-            viewModel: EmployeeHomeView.ViewModel(
-                currentUser: UserData(name: "Test user")
-            )
-        )
+extension EmployeeAllOrders {
+
+    class ViewModel: ObservableObject {
+
+        @Published var registeredOrders: [Order] = []
+        @Published var startedOrders: [Order] = []
+        @Published var delayedOrders: [Order] = []
+        @Published var completedOrders: [Order] = []
+
+        private var cancellables = Set<AnyCancellable>()
+
+        
+        func setup(appData:AppData){
+            appData.$allOrders
+                .sink { [weak self] allOrders in
+                   let unassignedOrders = allOrders.filter{ $0.assignedUserId == nil}
+                    self?.registeredOrders = unassignedOrders.filter {
+                        $0.status == .registered
+                    }
+                    self?.startedOrders = unassignedOrders.filter {
+                        $0.status == .started
+                    }
+                    self?.delayedOrders = unassignedOrders.filter {
+                        $0.status == .delayed
+                    }
+                    self?.completedOrders = unassignedOrders.filter {
+                        $0.status == .completed
+                    }
+                }
+                .store(in: &cancellables)
+        }
+        
+                ///Sets the order's `assignedUserId` to the current user's id.
+        func takeOrder(order: Order, userId: String) {
+                    var updatedOrder = order
+                    updatedOrder.assignedUserId = userId
+                    do {
+                        try FirestoreManager.shared.updateOrder(updatedOrder)
+                    } catch {
+                        print("Error taking order!")
+                    }
+                }
+
+        deinit {
+            cancellables.forEach { $0.cancel() }
+            cancellables.removeAll()
+        }
+
     }
+
 }
+
+//#Preview {
+//    NavigationStack {
+//        EmployeeAllOrders(
+//            viewModel: EmployeeHomeView.ViewModel(
+//                currentUser: UserData(name: "Test user")
+//            )
+//        )
+//    }
+//}

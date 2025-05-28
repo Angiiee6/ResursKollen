@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct EmployeeMyOrders: View {
-    @ObservedObject var viewModel: EmployeeHomeView.ViewModel
+    @EnvironmentObject var appData: AppData
+    @StateObject var viewModel = ViewModel()
     @State var monthlySummarySheetPresent: Bool = false
+
 
     var body: some View {
         ZStack {
@@ -25,7 +27,7 @@ struct EmployeeMyOrders: View {
             .edgesIgnoringSafeArea(.all)
 
             VStack(alignment: .leading) {
-                Text("Hej, \(viewModel.currentUser.name) 👋")
+                Text("Hej, \(appData.currentUser.name) 👋")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.top)
@@ -33,11 +35,16 @@ struct EmployeeMyOrders: View {
 
                 List {
                     Section(
-                        header: Text("Påbörjade ordrar:").foregroundColor(.orange)
+                        header: Text("Påbörjade ordrar:").foregroundColor(
+                            .orange
+                        )
                     ) {
                         ForEach(viewModel.myOrders) { order in
                             NavigationLink(
-                                destination: OrderDetailView(order: order, status: .employee)
+                                destination: OrderDetailView(
+                                    order: order,
+                                    status: .employee
+                                )
                             ) {
                                 OrderRowMyOrders(order: order)
 
@@ -57,17 +64,48 @@ struct EmployeeMyOrders: View {
                     }
                 }
                 .listStyle(.insetGrouped)
-                .scrollContentBackground(.hidden) // Make list background transparent
-                .background(Color.clear) // Clear background for the list
+                .scrollContentBackground(.hidden)  // Make list background transparent
+                .background(Color.clear)  // Clear background for the list
             }
+        }
+        .onAppear {
+            viewModel.setup(appData: appData)
         }
     }
 }
 
-#Preview {
-    EmployeeMyOrders(
-        viewModel: EmployeeHomeView.ViewModel(
-            currentUser: UserData(name: "Test user")
-        )
-    )
+extension EmployeeMyOrders {
+
+    class ViewModel: ObservableObject {
+
+        @Published var myOrders: [Order] = []
+        
+        func setup(appData:AppData){
+            appData.$allOrders.map { orders in
+                orders.filter { $0.assignedUserId == appData.currentUser.id }
+            }
+            .assign(to: &$myOrders)
+        }
+
+        ///Sets an order's `assignedUserId` to `nil`.
+        func leaveOrder(_ order: Order) {
+            var updatedOrder = order
+            updatedOrder.assignedUserId = nil
+            do {
+                try FirestoreManager.shared.updateOrder(updatedOrder)
+            } catch {
+                print("Error leaving order!")
+            }
+        }
+
+    }
+
 }
+
+//#Preview {
+//    EmployeeMyOrders(
+//        viewModel: EmployeeHomeView.ViewModel(
+//            currentUser: UserData(name: "Test user")
+//        )
+//    )
+//}

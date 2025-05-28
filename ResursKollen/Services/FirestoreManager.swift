@@ -121,4 +121,19 @@ class FirestoreManager {
             try? document.data(as: UserData.self)
         }
     }
+    
+//    func listenToUserCollection(onUpdate: (Result<[UserData], Error>) -> Void) {
+//        usersRef.addSnapshotListener { snapshot, error in
+//            if let error = error {
+//                onUpdate(.failure(error))
+//                return
+//            }
+//            guard let documents = snapshot?.documents else {
+//                onUpdate(.success([]))
+//                return
+//            }
+//            let users = documents.compactMap{ try? $0.data(as: UserData.self)}
+//            onUpdate(.success(users))
+//        }
+//    }
 }

@@ -12,22 +12,28 @@ struct ContentView: View {
     @StateObject var viewModel = LoginViewViewmodel()
 
     var body: some View {
-        
+
         if let user = viewModel.currentUser {
+            let appdataProvider = AppData(currentUser: user)
             switch user.status {
             case .manager:
-                ManagerHomeView(currentUser: user)
+                ManagerHomeView()
+                    .environmentObject(appdataProvider)
             case .employee:
-                EmployeeHomeView(currentUser: user)
-//            case .unknown:
-//                Text("Unknown user!")
+                EmployeeHomeView()
+                    .environmentObject(appdataProvider)
+
+            //            case .unknown:
+            //                Text("Unknown user!")
             }
         } else {
             LoginView(viewModel: viewModel)
         }
-    
+
     }
 }
+
+
 
 #Preview {
     ContentView()

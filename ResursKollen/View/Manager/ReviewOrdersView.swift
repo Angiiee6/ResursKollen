@@ -7,10 +7,14 @@
 
 import FirebaseFirestore
 import SwiftUI
+import Combine
 
 ///Shows a list of orders that need review (manager only).
 struct ReviewOrdersView: View {
+    @EnvironmentObject var appData: AppData
     @StateObject var viewModel = ViewModel()
+    
+    
     var body: some View {
         ZStack {
             LinearGradient(
@@ -55,6 +59,9 @@ struct ReviewOrdersView: View {
                 }
             }
         }
+        .onAppear {
+            viewModel.setup(appData: appData)
+        }
     }
     
     
@@ -65,8 +72,7 @@ extension ReviewOrdersView {
     class ViewModel: ObservableObject {
 
         @Published var state: OrderDataState = .loading
-
-        private var listenerRegistration: ListenerRegistration?
+        private var cancellables = Set<AnyCancellable>()
 
         enum OrderDataState {
             case loading
@@ -75,29 +81,29 @@ extension ReviewOrdersView {
             case error(Error)
         }
 
-        init() {
-            self.listenerRegistration = FirestoreManager.shared
-                .listenToDoneOrders { result in
-                    switch result {
-                    case .success(let orders):
-                        if orders.isEmpty {
-                            self.state = .noData
-                        } else {
-                            self.state = .hasData(orders)
-                        }
-                    case .failure(let error):
-                        self.state = .error(error)
-                    }
+        func setup(appData: AppData) {
+            appData.$allOrders.sink{ [weak self] orders in
+                let doneOrders = orders.filter{$0.status == .done}
+                if doneOrders.isEmpty {
+                    self?.state = .noData
                 }
+                else {
+                    self?.state = .hasData(doneOrders)
+                }
+                
+                }
+            .store(in: &cancellables)
+            }
+        
+        deinit{
+            cancellables.forEach { $0.cancel() }
+            cancellables.removeAll()
         }
-
-        deinit {
-            listenerRegistration?.remove()
+        
         }
-
     }
-}
 
-#Preview {
-    ReviewOrdersView()
-}
+
+//#Preview {
+//    ReviewOrdersView()
+//}
