@@ -10,7 +10,6 @@ import SwiftUI
 struct ManagerHomeView: View {
     let currentUser: UserData
 
-    @State private var isLoggedOut = false
     ///EXEMPEL USER
     let exampleUser = UserData(
         id: "1",
@@ -22,50 +21,24 @@ struct ManagerHomeView: View {
     )
 
     var body: some View {
-        NavigationStack{
-            
-            NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true), isActive: $isLoggedOut){
-                EmptyView()
-            }.navigationBarBackButtonHidden(true)
-            
-            TabView {
-                
+        TabView {
+            NavigationStack {
                 ManagerAllOrdersView()
-                
-                    .tabItem {
-                        Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
-                    }
-                
-                ReviewOrdersView()
-                
-                    .tabItem {
-                        Label(
-                            "Utförda ordrar",
-                            systemImage: "text.page.badge.magnifyingglass"
-                        )
-                    }
-                
-                SummaryView()
+            }
+            .tabItem {
+                Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
+            }
+            
 
-                
-                    .tabItem {
-                        Label(
-                            "Statistik",
-                            systemImage: "waveform.badge.magnifyingglass"
-                        )
-                    }
-                
-                StaffView()
-                
-                    .tabItem {
-                        Label("Personal", systemImage: "person.3")
-                    }
-                NewMessageEditView()
-                    .tabItem{
-                        Label("Meddlanden", systemImage: "message")
-                    }
-                
-         
+            NavigationStack {
+                ReviewOrdersView()
+            }
+            .tabItem {
+                Label("Utförda ordrar", systemImage: "text.page.badge.magnifyingglass")
+            }
+
+            NavigationStack {
+                SummaryView()
             }
             .tabItem {
                 Label("Statistik", systemImage: "waveform.badge.magnifyingglass")
@@ -73,29 +46,15 @@ struct ManagerHomeView: View {
 
             NavigationStack {
                 StaffView(currentUser: currentUser )
-
             }
-            .tint(Color.orange)
-            .toolbar{
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button{
-                        do{
-                            try AuthenticationManager.shared.signOut()
-                            isLoggedOut = true
-                        }catch {
-                            print("Kunde inte logga ut användaren")
-                        }
-                    }label: {
-                     Image(systemName: "rectangle.portrait.and.arrow.right")
-                            .tint(.orange)
-                    }
+            .tabItem {
+                Label("Personal", systemImage: "person.3")
                 }
             }
+        .tint(Color.orange)
         }
-       
     }
-    
-}
+
 
 //TODO: Fetch all orders here instead of in sub-views
 
