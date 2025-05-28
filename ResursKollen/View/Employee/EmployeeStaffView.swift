@@ -18,11 +18,25 @@ struct EmployeeStaffView: View {
     
 
     var body: some View {
-        VStack {
-            StaffView(currentUser: dataProvider.currentUser)
-            EmployeeMonthlySummaryDisplay(
-                hoursWorkedThisMonth: viewModel.hoursWorkedThisMonth
+        ZStack {
+            // Gradientbakgrund
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.11, green: 0.11, blue: 0.15),
+                    Color(red: 0.20, green: 0.20, blue: 0.25),
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
             )
+            .ignoresSafeArea()
+
+            VStack {
+                StaffView(currentUser: viewModel.currentUser)
+                EmployeeMonthlySummaryDisplay(
+                    hoursWorkedThisMonth: viewModel.myTimeUnitsThisMonth.map {
+                        $0.time
+                    }.reduce(0, +)
+                )
         }
     }
 }
@@ -49,17 +63,15 @@ extension EmployeeStaffView {
             }
             .assign(to: &$hoursWorkedThisMonth)
         }
-
     }
-
 }
 
-//#Preview {
-//    NavigationStack {
-//        EmployeeStaffView(
-//            viewModel: EmployeeHomeView.ViewModel(
-//                currentUser: UserData(name: "Test user")
-//            )
-//        )
-//    }
-//}
+#Preview {
+    NavigationStack {
+        EmployeeStaffView(
+            viewModel: EmployeeHomeView.ViewModel(
+                currentUser: UserData(name: "Test user")
+            )
+        )
+    }
+}

@@ -73,7 +73,7 @@ struct OrderDetailView: View {
             )
             .edgesIgnoringSafeArea(.all)
 
-            VStack {
+            VStack(spacing: 0) {
                 ScrollView {
                     VStack(spacing: 32) {
                         //MARK: Creation date
@@ -217,7 +217,6 @@ struct OrderDetailView: View {
                     .padding(.vertical)
                 }
                 .scrollIndicators(.hidden)
-                Spacer()
                 //MARK: Summary
                 PriceSummaryBox(
                     totalLaborCost: (order.totalLaborCost
@@ -240,11 +239,10 @@ struct OrderDetailView: View {
                         alertPresent = true
                     }
                 }
-                .padding()
                 .buttonStyle(.borderedProminent)
+                .padding(.bottom, 10)
             }
             .navigationBarBackButtonHidden(true)
-            .padding(.vertical, 16)
             //MARK: Nav title
             .navigationTitle(order.orderNumber)
         }

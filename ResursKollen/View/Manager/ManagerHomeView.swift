@@ -9,45 +9,76 @@ import SwiftUI
 
 struct ManagerHomeView: View {
     @ObservedObject var dataProvider: AppData
-    var body: some View {
-        TabView {
+    @State private var isLoggedOut = false
+        NavigationStack{
+            
+            NavigationLink(destination: ContentView().navigationBarBackButtonHidden(true), isActive: $isLoggedOut){
+                EmptyView()
+            }.navigationBarBackButtonHidden(true)
+            
+            TabView {
+                
+                ManagerAllOrdersView()
+                
+                    .tabItem {
+                        Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
+                    }
+                
+                ReviewOrdersView()
+                
+                    .tabItem {
+                        Label(
+                            "Utförda ordrar",
+                            systemImage: "text.page.badge.magnifyingglass"
+                        )
+                    }
+                
+                SummaryView()
+                
+                
+                    .tabItem {
+                        Label(
+                            "Statistik",
+                            systemImage: "waveform.badge.magnifyingglass"
+                        )
+                    }
+                
+                StaffView(currentUser: currentUser)
+                
+                    .tabItem {
+                        Label("Personal", systemImage: "person.3")
+                    }
+                NewMessageEditView()
+                    .tabItem{
+                        Label("Meddlanden", systemImage: "message")
+                    }
+                
             NavigationStack {
-                ManagerAllOrdersView(dataProvider: dataProvider)
-            }
-            .tabItem {
-                Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
-            }
-
-            NavigationStack {
-                ReviewOrdersView(dataProvider:dataProvider)
-            }
-            .tabItem {
-                Label(
-                    "Utförda ordrar",
-                    systemImage: "text.page.badge.magnifyingglass"
-                )
-            }
-
-            NavigationStack {
-                SummaryView(dataProvider: dataProvider)
-            }
-            .tabItem {
-                Label(
-                    "Statistik",
-                    systemImage: "waveform.badge.magnifyingglass"
-                )
-            }
-
-            NavigationStack {
-                StaffView(currentUser: dataProvider.currentUser)
-            }
+            .tint(Color.orange)
+            .toolbar{
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button{
+                        do{
+                            try AuthenticationManager.shared.signOut()
+                            isLoggedOut = true
+                        }catch {
+                            print("Kunde inte logga ut användaren")
+                        }
+                    }label: {
+                     Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .tint(.orange)
+                    }
+                }
             .tabItem {
                 Label("Personal", systemImage: "person.3")
-            }
+       
         }
         .tint(Color.orange)
     }
-}
+
+//TODO: Fetch all orders here instead of in sub-views
+
+//TODO: Fetch all orders here instead of in sub-views
 
 //extension ManagerHomeView {
 //
