@@ -23,14 +23,14 @@ struct EmployeeMyOrders: View {
                 endPoint: .bottom
             )
             .edgesIgnoringSafeArea(.all)
-
+            
             VStack(alignment: .leading) {
                 Text("Hej, \(viewModel.currentUser.name) 👋")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.top)
                     .padding(.leading)
-
+                
                 List {
                     Section(
                         header: Text("Påbörjade ordrar:").foregroundColor(.orange)
@@ -40,7 +40,7 @@ struct EmployeeMyOrders: View {
                                 destination: OrderDetailView(order: order, status: .employee)
                             ) {
                                 OrderRowMyOrders(order: order)
-
+                                
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
                                             viewModel.leaveOrder(order)
@@ -55,12 +55,17 @@ struct EmployeeMyOrders: View {
                             }.listRowBackground(Color.white.opacity(0.2))
                         }
                     }
+                    
                 }
                 .listStyle(.insetGrouped)
                 .scrollContentBackground(.hidden) // Make list background transparent
                 .background(Color.clear) // Clear background for the list
+                
+            MessagesShowView()
             }
+           
         }
+       // MessagesShowView()
     }
 }
 
