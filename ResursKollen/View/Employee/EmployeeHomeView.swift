@@ -8,6 +8,7 @@ import SwiftUI
 
 struct EmployeeHomeView: View {
     @StateObject var viewModel: ViewModel
+    @State private var isLoggedOut = false
 
     //Sends the current user directly to the view model
     init(currentUser: UserData) {
@@ -17,31 +18,61 @@ struct EmployeeHomeView: View {
     }
 
     var body: some View {
-        TabView {
 
-            NavigationStack {
-                EmployeeMyOrders(viewModel: viewModel)
-            }
-            .tabItem {
-                Label("Mina Ordrar", systemImage: "list.bullet.clipboard")
-            }
 
-            NavigationStack {
-                EmployeeAllOrders(viewModel: viewModel)
+        NavigationStack {
+            
+            NavigationLink(
+                destination: ContentView().navigationBarBackButtonHidden(true),
+                isActive: $isLoggedOut
+            ) {
+                EmptyView()
             }
-            .tabItem {
-                Label("Alla Ordrar", systemImage: "list.bullet.clipboard")
-            }
+            
+            TabView {
+                    EmployeeMyOrders(viewModel: viewModel)
+                        .tabItem {
+                            Label(
+                                "Mina Ordrar",
+                                systemImage: "list.bullet.clipboard")
+                        }.badge(viewModel.myOrders.count)
+                
+                    EmployeeAllOrders(viewModel: viewModel)
+                        .tabItem {
+                            Label(
+                                "Alla Ordrar",
+                                systemImage: "list.bullet.clipboard"
+                            )
+                        }.badge(viewModel.unassignedOrders.count)
+                    
+                    StaffView()
+                        .tabItem {
+                            Label("Personal", systemImage: "person.3")
+                        }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            do {
+                                try AuthenticationManager.shared.signOut()
+                                isLoggedOut = true
+                            } catch {
+                                print("Kunde inte logga ut användaren")
+                            }
+                        } label: {
+                            Image(
+                                systemName: "rectangle.portrait.and.arrow.right"
+                            )
+                            .tint(.orange)
+                        }
+                    }
+                }
+            }.tint(Color.orange)
+        
+        }
 
-            NavigationStack {
-                EmployeeStaffView(viewModel: viewModel)
-            }
-            .tabItem {
-                Label("Personal", systemImage: "person.3")
-            }
-        }.tint(Color.orange)
-    }
 }
+
 
 extension EmployeeHomeView {
 
@@ -49,10 +80,16 @@ extension EmployeeHomeView {
         let currentUser: UserData
         @Published var myOrders: [Order] = []
         @Published var unassignedOrders: [Order] = []
+
+
+        init(currentUser: UserData) {
+            self.currentUser = currentUser
+
         @Published var myTimeUnitsThisMonth: [OrderTimeUnit] = []
 
         init(currentUser: UserData) {
             self.currentUser = currentUser
+
             FirestoreManager.shared.listenToOrderCollection { orders in
                 self.myOrders = orders.filter {
                     $0.assignedUserId == currentUser.id && $0.status != .done
@@ -71,7 +108,13 @@ extension EmployeeHomeView {
             }
         }
 
+                
+        
+        ///Sets the order's `assignedUser` to the current user.
+
+
         ///Sets the order's `assignedUserId` to the current user's id.
+       Developer
         func takeOrder(_ order: Order) {
             var updatedOrder = order
             updatedOrder.assignedUserId = currentUser.id
