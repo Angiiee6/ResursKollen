@@ -8,56 +8,86 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
-    let currentUser: UserData
+    @StateObject var viewModel: ViewModel
 
-    ///EXEMPEL USER
-    let exampleUser = UserData(
-        id: "1",
-        status: .employee,
-        name: "Vivianne och Angie",
-        employmentDate: Date(),
-        employmentNumber: "EMP123",
-        phoneNumber: "0701234567"
-    )
+    //Passes the current user directly into the view model
+    init(currentUser: UserData) {
+        _viewModel = StateObject(
+            wrappedValue: ViewModel(currentUser: currentUser)
+        )
+    }
 
     var body: some View {
         TabView {
             NavigationStack {
-                ManagerAllOrdersView()
+                ManagerAllOrdersView(viewModel: viewModel)
             }
             .tabItem {
                 Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
             }
-            
 
             NavigationStack {
                 ReviewOrdersView()
             }
             .tabItem {
-                Label("Utförda ordrar", systemImage: "text.page.badge.magnifyingglass")
+                Label(
+                    "Utförda ordrar",
+                    systemImage: "text.page.badge.magnifyingglass"
+                )
             }
 
             NavigationStack {
                 SummaryView()
             }
             .tabItem {
-                Label("Statistik", systemImage: "waveform.badge.magnifyingglass")
+                Label(
+                    "Statistik",
+                    systemImage: "waveform.badge.magnifyingglass"
+                )
             }
 
             NavigationStack {
-                StaffView(currentUser: currentUser )
+                StaffView(currentUser: viewModel.currentUser)
             }
             .tabItem {
                 Label("Personal", systemImage: "person.3")
+            }
+        }
+        .tint(Color.orange)
+    }
+}
+
+extension ManagerHomeView {
+
+    class ViewModel: ObservableObject {
+        let currentUser: UserData
+        
+        @Published var registeredOrders: [Order] = []
+        @Published var startedOrders: [Order] = []
+        @Published var delayedOrders: [Order] = []
+        @Published var completedOrders: [Order] = []
+
+        init(currentUser: UserData) {
+            self.currentUser = currentUser
+            listenToOrderCollection()
+        }
+        
+        func listenToOrderCollection() {
+            FirestoreManager.shared.listenToOrderCollection { [weak self] newOrders in
+                DispatchQueue.main.async {
+                    self?.registeredOrders = newOrders.filter {$0.status == .registered}
+                    self?.startedOrders = newOrders.filter {$0.status == .started}
+                    self?.delayedOrders = newOrders.filter {$0.status == .delayed}
+                    self?.completedOrders = newOrders.filter {$0.status == .completed}
+                    
                 }
             }
-        .tint(Color.orange)
         }
+        
+        
     }
 
-
-//TODO: Fetch all orders here instead of in sub-views
-
+}
 
 #Preview {
     ManagerHomeView(currentUser: UserData(name: "Test user"))
