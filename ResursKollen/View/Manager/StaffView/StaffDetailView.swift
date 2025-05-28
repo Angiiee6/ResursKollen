@@ -223,7 +223,7 @@ private func sendSMS(_ number: String) {
 #Preview {
     NavigationStack {
         
-        StaffDetailView(user: UserData.UserDataMockData as UserData)
+        StaffDetailView(user: UserData.UserDataMockData as UserData, currentUser: UserData.UserDataMockData as UserData)
         
     }
 }
