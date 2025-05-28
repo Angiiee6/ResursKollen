@@ -8,7 +8,8 @@ import SwiftUI
 
 struct EmployeeHomeView: View {
     @StateObject var viewModel: ViewModel
-
+    @State private var isLoggedOut = false
+    
     //Sends the current user directly to the view model
     init(currentUser: UserData) {
         _viewModel = StateObject(
@@ -16,32 +17,63 @@ struct EmployeeHomeView: View {
         )
     }
 
+
     var body: some View {
-        TabView {
 
-            NavigationStack {
-                EmployeeMyOrders(viewModel: viewModel)
-            }
-            .tabItem {
-                Label("Mina Ordrar", systemImage: "list.bullet.clipboard")
-            }
 
-            NavigationStack {
-                EmployeeAllOrders(viewModel: viewModel)
+        NavigationStack {
+            
+            NavigationLink(
+                destination: ContentView().navigationBarBackButtonHidden(true),
+                isActive: $isLoggedOut
+            ) {
+                EmptyView()
             }
-            .tabItem {
-                Label("Alla Ordrar", systemImage: "list.bullet.clipboard")
-            }
+            
+            TabView {
+                    EmployeeMyOrders(viewModel: viewModel)
+                        .tabItem {
+                            Label(
+                                "Mina Ordrar",
+                                systemImage: "list.bullet.clipboard")
+                        }.badge(viewModel.myOrders.count)
+                
+                    EmployeeAllOrders(viewModel: viewModel)
+                        .tabItem {
+                            Label(
+                                "Alla Ordrar",
+                                systemImage: "list.bullet.clipboard"
+                            )
+                        }.badge(viewModel.unassignedOrders.count)
+                    
+                    EmployeeStaffView(viewModel: viewModel)
+                        .tabItem {
+                            Label("Personal", systemImage: "person.3")
+                        }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            do {
+                                try AuthenticationManager.shared.signOut()
+                                isLoggedOut = true
+                            } catch {
+                                print("Kunde inte logga ut användaren")
+                            }
+                        } label: {
+                            Image(
+                                systemName: "rectangle.portrait.and.arrow.right"
+                            )
+                            .tint(.orange)
+                        }
+                    }
+                }
+            }.tint(Color.orange)
+        
+        }
 
-            NavigationStack {
-                EmployeeStaffView(viewModel: viewModel)
-            }
-            .tabItem {
-                Label("Personal", systemImage: "person.3")
-            }
-        }.tint(Color.orange)
-    }
 }
+
 
 extension EmployeeHomeView {
 
