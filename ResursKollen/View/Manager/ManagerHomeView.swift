@@ -40,7 +40,8 @@ struct ManagerHomeView: View {
                     .tabItem {
                         Label("Personal", systemImage: "person.3")
                     }
-                NewMessageEditView()
+            
+                 NewMessageEditView()
                     .tabItem{
                         Label("Meddlanden", systemImage: "message")
                     }

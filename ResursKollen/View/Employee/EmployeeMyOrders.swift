@@ -10,6 +10,8 @@ import SwiftUI
 struct EmployeeMyOrders: View {
     @ObservedObject var dataProvider: AppData
     @StateObject var viewModel: ViewModel
+    @State var isLoading = true
+
 
     init(dataProvider: AppData) {
         self.dataProvider = dataProvider
@@ -73,12 +75,38 @@ struct EmployeeMyOrders: View {
                 .scrollContentBackground(.hidden) // Make list background transparent
                 .background(Color.clear) // Clear background for the list
                 
-            MessagesShowView()
+                //fejka lite fördröjning för att fåt meddelande listan i sync
+                
+                
+                    Group{
+                        if isLoading {
+                            HStack(alignment: .center) {
+                                ProgressView("Laddar...")
+                                    .progressViewStyle(CircularProgressViewStyle())
+                                    .padding()
+                            }
+                            .onAppear {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {  // <--- ändra antalet sekunder här
+                                    isLoading = false
+                                }
+                            }
+                        } else {
+                            MessagesShowView()
+                        }
+                    }
+                    .animation(.easeInOut, value: isLoading)
+                    .transition(.opacity)
+                }
+            
+                
+                
+                
+           
             }
         }
        // MessagesShowView()
     }
-}
+
 
 #Preview {
     EmployeeMyOrders(dataProvider: AppData(currentUser: UserData(name: "Test user")
