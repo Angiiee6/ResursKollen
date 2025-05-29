@@ -14,15 +14,20 @@ struct ContentView: View {
     var body: some View {
 
         if let user = viewModel.currentUser {
-            let appdataProvider = AppDataProvider(currentUser: user)
             switch user.status {
             case .manager:
-                ManagerHomeView(dataProvider: appdataProvider)
+                let dataProvider = MainDataProviderBuilder(currentUser: user)
+                    .withActiveOrders()
+                    .withCompletedOrders()
+                    .build()
+                ManagerHomeView(
+                    dataProvider: dataProvider
+                )
             case .employee:
-                EmployeeHomeView(dataProvider: appdataProvider)
-
-            //            case .unknown:
-            //                Text("Unknown user!")
+                let dataProvider = MainDataProviderBuilder(currentUser: user)
+                    .withActiveOrders()
+                    .build()
+                EmployeeHomeView(dataProvider: dataProvider)
             }
         } else {
             LoginView(viewModel: viewModel)
@@ -30,8 +35,6 @@ struct ContentView: View {
 
     }
 }
-
-
 
 #Preview {
     ContentView()

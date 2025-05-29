@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct EmployeeMyOrders: View {
-    @ObservedObject var dataProvider: AppDataProvider
+    @ObservedObject var dataProvider: MainDataProvider
     @StateObject var viewModel: ViewModel
     @State var isLoading = true
 
 
-    init(dataProvider: AppDataProvider) {
+    init(dataProvider: MainDataProvider) {
         self.dataProvider = dataProvider
         _viewModel = StateObject(
             wrappedValue: ViewModel(dataProvider: dataProvider)
@@ -109,18 +109,17 @@ struct EmployeeMyOrders: View {
 
 
 #Preview {
-    EmployeeMyOrders(dataProvider: AppDataProvider(currentUser: UserData(name: "Test user")
-       )
-    )
+    EmployeeMyOrders(dataProvider: MainDataProvider.asPreview())
 }
 
 extension EmployeeMyOrders {
 
+    @MainActor
     class ViewModel: ObservableObject {
 
         @Published var myOrders: [Order] = []
 
-        init(dataProvider: AppDataProvider) {
+        init(dataProvider: MainDataProvider) {
             dataProvider.$activeOrders.map { orders in
                 orders.filter { $0.assignedUserId == dataProvider.currentUser.id
                     && $0.status != .completed

@@ -9,11 +9,11 @@ import Combine
 import SwiftUI
 
 struct EmployeeAllOrders: View {
-    @ObservedObject var dataProvider: AppDataProvider
+    @ObservedObject var dataProvider: MainDataProvider
     @State var searchText: String = ""
     @StateObject var viewModel: ViewModel
 
-    init(dataProvider: AppDataProvider) {
+    init(dataProvider: MainDataProvider) {
         self.dataProvider = dataProvider
         _viewModel = StateObject(
             wrappedValue: ViewModel(dataProvider: dataProvider, currentUserId: dataProvider.currentUser.id)
@@ -176,6 +176,7 @@ struct EmployeeAllOrders: View {
 
 extension EmployeeAllOrders {
 
+    @MainActor
     class ViewModel: ObservableObject {
 
         @Published var registeredOrders: [Order] = []
@@ -186,7 +187,7 @@ extension EmployeeAllOrders {
 
         private var cancellables = Set<AnyCancellable>()
 
-        init(dataProvider: AppDataProvider, currentUserId: String) {
+        init(dataProvider: MainDataProvider, currentUserId: String) {
             self.currentUserId = dataProvider.currentUser.id
             dataProvider.$activeOrders
                 .sink { [weak self] allOrders in
@@ -231,6 +232,6 @@ extension EmployeeAllOrders {
 
 #Preview {
     NavigationStack {
-        EmployeeAllOrders(dataProvider: AppDataProvider(currentUser: UserData(name: "Test user")))
+        EmployeeAllOrders(dataProvider: MainDataProvider.asPreview())
     }
 }

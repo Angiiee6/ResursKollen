@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct EmployeeStaffView: View {
-    @ObservedObject var dataProvider: AppDataProvider
+    @ObservedObject var dataProvider: MainDataProvider
     @StateObject var viewModel : ViewModel
     
-    init(dataProvider: AppDataProvider) {
+    init(dataProvider: MainDataProvider) {
         self.dataProvider = dataProvider
         _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
     }
@@ -41,10 +41,11 @@ struct EmployeeStaffView: View {
 
 extension EmployeeStaffView {
 
+    @MainActor
     class ViewModel: ObservableObject {
         @Published var hoursWorkedThisMonth: Double = 0
 
-        init(dataProvider: AppDataProvider) {
+        init(dataProvider: MainDataProvider) {
             dataProvider.$activeOrders.map { orders in
                 orders
                     //Put all order lists of time units into one list
@@ -66,6 +67,6 @@ extension EmployeeStaffView {
 
 #Preview {
     NavigationStack {
-        EmployeeStaffView(dataProvider: AppDataProvider(currentUser: UserData(name: "Test user")))
+        EmployeeStaffView(dataProvider: MainDataProvider.asPreview())
     }
 }
