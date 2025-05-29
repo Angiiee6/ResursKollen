@@ -10,25 +10,24 @@ import SwiftUI
 /// Shows a view of all details on an order.
 struct OrderDetailView: View {
     @Environment(\.dismiss) var dismiss
-    @StateObject var viewModel = ViewModel()
+    @StateObject var viewModel: ViewModel
 
     @State var order: Order
     @State var newTimeUnit: OrderTimeUnit
 
-    //Used to compare changes to an order to be able to show an alert if the user clicks the back button without saving
-    let orderOriginal: Order
+    //let orderOriginal: Order
     //To be able to build different UI's depending on the current user's status.
     let employmentStatus: EmploymentStatus
 
     init(order: Order, status: EmploymentStatus) {
         self.order = order
-        self.orderOriginal = order
         self.employmentStatus = status
         self.newTimeUnit = OrderTimeUnit(
             time: 0,
             date: Date(),
             userId: order.assignedUserId ?? ""
         )
+        _viewModel = StateObject(wrappedValue: ViewModel(order: order))
     }
 
     //Sheets & alerts
@@ -146,48 +145,12 @@ struct OrderDetailView: View {
                         }
                         Divider()
                         //MARK: Time consumption
-                        VStack(spacing: 24) {
-                            HStack {
-                                Text("Total tid på order:")
-                                    .font(.headline)
-                                Spacer()
-                                Text(
-                                    "\((newTimeUnit.time + order.totalTimeWorked).formattedAsHours) h"
-                                )
-                                .font(.headline)
-                            }
-                            if order.assignedUserId == nil {
-                                Text(
-                                    "Lägg till utförare för att kunna lägga till tid."
-                                )
-                                .font(.callout)
-                                .foregroundStyle(.secondary)
-                                .italic()
-                            } else {
-                                VStack(spacing: 24) {
-                                    HStack {
-                                        Text("Lägg till tid:")
-                                        Spacer()
-                                        Text(newTimeUnit.time.formattedAsHours)
-                                        Stepper(
-                                            value: $newTimeUnit.time,
-                                            in: 0...Double.infinity,
-                                            step: 0.5
-                                        ) {
-                                            Text("h")
-                                        }
-                                        .frame(maxWidth: 130)
-                                    }
-                                }
+                        TimeConsumptionView(
+                            newTimeUnit: $newTimeUnit,
+                            order: $order,
+                            activeSheet: $activeSheet
+                        )
 
-                            }
-                            HStack {
-                                Spacer()
-                                Button("Detaljer") {
-                                    activeSheet = .timeUnits
-                                }
-                            }
-                        }
                         //MARK: Material
                         VStack {
                             HStack {
@@ -228,20 +191,12 @@ struct OrderDetailView: View {
 
                 //MARK: Save button
                 Button("Spara") {
-                    //TODO: Move this logic into the view model
                     Task {
                         do {
                             if newTimeUnit.time > 0 {
                                 order.timeUnits.append(newTimeUnit)
                             }
-
-                            if orderOriginal.status == .completed
-                                && order.status != .completed
-                            {
-                                try await viewModel.returnOrderToActive(order)
-                            } else {
-                                try viewModel.updateOrder(order)
-                            }
+                            try await viewModel.updateOrder(order: order)
                             dismiss()
                         } catch {
                             activeAlert = .error(error)
@@ -277,7 +232,8 @@ struct OrderDetailView: View {
             //Use a custom back button to be able to show an alert if the user presses the back button without saving.
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
-                    if order != orderOriginal || newTimeUnit.time != 0 {
+                    if order != viewModel.orderOriginal || newTimeUnit.time != 0
+                    {
                         activeAlert = .exit
                         alertPresent = true
                     } else {
@@ -291,7 +247,7 @@ struct OrderDetailView: View {
                 }
             }
             //Button to mark an order as done or completed (depending on user's status)
-            if orderOriginal.status != .completed {
+            if viewModel.orderOriginal.status != .completed {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(
                         "\(employmentStatus == .manager ? "Avsluta": "Utför")"
@@ -345,13 +301,12 @@ struct OrderDetailView: View {
                     ),
                     primaryButton: .default(Text("Nej")),
                     secondaryButton: .destructive(Text("Ja")) {
-                        //TODO: Move this logic into the view model
                         Task {
                             do {
-                                var updatedOrder = order
                                 if newTimeUnit.time > 0 {
-                                    updatedOrder.timeUnits.append(newTimeUnit)
+                                    order.timeUnits.append(newTimeUnit)
                                 }
+                                var updatedOrder = order
                                 updatedOrder.status =
                                     switch employmentStatus {
                                     case .manager:
@@ -359,15 +314,9 @@ struct OrderDetailView: View {
                                     case .employee:
                                         .done
                                     }
-                                if orderOriginal.status != .completed
-                                    && updatedOrder.status == .completed
-                                {
-                                    try await viewModel.markOrderCompleted(
-                                        order
-                                    )
-                                } else {
-                                    try viewModel.updateOrder(updatedOrder)
-                                }
+                                try await viewModel.updateOrder(
+                                    order: updatedOrder
+                                )
                                 dismiss()
                             } catch {
                                 activeAlert = .error(error)
@@ -392,10 +341,16 @@ extension OrderDetailView {
     class ViewModel: ObservableObject {
         let firestoreManager = FirestoreManager.shared
 
+        let orderOriginal: Order
+
         @Published var currentUserInfo: (id: String, name: String)?
         @Published var allUsersDataState: AllUsersDataState = .loading
 
         private(set) var allUsersNotFetched = true
+
+        init(order: Order) {
+            self.orderOriginal = order
+        }
 
         enum AllUsersDataState {
             case loading
@@ -404,20 +359,21 @@ extension OrderDetailView {
             case error(Error)
         }
 
-        func updateOrder(_ order: Order) throws {
-            try firestoreManager.updateOrder(order)
-        }
-
-        func markOrderCompleted(_ order: Order) async throws {
-            try await firestoreManager.moveOrderFromActiveToCompleted(
-                order: order
-            )
-        }
-
-        func returnOrderToActive(_ order: Order) async throws {
-            try await firestoreManager.moveOrderFromCompletedToActive(
-                order: order
-            )
+        func updateOrder(order: Order) async throws {
+            if order.status != .completed && orderOriginal.status == .completed
+            {
+                try await firestoreManager.moveOrderFromCompletedToActive(
+                    order: order
+                )
+            } else if order.status == .completed
+                && orderOriginal.status != .completed
+            {
+                try await firestoreManager.moveOrderFromActiveToCompleted(
+                    order: order
+                )
+            } else {
+                try firestoreManager.updateOrder(order)
+            }
         }
 
         func fetchUserName(userId: String) async throws {

@@ -82,7 +82,7 @@ extension ReviewOrdersView {
         }
 
         init(dataProvider: AppDataProvider) {
-            dataProvider.$allOrders.sink{ [weak self] orders in
+            dataProvider.$activeOrders.sink{ [weak self] orders in
                 let doneOrders = orders.filter{$0.status == .done}
                 if doneOrders.isEmpty {
                     self?.state = .noData

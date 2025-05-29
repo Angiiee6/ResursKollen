@@ -121,7 +121,7 @@ extension EmployeeMyOrders {
         @Published var myOrders: [Order] = []
 
         init(dataProvider: AppDataProvider) {
-            dataProvider.$allOrders.map { orders in
+            dataProvider.$activeOrders.map { orders in
                 orders.filter { $0.assignedUserId == dataProvider.currentUser.id
                     && $0.status != .completed
                     && $0.status != .done}

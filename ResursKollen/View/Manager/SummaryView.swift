@@ -123,7 +123,7 @@ extension SummaryView {
     class SummaryViewModel: ObservableObject {
 
        init(dataProvider: AppDataProvider) {
-            dataProvider.$allOrders.assign(to: &$orders)
+            dataProvider.$activeOrders.assign(to: &$orders)
         }
 
         @Published var orders: [Order] = []

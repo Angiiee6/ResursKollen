@@ -34,7 +34,9 @@ class FirestoreManager {
     }
 
     //Snapshot lyssnare för order collectionen som kallas i viewmodels och använder closure i viewmodel
-    func listenToOrderCollection(onUpdate: @escaping ([Order]) -> Void) {
+    func listenToOrderCollection(onUpdate: @escaping ([Order]) -> Void)
+        -> ListenerRegistration
+    {
         activeOrdersRef.addSnapshotListener { snapshot, error in
             if let error = error {
                 print(
@@ -85,7 +87,7 @@ class FirestoreManager {
     func listenToDoneOrders(
         onUpdate: @escaping (Result<[Order], Error>) -> Void
     ) -> ListenerRegistration {
-        return activeOrdersRef.whereField(
+        activeOrdersRef.whereField(
             "status",
             isEqualTo: OrderStatus.done.rawValue
         ).addSnapshotListener {
@@ -99,8 +101,24 @@ class FirestoreManager {
                 onUpdate(.success([]))
                 return
             }
-            for document in documents {
-                print(document)
+            let orders = documents.compactMap { document in
+                try? document.data(as: Order.self)
+            }
+            onUpdate(.success(orders))
+        }
+    }
+
+    func listenToCompletedOrders(
+        onUpdate: @escaping (Result<[Order], Error>) -> Void
+    ) -> ListenerRegistration {
+        completedOrdersRef.addSnapshotListener { snapshot, error in
+            if let error = error {
+                onUpdate(.failure(error))
+                return
+            }
+            guard let documents = snapshot?.documents else {
+                onUpdate(.success([]))
+                return
             }
             let orders = documents.compactMap { document in
                 try? document.data(as: Order.self)
@@ -135,7 +153,7 @@ class FirestoreManager {
         )
         try await batch.commit()
     }
-    
+
     func moveOrderFromCompletedToActive(order: Order) async throws {
         print("completed -> active")
         let batch = db.batch()

@@ -45,7 +45,7 @@ extension EmployeeStaffView {
         @Published var hoursWorkedThisMonth: Double = 0
 
         init(dataProvider: AppDataProvider) {
-            dataProvider.$allOrders.map { orders in
+            dataProvider.$activeOrders.map { orders in
                 orders
                     //Put all order lists of time units into one list
                     .flatMap { $0.timeUnits }

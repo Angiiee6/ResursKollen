@@ -82,7 +82,7 @@ extension EmployeeHomeView {
 
         init(dataProvider: AppDataProvider) {
             self.currentUser = dataProvider.currentUser
-            dataProvider.$allOrders.sink { [weak self] allOrders in
+            dataProvider.$activeOrders.sink { [weak self] allOrders in
                 self?.myOrdersCount =
                     allOrders.filter {
                         $0.assignedUserId == dataProvider.currentUser.id

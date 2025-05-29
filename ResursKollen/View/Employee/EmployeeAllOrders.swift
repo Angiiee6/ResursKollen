@@ -188,7 +188,7 @@ extension EmployeeAllOrders {
 
         init(dataProvider: AppDataProvider, currentUserId: String) {
             self.currentUserId = dataProvider.currentUser.id
-            dataProvider.$allOrders
+            dataProvider.$activeOrders
                 .sink { [weak self] allOrders in
                     let unassignedOrders = allOrders.filter {
                         $0.assignedUserId == nil

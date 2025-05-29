@@ -123,7 +123,8 @@ extension ManagerAllOrdersView {
         private var cancellables = Set<AnyCancellable>()
 
         init(dataProvider: AppDataProvider) {
-            dataProvider.$allOrders
+            dataProvider.startListeningToCompletedOrders()
+            dataProvider.$activeOrders
                 .sink { [weak self] allOrders in
                     self?.registeredOrders = allOrders.filter {
                         $0.status == .registered
@@ -134,11 +135,10 @@ extension ManagerAllOrdersView {
                     self?.delayedOrders = allOrders.filter {
                         $0.status == .delayed
                     }
-                    self?.completedOrders = allOrders.filter {
-                        $0.status == .completed
-                    }
+                   
                 }
                 .store(in: &cancellables)
+            dataProvider.$completedOrders.assign(to: &$completedOrders)
         }
 
         deinit {
