@@ -19,9 +19,32 @@ final class MessagesManager{
         return messagesCollection.document()
     }
     
+    
+    //Radera ett meddlande
+    func deleteMessages(message: Message)async throws{
+        
+        try await messagesCollection.document(message.id).delete()
+        
+    }
+    
+    
+    
     //Spara ett nytt medd.
     func writeNewMessage(message: Message) async throws{
-        try messagesDocuments().setData(from: message, merge: false )
+      
+        let docRefNr: DocumentReference
+        var newMessage = message
+        
+        if newMessage.id.isEmpty {
+            docRefNr = messagesCollection.document()
+            newMessage.id = docRefNr.documentID
+        }else {
+            docRefNr = messagesCollection.document(newMessage.id)
+        }
+     
+        print(newMessage.id)   //TODO for testing only
+        
+        try docRefNr.setData(from: newMessage, merge: true)
     }
     
     //läs alla medd.

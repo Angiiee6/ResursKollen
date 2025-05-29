@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct Message: Codable, Identifiable{
-    var id: UUID = UUID()
+    var id: String = ""
     var title: String
     var text: String
     var date = Date()
