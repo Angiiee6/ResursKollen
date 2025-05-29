@@ -14,7 +14,7 @@ struct ContentView: View {
     var body: some View {
 
         if let user = viewModel.currentUser {
-            let appdataProvider = AppData(currentUser: user)
+            let appdataProvider = AppDataProvider(currentUser: user)
             switch user.status {
             case .manager:
                 ManagerHomeView(dataProvider: appdataProvider)

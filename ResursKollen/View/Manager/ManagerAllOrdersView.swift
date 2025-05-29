@@ -9,11 +9,11 @@ import SwiftUI
 import Combine
 
 struct ManagerAllOrdersView: View {
-    @ObservedObject var dataProvider: AppData
+    @ObservedObject var dataProvider: AppDataProvider
     @StateObject var viewModel : ViewModel
     @State var searchText: String = ""
     
-    init(dataProvider: AppData) {
+    init(dataProvider: AppDataProvider) {
         self.dataProvider = dataProvider
         _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
     }
@@ -122,7 +122,7 @@ extension ManagerAllOrdersView {
 
         private var cancellables = Set<AnyCancellable>()
 
-        init(dataProvider: AppData) {
+        init(dataProvider: AppDataProvider) {
             dataProvider.$allOrders
                 .sink { [weak self] allOrders in
                     self?.registeredOrders = allOrders.filter {
@@ -151,6 +151,6 @@ extension ManagerAllOrdersView {
 }
 
 #Preview {
-    ManagerAllOrdersView(dataProvider: AppData(currentUser: UserData(name: "Test user")))
+    ManagerAllOrdersView(dataProvider: AppDataProvider(currentUser: UserData(name: "Test user")))
 }
 

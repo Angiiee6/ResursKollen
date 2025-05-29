@@ -11,10 +11,10 @@ import Combine
 
 ///Shows a list of orders that need review (manager only).
 struct ReviewOrdersView: View {
-    @ObservedObject var dataProvider: AppData
+    @ObservedObject var dataProvider: AppDataProvider
     @StateObject var viewModel : ViewModel
     
-    init(dataProvider: AppData) {
+    init(dataProvider: AppDataProvider) {
         self.dataProvider = dataProvider
         _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
     }
@@ -81,7 +81,7 @@ extension ReviewOrdersView {
             case error(Error)
         }
 
-        init(dataProvider: AppData) {
+        init(dataProvider: AppDataProvider) {
             dataProvider.$allOrders.sink{ [weak self] orders in
                 let doneOrders = orders.filter{$0.status == .done}
                 if doneOrders.isEmpty {
@@ -105,5 +105,5 @@ extension ReviewOrdersView {
 
 
 #Preview {
-    ReviewOrdersView(dataProvider: AppData(currentUser: UserData(name: "Test user")))
+    ReviewOrdersView(dataProvider: AppDataProvider(currentUser: UserData(name: "Test user")))
 }

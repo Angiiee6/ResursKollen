@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
-    @ObservedObject var dataProvider: AppData
+    @ObservedObject var dataProvider: AppDataProvider
     @State private var isLoggedOut = false
     
     var body: some View {
@@ -109,5 +109,5 @@ struct ManagerHomeView: View {
 //}
 
 #Preview {
-    ManagerHomeView(dataProvider: AppData(currentUser: UserData(name: "Test user")))
+    ManagerHomeView(dataProvider: AppDataProvider(currentUser: UserData(name: "Test user")))
 }

@@ -8,11 +8,11 @@ import Combine
 import SwiftUI
 
 struct EmployeeHomeView: View {
-    @ObservedObject var dataProvider: AppData
+    @ObservedObject var dataProvider: AppDataProvider
     @StateObject var viewModel: ViewModel
     @State private var isLoggedOut = false
 
-    init(dataProvider: AppData) {
+    init(dataProvider: AppDataProvider) {
         self.dataProvider = dataProvider
         _viewModel = StateObject(
             wrappedValue: ViewModel(dataProvider: dataProvider)
@@ -80,7 +80,7 @@ extension EmployeeHomeView {
 
         private var cancellables = Set<AnyCancellable>()
 
-        init(dataProvider: AppData) {
+        init(dataProvider: AppDataProvider) {
             self.currentUser = dataProvider.currentUser
             dataProvider.$allOrders.sink { [weak self] allOrders in
                 self?.myOrdersCount =
@@ -152,6 +152,6 @@ extension EmployeeHomeView {
 
 #Preview {
     EmployeeHomeView(
-        dataProvider: AppData(currentUser: UserData(name: "Test user"))
+        dataProvider: AppDataProvider(currentUser: UserData(name: "Test user"))
     )
 }

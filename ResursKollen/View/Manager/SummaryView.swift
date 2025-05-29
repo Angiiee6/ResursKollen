@@ -9,10 +9,10 @@ import Charts
 import SwiftUI
 
 struct SummaryView: View {
-    @ObservedObject var dataProvider : AppData
+    @ObservedObject var dataProvider : AppDataProvider
     @StateObject var vm : SummaryViewModel
     
-    init(dataProvider: AppData) {
+    init(dataProvider: AppDataProvider) {
         self.dataProvider = dataProvider
         _vm = StateObject(wrappedValue: SummaryViewModel(dataProvider: dataProvider))
     }
@@ -115,14 +115,14 @@ struct SummaryView: View {
 }
 
 #Preview {
-    SummaryView(dataProvider: AppData(currentUser: UserData(name: "Test user")))
+    SummaryView(dataProvider: AppDataProvider(currentUser: UserData(name: "Test user")))
 }
 
 extension SummaryView {
 
     class SummaryViewModel: ObservableObject {
 
-       init(dataProvider: AppData) {
+       init(dataProvider: AppDataProvider) {
             dataProvider.$allOrders.assign(to: &$orders)
         }
 

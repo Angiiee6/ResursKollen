@@ -228,15 +228,25 @@ struct OrderDetailView: View {
 
                 //MARK: Save button
                 Button("Spara") {
-                    do {
-                        if newTimeUnit.time > 0 {
-                            order.timeUnits.append(newTimeUnit)
+                    //TODO: Move this logic into the view model
+                    Task {
+                        do {
+                            if newTimeUnit.time > 0 {
+                                order.timeUnits.append(newTimeUnit)
+                            }
+
+                            if orderOriginal.status == .completed
+                                && order.status != .completed
+                            {
+                                try await viewModel.returnOrderToActive(order)
+                            } else {
+                                try viewModel.updateOrder(order)
+                            }
+                            dismiss()
+                        } catch {
+                            activeAlert = .error(error)
+                            alertPresent = true
                         }
-                        try viewModel.updateOrder(order)
-                        dismiss()
-                    } catch {
-                        activeAlert = .error(error)
-                        alertPresent = true
                     }
                 }
                 .buttonStyle(.borderedProminent)
@@ -246,7 +256,7 @@ struct OrderDetailView: View {
             //MARK: Nav title
             .navigationTitle(order.orderNumber)
         }
-        
+
         //MARK: onChange
         .onChange(
             //Update the local state of assignedUser and newTimeUnit depending on new selected user
@@ -335,19 +345,33 @@ struct OrderDetailView: View {
                     ),
                     primaryButton: .default(Text("Nej")),
                     secondaryButton: .destructive(Text("Ja")) {
-                        do {
-                            var updatedOrder = order
-                            updatedOrder.status =
-                                switch employmentStatus {
-                                case .manager:
-                                    .completed
-                                case .employee:
-                                    .done
+                        //TODO: Move this logic into the view model
+                        Task {
+                            do {
+                                var updatedOrder = order
+                                if newTimeUnit.time > 0 {
+                                    updatedOrder.timeUnits.append(newTimeUnit)
                                 }
-                            try viewModel.updateOrder(updatedOrder)
-                            dismiss()
-                        } catch {
-                            activeAlert = .error(error)
+                                updatedOrder.status =
+                                    switch employmentStatus {
+                                    case .manager:
+                                        .completed
+                                    case .employee:
+                                        .done
+                                    }
+                                if orderOriginal.status != .completed
+                                    && updatedOrder.status == .completed
+                                {
+                                    try await viewModel.markOrderCompleted(
+                                        order
+                                    )
+                                } else {
+                                    try viewModel.updateOrder(updatedOrder)
+                                }
+                                dismiss()
+                            } catch {
+                                activeAlert = .error(error)
+                            }
                         }
                     }
                 )
@@ -382,6 +406,18 @@ extension OrderDetailView {
 
         func updateOrder(_ order: Order) throws {
             try firestoreManager.updateOrder(order)
+        }
+
+        func markOrderCompleted(_ order: Order) async throws {
+            try await firestoreManager.moveOrderFromActiveToCompleted(
+                order: order
+            )
+        }
+
+        func returnOrderToActive(_ order: Order) async throws {
+            try await firestoreManager.moveOrderFromCompletedToActive(
+                order: order
+            )
         }
 
         func fetchUserName(userId: String) async throws {

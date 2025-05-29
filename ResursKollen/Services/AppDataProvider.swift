@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-class AppData : ObservableObject {
+class AppDataProvider : ObservableObject {
     @Published var allOrders: [Order] = []
     //@Published var allUsers: [UserData] = []
     let currentUser: UserData
