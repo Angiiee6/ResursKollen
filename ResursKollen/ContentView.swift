@@ -26,6 +26,7 @@ struct ContentView: View {
             case .employee:
                 let dataProvider = MainDataProviderBuilder(currentUser: user)
                     .withActiveOrders()
+                    .withCompletedOrders()
                     .build()
                 EmployeeHomeView(dataProvider: dataProvider)
             }
