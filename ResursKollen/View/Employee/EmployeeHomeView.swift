@@ -44,10 +44,11 @@ struct EmployeeHomeView: View {
                             systemImage: "list.bullet.clipboard"
                         )
                     }.badge(viewModel.unassignedOrdersCount)
-
+                
+               
                 EmployeeStaffView(dataProvider: dataProvider)
                     .tabItem {
-                        Label("Personal", systemImage: "person.3")
+                        Label("Kontakter", systemImage: "person.3")
                     }
             }
             .toolbar {

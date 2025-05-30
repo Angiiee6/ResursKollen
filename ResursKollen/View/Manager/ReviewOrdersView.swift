@@ -54,7 +54,8 @@ struct ReviewOrdersView: View {
                 }
             }
             .padding()
-            .toolbar {
+          /* Pluset för att skapa en ny order
+           .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
                         CreateOrderView()
@@ -62,7 +63,7 @@ struct ReviewOrdersView: View {
                         Image(systemName: "plus")
                     }
                 }
-            }
+            } */
         }
     }
 }
