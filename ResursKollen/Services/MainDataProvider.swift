@@ -8,6 +8,8 @@
 import FirebaseFirestore
 import SwiftUI
 
+///This class handles Firestore listeners for the main data used in the app, like order collections and users collection.
+/// Initialized by using [`MainDataProviderBuilder`](MainDataProviderBuilder).
 @MainActor
 class MainDataProvider: ObservableObject {
     @Published var activeOrders: [Order] = []
@@ -77,31 +79,52 @@ class MainDataProvider: ObservableObject {
     }
 }
 
+/// A builder class for configuring and initializing a `MainDataProvider` object.
+///
+/// Use this class to set up listeners for specific data sets before building
+/// a `MainDataProvider`.
+///
+/// - Note:
+///   - Call `withActiveOrders()` to set a listener for all active orders.
+///   - Call `withCompletedOrders()` to set a listener for all completed orders.
+///   - Call `withAllUsers()` to set a listener for all users (not yet implemented).
 class MainDataProviderBuilder {
     private var activeOrdersAdded = false
     private var completedOrdersAdded = false
     private var allUsersAdded = false
     let currentUser: UserData
 
+    /// Initializes the builder with the current user.
+    ///
+    /// - Parameter currentUser: The current user of the session.
     init(currentUser: UserData) {
         self.currentUser = currentUser
     }
 
-    func withActiveOrders() -> MainDataProviderBuilder {
+    /// Adds a listener for active orders Firestore collection.
+        func withActiveOrders() -> MainDataProviderBuilder {
         self.activeOrdersAdded = true
         return self
     }
 
+    /// Adds a listener for completed orders Firestore collection.
     func withCompletedOrders() -> MainDataProviderBuilder {
         self.completedOrdersAdded = true
         return self
     }
 
+    /// Adds a listener for all users Firestore collection.
+    /// - Warning: This feature is not yet implemented.
     func withAllUsers() -> MainDataProviderBuilder {
         self.allUsersAdded = true
         return self
     }
+    
+    //TODO: Add Customer collection here
 
+    /// Builds the configured `MainDataProvider`.
+    ///
+    /// - Returns: A fully configured `MainDataProvider` instance.
     @MainActor func build() -> MainDataProvider {
         MainDataProvider(
             currentUser: currentUser,
@@ -110,5 +133,4 @@ class MainDataProviderBuilder {
             withAllUsers: allUsersAdded
         )
     }
-
 }

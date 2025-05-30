@@ -5,18 +5,20 @@
 //  Created by Magnus Freidenfelt on 2025-05-27.
 //
 
+import Combine
 import SwiftUI
 
 struct EmployeeStaffView: View {
     @ObservedObject var dataProvider: MainDataProvider
-    @StateObject var viewModel : ViewModel
-    
+    @StateObject var viewModel: ViewModel
+
     init(dataProvider: MainDataProvider) {
         self.dataProvider = dataProvider
-        _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
+        _viewModel = StateObject(
+            wrappedValue: ViewModel(dataProvider: dataProvider)
+        )
     }
-    
-    
+
     var body: some View {
         ZStack {
             // Gradientbakgrund
@@ -46,21 +48,33 @@ extension EmployeeStaffView {
         @Published var hoursWorkedThisMonth: Double = 0
 
         init(dataProvider: MainDataProvider) {
-            dataProvider.$activeOrders.map { orders in
-                orders
-                    //Put all order lists of time units into one list
-                    .flatMap { $0.timeUnits }
-                    //Selected only time added this month and for the current user
-                    .filter {
-                        $0.date.isThisMonth
-                            && $0.userId == dataProvider.currentUser.id
-                    }
-                    //Create new list with only the time (doubles)
-                    .map { $0.time }
-                    //Sum all time
-                    .reduce(0, +)
-            }
-            .assign(to: &$hoursWorkedThisMonth)
+            let ordersPublisher = Publishers.CombineLatest(
+                dataProvider.$activeOrders,
+                dataProvider.$completedOrders
+            )
+
+            let timeWorkedPublisher =
+                ordersPublisher
+                .map { active, completed in
+                    let allOrders = active + completed
+                    //Turn list of lists into one single list
+                    let timeUnits = allOrders.flatMap { $0.timeUnits }
+                    let currentUserId = dataProvider.currentUser.id
+
+                    return
+                        timeUnits
+                        //Select only dates this month and for the current user
+                        .filter {
+                            $0.date.isThisMonth && $0.userId == currentUserId
+                        }
+                        //Use only the time
+                        .map { $0.time }
+                        //Sum all time
+                        .reduce(0, +)
+                }
+
+            timeWorkedPublisher
+                .assign(to: &$hoursWorkedThisMonth)
         }
     }
 }
