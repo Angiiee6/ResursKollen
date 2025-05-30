@@ -12,7 +12,6 @@ struct ManagerAllOrdersView: View {
     @ObservedObject var dataProvider: MainDataProvider
     @StateObject var viewModel : ViewModel
     @State var searchText: String = ""
-    @State var isCreateOrder = false
     
     init(dataProvider: MainDataProvider) {
         self.dataProvider = dataProvider
@@ -21,7 +20,7 @@ struct ManagerAllOrdersView: View {
    
 
     var body: some View {
-        ZStack{
+        ZStack {
             LinearGradient(
                 gradient: Gradient(colors: [
                     Color(red: 0.11, green: 0.11, blue: 0.15),
@@ -31,103 +30,71 @@ struct ManagerAllOrdersView: View {
                 endPoint: .bottom
             )
             .edgesIgnoringSafeArea(.all)
-            
-            VStack(spacing: 16) {
-                List {
-                    Section(header: Text("Lediga ordrar").foregroundColor(.blue)) {
-                        ForEach(filteredOrders(for: viewModel.registeredOrders)) { order in
-                            NavigationLink(
-                                destination: OrderDetailView(
-                                    order: order,
-                                    status: .manager
-                                )
-                            ) {
-                                OrderRowAllOrders(order: order)
-                            }
-                            .listRowBackground(Color.white.opacity(0.2))
+
+            List {
+                Section(header: Text("Lediga ordrar").foregroundColor(.blue)) {
+                    ForEach(filteredOrders(for: viewModel.registeredOrders)) { order in
+                        NavigationLink(
+                            destination: OrderDetailView(
+                                order: order,
+                                status: .manager
+                            )
+                        ) {
+                            OrderRowAllOrders(order: order)
                         }
+                        .listRowBackground(Color.white.opacity(0.2))
                     }
-                    Section(
-                        header: Text("Påbörjade ordrar").foregroundColor(.orange)
-                    ) {
-                        ForEach(filteredOrders(for: viewModel.startedOrders)) { order in
-                            NavigationLink(
-                                destination: OrderDetailView(
-                                    order: order,
-                                    status: .manager
-                                )
-                            ) {
-                                OrderRowAllOrders(order: order)
-                            }
-                            .listRowBackground(Color.white.opacity(0.2))
-                        }
-                    }
-                    Section(header: Text("Försenade ordrar").foregroundColor(.red))
-                    {
-                        ForEach(filteredOrders(for: viewModel.delayedOrders)) { order in
-                            NavigationLink(
-                                destination: OrderDetailView(
-                                    order: order,
-                                    status: .manager
-                                )
-                            ) {
-                                OrderRowAllOrders(order: order)
-                            }
-                            .listRowBackground(Color.white.opacity(0.2))
-                        }
-                    }
-                    Section(
-                        header: Text("Avslutade ordrar").foregroundColor(.green)
-                    ) {
-                        ForEach(filteredOrders(for: viewModel.completedOrders)) { order in
-                            NavigationLink(
-                                destination: OrderDetailView(
-                                    order: order,
-                                    status: .manager
-                                )
-                            ) {
-                                OrderRowAllOrders(order: order)
-                            }
-                            .listRowBackground(Color.white.opacity(0.2))
-                        }
-                        
-                    }
-                    
                 }
-                .listStyle(.insetGrouped)
-                .background(Color.clear)
-                .scrollContentBackground(.hidden)
-                .toolbarColorScheme(.dark, for: .navigationBar)
-                .searchable(text: $searchText, prompt: "Sök bland ordrar")
-                
-                HStack{
-                    
-                    Button(action: {
-                        isCreateOrder = true
-                    }) {
-                        HStack {
-                            Image(systemName: "plus.circle.fill")
-                            Text("Skapa ny arbetsorder")
+                Section(
+                    header: Text("Påbörjade ordrar").foregroundColor(.orange)
+                ) {
+                    ForEach(filteredOrders(for: viewModel.startedOrders)) { order in
+                        NavigationLink(
+                            destination: OrderDetailView(
+                                order: order,
+                                status: .manager
+                            )
+                        ) {
+                            OrderRowAllOrders(order: order)
                         }
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.orange)
-                        .cornerRadius(12)
-                        .padding(.horizontal)
-                        .padding(.bottom,20)
-                    }.sheet(isPresented: $isCreateOrder) {
-                        CreateOrderView()
-                            .presentationDragIndicator(.visible)
+                        .listRowBackground(Color.white.opacity(0.2))
                     }
-                    
-                    
                 }
-                
-                
-                
+                Section(header: Text("Försenade ordrar").foregroundColor(.red))
+                {
+                    ForEach(filteredOrders(for: viewModel.delayedOrders)) { order in
+                        NavigationLink(
+                            destination: OrderDetailView(
+                                order: order,
+                                status: .manager
+                            )
+                        ) {
+                            OrderRowAllOrders(order: order)
+                        }
+                        .listRowBackground(Color.white.opacity(0.2))
+                    }
+                }
+                Section(
+                    header: Text("Avslutade ordrar").foregroundColor(.green)
+                ) {
+                    ForEach(filteredOrders(for: viewModel.completedOrders)) { order in
+                        NavigationLink(
+                            destination: OrderDetailView(
+                                order: order,
+                                status: .manager
+                            )
+                        ) {
+                            OrderRowAllOrders(order: order)
+                        }
+                        .listRowBackground(Color.white.opacity(0.2))
+                    }
+                }
             }
+            .listStyle(.insetGrouped)
+            .background(Color.clear)
+            .scrollContentBackground(.hidden)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .searchable(text: $searchText, prompt: "Sök bland ordrar")
         }
     }
 
