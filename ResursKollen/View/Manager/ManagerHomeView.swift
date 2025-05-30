@@ -62,11 +62,6 @@ struct ManagerHomeView: View {
                             .tint(.orange)
                     }
                 }
-                //            .tabItem {
-                //                Label("Personal", systemImage: "person.3")
-                //
-                //        }
-                //        .tint(Color.orange)
             }
         }
     }
