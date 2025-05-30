@@ -49,70 +49,82 @@ struct NewMessageEditView: View {
     @State private var editingMessage: Message?
     
     var body: some View {
-        VStack{
-            List{
-                ForEach(viewmodel.messages){ message in
-                    VStack(alignment: .leading,spacing: 4){
-                        Text(message.title)
-                            .font(.headline)
-                        Text(message.text)
-                            .font(.body)
-                        Text("Kategori: \(message.category.MessagesCategorySE)")
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.11, green: 0.11, blue: 0.15),
+                    Color(red: 0.20, green: 0.20, blue: 0.25),
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .edgesIgnoringSafeArea(.all)
+            VStack{
+                List{
+                    ForEach(viewmodel.messages){ message in
+                        VStack(alignment: .leading,spacing: 4){
+                            Text(message.title)
+                                .font(.headline)
+                            Text(message.text)
+                                .font(.body)
+                            Text("Kategori: \(message.category.MessagesCategorySE)")
+                                .font(.caption)
+                            
+                            HStack{
+                                Button("Ändra"){
+                                    editingMessage = message
+                                    showingEditor = true
+                                }
+                                .buttonStyle(.borderless)
+                                
+                                Spacer()
+                                
+                                Button("Radera", role: .destructive){
+                                    deleteMessage(message: message)
+                                }
+                                .buttonStyle(.borderless)
+                            }
                             .font(.caption)
-                        
-                        HStack{
-                            Button("Ändra"){
-                                editingMessage = message
-                                showingEditor = true
-                            }
-                            .buttonStyle(.borderless)
-                            
-                            Spacer()
-                            
-                            Button("Radera", role: .destructive){
-                                deleteMessage(message: message)
-                            }
-                            .buttonStyle(.borderless)
                         }
-                        .font(.caption)
+                        .padding(.vertical, 8)
                     }
-                    .padding(.vertical, 8)
+                    
+                }.scrollContentBackground(.hidden)
+                
+                Button(action: {
+                    editingMessage = nil
+                    showingEditor = true
+                }) {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Nytt meddlande")
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.orange)
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                    .padding(.bottom,20)
                 }
                 
             }
-            Button(action: {
-               editingMessage = nil
-                showingEditor = true
-            }) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("Nytt meddlande")
-                }
-                .font(.headline)
-                .foregroundColor(.white)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.orange)
-                .cornerRadius(12)
-                .padding(.horizontal)
-                .padding(.bottom,20)
-            }
-            
-    }
             .navigationTitle("Meddelanden ")
             .sheet(isPresented: $showingEditor){
                 EditMessagesView(viewmodel: viewmodel, messageToEdit:  editingMessage)
                 
-            
+                
             }
-        
+            
             .onAppear{
                 Task{
                     
-                        try? await viewmodel.readMessages()
+                    try? await viewmodel.readMessages()
                     
                 }
             }
+        }
         
         
         
