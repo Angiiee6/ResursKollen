@@ -9,34 +9,36 @@ import SwiftUI
 
 struct TimeUnitListSheet: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var timeUnits: [OrderTimeUnit]
+    let timeUnits : [OrderTimeUnit]
     var body: some View {
-        VStack{
-            HStack{
+        VStack {
+            HStack {
                 Spacer()
-                Button("Stäng"){
+                Button("Stäng") {
                     dismiss()
                 }
             }
-//            List {
-//                ForEach(timeUnits) { timeUnit in
-//                    HStack{
-//                        VStack (alignment: .leading) {
-//                            Text(timeUnit.date.asYYYYMMDD)
-//                                .font(.caption)
-//                            Text(timeUnit.user.name)
+            List {
+                ForEach(timeUnits) { timeUnit in
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(timeUnit.date.asYYYYMMDD)
+                                .font(.caption)
+//                            Text(currentUserName)
 //                                .font(.caption2)
-//                        }
-//                        Spacer()
-//                        Text("\(timeUnit.time.formattedAsHours) h")
-//                    }
-//                }
-//            }
+                        }
+                        Spacer()
+                        Text("\(timeUnit.time.formattedAsHours) h")
+                    }
+                }
+            }
         }
         .padding()
     }
 }
 
+
+
 #Preview {
-    TimeUnitListSheet(timeUnits: .constant(Order.orderMockUpData.timeUnits))
+    TimeUnitListSheet(timeUnits: Order.orderMockUpData.timeUnits)
 }

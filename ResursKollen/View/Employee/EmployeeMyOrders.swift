@@ -8,9 +8,17 @@
 import SwiftUI
 
 struct EmployeeMyOrders: View {
-    @ObservedObject var viewModel: EmployeeHomeView.ViewModel
-    @State var monthlySummarySheetPresent: Bool = false
+    @ObservedObject var dataProvider: MainDataProvider
+    @StateObject var viewModel: ViewModel
     @State var isLoading = true
+
+
+    init(dataProvider: MainDataProvider) {
+        self.dataProvider = dataProvider
+        _viewModel = StateObject(
+            wrappedValue: ViewModel(dataProvider: dataProvider)
+        )
+    }
 
     var body: some View {
         ZStack {
@@ -26,7 +34,7 @@ struct EmployeeMyOrders: View {
             .edgesIgnoringSafeArea(.all)
             
             VStack(alignment: .leading) {
-                Text("Hej, \(viewModel.currentUser.name) 👋")
+                Text("Hej, \(dataProvider.currentUser.name) 👋")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.top)
@@ -34,17 +42,22 @@ struct EmployeeMyOrders: View {
                 
                 List {
                     Section(
-                        header: Text("Påbörjade ordrar:").foregroundColor(.orange)
+                        header: Text("Påbörjade ordrar:").foregroundColor(
+                            .orange
+                        )
                     ) {
                         ForEach(viewModel.myOrders) { order in
                             NavigationLink(
-                                destination: OrderDetailView(order: order, status: .employee)
+                                destination: OrderDetailView(
+                                    order: order,
+                                    status: .employee
+                                )
                             ) {
                                 OrderRowMyOrders(order: order)
                                 
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
-                                            viewModel.leaveOrder(order)
+                                            self.viewModel.leaveOrder(order)
                                         } label: {
                                             Label(
                                                 "Lämna order",
@@ -90,16 +103,40 @@ struct EmployeeMyOrders: View {
                 
            
             }
-           
         }
        // MessagesShowView()
     }
 
 
 #Preview {
-    EmployeeMyOrders(
-        viewModel: EmployeeHomeView.ViewModel(
-            currentUser: UserData(name: "Test user")
-        )
-    )
+    EmployeeMyOrders(dataProvider: MainDataProvider.asPreview())
+}
+
+extension EmployeeMyOrders {
+
+    @MainActor
+    class ViewModel: ObservableObject {
+
+        @Published var myOrders: [Order] = []
+
+        init(dataProvider: MainDataProvider) {
+            dataProvider.$activeOrders.map { orders in
+                orders.filter { $0.assignedUserId == dataProvider.currentUser.id
+                    && $0.status != .completed
+                    && $0.status != .done}
+            }
+            .assign(to: &$myOrders)
+        }
+
+        ///Sets an order's `assignedUserId` to `nil`.
+        func leaveOrder(_ order: Order) {
+            var updatedOrder = order
+            updatedOrder.assignedUserId = nil
+            do {
+                try FirestoreManager.shared.updateOrder(updatedOrder)
+            } catch {
+                print("Error leaving order!")
+            }
+        }
+    }
 }

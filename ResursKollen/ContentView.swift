@@ -12,20 +12,27 @@ struct ContentView: View {
     @StateObject var viewModel = LoginViewViewmodel()
 
     var body: some View {
-        
+
         if let user = viewModel.currentUser {
             switch user.status {
             case .manager:
-                ManagerHomeView(currentUser: user)
+                let dataProvider = MainDataProviderBuilder(currentUser: user)
+                    .withActiveOrders()
+                    .withCompletedOrders()
+                    .build()
+                ManagerHomeView(
+                    dataProvider: dataProvider
+                )
             case .employee:
-                EmployeeHomeView(currentUser: user)
-//            case .unknown:
-//                Text("Unknown user!")
+                let dataProvider = MainDataProviderBuilder(currentUser: user)
+                    .withActiveOrders()
+                    .build()
+                EmployeeHomeView(dataProvider: dataProvider)
             }
         } else {
             LoginView(viewModel: viewModel)
         }
-    
+
     }
 }
 

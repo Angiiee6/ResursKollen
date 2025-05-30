@@ -6,120 +6,151 @@
 //
 
 import SwiftUI
+import Combine
 
 struct ManagerAllOrdersView: View {
-    @StateObject private var vm = AllOrdersViewModel()
+    @ObservedObject var dataProvider: MainDataProvider
+    @StateObject var viewModel : ViewModel
     @State var searchText: String = ""
     
+    init(dataProvider: MainDataProvider) {
+        self.dataProvider = dataProvider
+        _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
+    }
+   
+
     var body: some View {
-        
-            ZStack {
-                LinearGradient(
-                    gradient: Gradient(colors: [
-                        Color(red: 0.11, green: 0.11, blue: 0.15),
-                        Color(red: 0.20, green: 0.20, blue: 0.25),
-                    ]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .edgesIgnoringSafeArea(.all)
-                
-                List {
-                    Section(header: Text("Lediga ordrar").foregroundColor(.blue)) {
-                        ForEach(filteredOrders(for: .registered)) { order in
-                            NavigationLink(destination: OrderDetailView(order: order, status: .manager)) {
-                                OrderRowAllOrders(order: order)
-                            }
-                            .listRowBackground(Color.white.opacity(0.2))
+        ZStack {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color(red: 0.11, green: 0.11, blue: 0.15),
+                    Color(red: 0.20, green: 0.20, blue: 0.25),
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .edgesIgnoringSafeArea(.all)
+
+            List {
+                Section(header: Text("Lediga ordrar").foregroundColor(.blue)) {
+                    ForEach(filteredOrders(for: viewModel.registeredOrders)) { order in
+                        NavigationLink(
+                            destination: OrderDetailView(
+                                order: order,
+                                status: .manager
+                            )
+                        ) {
+                            OrderRowAllOrders(order: order)
                         }
-                    }
-                    Section(header: Text("Påbörjade ordrar").foregroundColor(.orange)) {
-                        ForEach(filteredOrders(for: .started)) { order in
-                            NavigationLink(destination: OrderDetailView(order: order, status: .manager)) {
-                                OrderRowAllOrders(order: order)
-                            }
-                            .listRowBackground(Color.white.opacity(0.2))
-                        }
-                    }
-                    Section(header: Text("Försenade ordrar").foregroundColor(.red)) {
-                        ForEach(filteredOrders(for: .delayed)) { order in
-                            NavigationLink(destination: OrderDetailView(order: order, status: .manager)) {
-                                OrderRowAllOrders(order: order)
-                            }
-                            .listRowBackground(Color.white.opacity(0.2))
-                        }
-                    }
-                    Section(header: Text("Avslutade ordrar").foregroundColor(.green)) {
-                        ForEach(filteredOrders(for: .completed)) { order in
-                            NavigationLink(destination: OrderDetailView(order: order, status: .manager)) {
-                                OrderRowAllOrders(order: order)
-                            }
-                            .listRowBackground(Color.white.opacity(0.2))
-                        }
+                        .listRowBackground(Color.white.opacity(0.2))
                     }
                 }
-                .listStyle(.insetGrouped)
-                .background(Color.clear)
-                .scrollContentBackground(.hidden)
-                .toolbarColorScheme(.dark, for: .navigationBar)
-                .searchable(text: $searchText, prompt: "Sök bland ordrar")
+                Section(
+                    header: Text("Påbörjade ordrar").foregroundColor(.orange)
+                ) {
+                    ForEach(filteredOrders(for: viewModel.startedOrders)) { order in
+                        NavigationLink(
+                            destination: OrderDetailView(
+                                order: order,
+                                status: .manager
+                            )
+                        ) {
+                            OrderRowAllOrders(order: order)
+                        }
+                        .listRowBackground(Color.white.opacity(0.2))
+                    }
+                }
+                Section(header: Text("Försenade ordrar").foregroundColor(.red))
+                {
+                    ForEach(filteredOrders(for: viewModel.delayedOrders)) { order in
+                        NavigationLink(
+                            destination: OrderDetailView(
+                                order: order,
+                                status: .manager
+                            )
+                        ) {
+                            OrderRowAllOrders(order: order)
+                        }
+                        .listRowBackground(Color.white.opacity(0.2))
+                    }
+                }
+                Section(
+                    header: Text("Avslutade ordrar").foregroundColor(.green)
+                ) {
+                    ForEach(filteredOrders(for: viewModel.completedOrders)) { order in
+                        NavigationLink(
+                            destination: OrderDetailView(
+                                order: order,
+                                status: .manager
+                            )
+                        ) {
+                            OrderRowAllOrders(order: order)
+                        }
+                        .listRowBackground(Color.white.opacity(0.2))
+                    }
+                }
             }
-        
-    }
-    
-    func filteredOrders(for status : OrderStatus) -> [Order] {
-        vm.orders.filter {
-            $0.status == status &&
-            (
-                searchText.isEmpty ||
-                $0.customer.name.lowercased().contains(searchText.lowercased()) ||
-                $0.orderNumber.lowercased().contains(searchText.lowercased())
-            )
+            .listStyle(.insetGrouped)
+            .background(Color.clear)
+            .scrollContentBackground(.hidden)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .searchable(text: $searchText, prompt: "Sök bland ordrar")
         }
     }
-}
 
-#Preview {
-    ManagerAllOrdersView()
+    func filteredOrders(for orders: [Order]) -> [Order] {
+        orders.filter {
+            searchText.isEmpty
+                || $0.customer.name.lowercased().contains(
+                    searchText.lowercased()
+                )
+                || $0.orderNumber.lowercased().contains(
+                    searchText.lowercased()
+                )
+        }
+    }
 }
 
 extension ManagerAllOrdersView {
-
-    class AllOrdersViewModel: ObservableObject {
-        private let firestore = FirestoreManager()
-
-        @Published var orders: [Order] = []
+    
+    @MainActor
+    class ViewModel: ObservableObject {
+        
+        @Published var registeredOrders: [Order] = []
+        @Published var startedOrders: [Order] = []
         @Published var delayedOrders: [Order] = []
-        //Lyssnar direkt vi initierar viewmodel
-        init() {
-            listenToOrderCollection()
-            listenToDelayed()
-        }
-        // Updaterar UI på maintråden
-        func listenToOrderCollection() {
-            firestore.listenToOrderCollection { [weak self] newOrders in
-                DispatchQueue.main.async {
-                    self?.orders = newOrders
+        @Published var completedOrders: [Order] = []
+
+        private var cancellables = Set<AnyCancellable>()
+
+        init(dataProvider: MainDataProvider) {
+            dataProvider.$activeOrders
+                .sink { [weak self] allOrders in
+                    self?.registeredOrders = allOrders.filter {
+                        $0.status == .registered
+                    }
+                    self?.startedOrders = allOrders.filter {
+                        $0.status == .started
+                    }
+                    self?.delayedOrders = allOrders.filter {
+                        $0.status == .delayed
+                    }
+                   
                 }
-            }
+                .store(in: &cancellables)
+            dataProvider.$completedOrders.assign(to: &$completedOrders)
         }
-        func listenToDelayed() {
-            firestore.listenToDelayed { [weak self] newOrders in
-                DispatchQueue.main.async {
-                    self?.delayedOrders = newOrders
-                }
-            }
+
+        deinit {
+            cancellables.forEach { $0.cancel() }
+            cancellables.removeAll()
         }
         
-        func takeOrder(order: Order, currentUser: UserData) {
-            var updatedOrder = order
-            updatedOrder.assignedUserId = currentUser.id
-            do{
-                try FirestoreManager.shared.updateOrder(updatedOrder)
-            } catch {
-                print("Error: Could not take order.")
-            }
-            
-        }
     }
+    
 }
+
+#Preview {
+    ManagerAllOrdersView(dataProvider: MainDataProvider.asPreview())
+}
+
