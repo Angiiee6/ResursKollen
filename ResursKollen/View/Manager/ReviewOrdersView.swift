@@ -45,7 +45,7 @@ struct ReviewOrdersView: View {
                                 OrderRowAllOrders(order: order)
                             }
                         }
-                    }
+                    } .scrollContentBackground(.hidden)
                 case .noData:
                     Text("Just nu finns det inga ordrar som behöver granskas.").foregroundColor(.white)
                 case .error(let error):
