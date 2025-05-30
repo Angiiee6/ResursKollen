@@ -55,7 +55,8 @@ struct StaffDetailView: View {
                             icon: "envelope",
                             label: "E-post",
                             value: user.email,
-                            isPhoneNumber: false
+                            isPhoneNumber: false,
+                            isEmail: true
                         )
                         DetailRow(
                             icon: "phone",
@@ -163,6 +164,7 @@ struct DetailRow: View {
     let label: String
     let value: String
     let isPhoneNumber: Bool
+    var isEmail: Bool = false
     @State private var showOptions = false
     
     @ObservedObject private var vm = StaffViewViewModel()
@@ -192,7 +194,13 @@ struct DetailRow: View {
                     }
                     Button("Avbryt", role: .cancel) {}
                 }
-            } else {
+            }
+            else if isEmail {
+                Button(value) {
+                    sendMail(to: value)
+                }
+            }
+            else {
                 Text(value)
                     .foregroundColor(.white)
             }
@@ -220,6 +228,31 @@ private func sendSMS(_ number: String) {
         print(" Kunde inte öppna SMS till: \(number)")
     }
 }
+
+private func sendMail(to address: String) {
+   let trimmedAddress = address.trimmingCharacters(
+       in: .whitespacesAndNewlines
+   )
+   // Email format validation
+   let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+   let predicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+
+   guard !trimmedAddress.isEmpty, predicate.evaluate(with: trimmedAddress)
+   else {
+       print("Invalid email address")
+       return
+   }
+   //Ensure format of special characters like '@' is properly formatted for URL
+   let mailto = "mailto:\(trimmedAddress)".addingPercentEncoding(
+       withAllowedCharacters: .urlQueryAllowed
+   )!
+   if let url = URL(string: mailto), UIApplication.shared.canOpenURL(url) {
+       UIApplication.shared.open(url)
+   } else {
+       print("Cannot open mail app")
+   }
+}
+
 #Preview {
     NavigationStack {
         
