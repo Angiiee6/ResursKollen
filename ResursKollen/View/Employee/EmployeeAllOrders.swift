@@ -66,7 +66,7 @@ struct EmployeeAllOrders: View {
                         }
                     }
                     Section(
-                        header: Text("Påbörjade ordrar").foregroundColor(
+                        header: Text("Påbörjade").foregroundColor(
                             .orange
                         )
                     ) {
@@ -99,7 +99,7 @@ struct EmployeeAllOrders: View {
                         }
                     }
                     Section(
-                        header: Text("Försenade ordrar").foregroundColor(.red)
+                        header: Text("Försenade").foregroundColor(.red)
                     ) {
                         ForEach(
                             filteredOrders(for: viewModel.delayedOrders)
@@ -130,7 +130,7 @@ struct EmployeeAllOrders: View {
                         }
                     }
 
-                    Section(
+                  /*  Section(
                         header: Text("Avslutade ordrar").foregroundColor(.green)
                     ) {
                         ForEach(
@@ -147,7 +147,7 @@ struct EmployeeAllOrders: View {
                                     .listRowBackground(Color.white)
                             }.listRowBackground(Color.white.opacity(0.2))
                         }
-                    }
+                    } */
                 }
                 .listStyle(.insetGrouped)
                 .background(Color.clear)
