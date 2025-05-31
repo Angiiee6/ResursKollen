@@ -46,4 +46,28 @@ final class UsersManager {
         try  userDocuments(userId: user.id).setData(from: user, merge: true)
     }
     
+    //Snapshot lyssnare för users kollektionen
+    func listenToUserChanges(onUpdate: @escaping (Result<[UserData], Error>) -> Void) -> ListenerRegistration {
+        usercollection.addSnapshotListener { snapShot, error in
+            if let error = error {
+                print ("Error listening to users: \(error)")
+                onUpdate(.failure(error))
+                return
+            }
+            
+            guard let documents = snapShot?.documents else {
+                print("No Documents")
+                onUpdate(.success([]))
+                return
+            }
+            
+            let users = documents.compactMap { doc in
+                try? doc.data(as: UserData.self)
+            }
+            
+            onUpdate(.success(users))
+            
+        }
+    }
+    
 }
