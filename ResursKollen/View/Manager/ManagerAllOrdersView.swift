@@ -44,7 +44,8 @@ struct ManagerAllOrdersView: View {
                             ) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white.opacity(0.2))
+                            .listRowBackground(Color.white.opacity(0.1))
+                            .listRowSeparatorTint(Color.white.opacity(0.3))
                         }
                     }
                     Section(
@@ -59,7 +60,8 @@ struct ManagerAllOrdersView: View {
                             ) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white.opacity(0.2))
+                            .listRowBackground(Color.white.opacity(0.1))
+                            .listRowSeparatorTint(Color.white.opacity(0.3))
                         }
                     }
                     Section(header: Text("Försenade ordrar").foregroundColor(.red))
@@ -73,7 +75,8 @@ struct ManagerAllOrdersView: View {
                             ) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white.opacity(0.2))
+                            .listRowBackground(Color.white.opacity(0.1))
+                            .listRowSeparatorTint(Color.white.opacity(0.3))
                         }
                     }
                     Section(
@@ -88,7 +91,8 @@ struct ManagerAllOrdersView: View {
                             ) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white.opacity(0.2))
+                            .listRowBackground(Color.white.opacity(0.1))
+                            .listRowSeparatorTint(Color.white.opacity(0.3))
                         }
                         
                     }

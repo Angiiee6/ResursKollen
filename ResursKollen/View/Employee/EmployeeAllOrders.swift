@@ -62,7 +62,8 @@ struct EmployeeAllOrders: View {
                                         }
                                         .tint(.yellow)
                                     }
-                            }.listRowBackground(Color.white.opacity(0.2))
+                            }                                                        .listRowBackground(Color.white.opacity(0.2))
+                                .listRowSeparatorTint(Color.white.opacity(0.3))
                         }
                     }
                     Section(
@@ -95,7 +96,8 @@ struct EmployeeAllOrders: View {
                                         }
                                         .tint(.yellow)
                                     }
-                            }.listRowBackground(Color.white.opacity(0.2))
+                            }                                                        .listRowBackground(Color.white.opacity(0.1))
+                                .listRowSeparatorTint(Color.white.opacity(0.3))
                         }
                     }
                     Section(
@@ -126,7 +128,8 @@ struct EmployeeAllOrders: View {
                                         }
                                         .tint(.yellow)
                                     }
-                            }.listRowBackground(Color.white.opacity(0.2))
+                            }                                                        .listRowBackground(Color.white.opacity(0.1))
+                                .listRowSeparatorTint(Color.white.opacity(0.3))
                         }
                     }
 

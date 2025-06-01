@@ -23,7 +23,8 @@ struct ShowDetailsView: View {
                 
                 DetailRow(icon: "ellipsis.circle", label: "Extra info", value: user.detailedInfo.extraInfo, isPhoneNumber: false)
                     
-            }.listRowBackground(Color.white.opacity(0.2))
+            }                                                       .listRowBackground(Color.white.opacity(0.1))
+            .listRowSeparatorTint(Color.white.opacity(0.3))
             
         
         }

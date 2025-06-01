@@ -42,7 +42,8 @@ struct StaffView: View {
                                     } label: {
                                         StaffRowView(user: user)
                                     }
-                                    .listRowBackground(Color.white.opacity(0.2))
+                                    .listRowBackground(Color.white.opacity(0.1))
+                                    .listRowSeparatorTint(Color.white.opacity(0.3))
                                 }
                             }
                         }
@@ -55,7 +56,8 @@ struct StaffView: View {
                                 } label: {
                                     StaffRowView(user: user)
                                 }
-                                .listRowBackground(Color.white.opacity(0.2))
+                                .listRowBackground(Color.white.opacity(0.1))
+                                .listRowSeparatorTint(Color.white.opacity(0.3))
                             }
                         }
                     }
