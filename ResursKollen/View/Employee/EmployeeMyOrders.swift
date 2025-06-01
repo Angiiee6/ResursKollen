@@ -67,7 +67,7 @@ struct EmployeeMyOrders: View {
                                         .tint(.red)
                                     }
                             }                            .listRowBackground(Color.white.opacity(0.1))
-                                .listRowSeparatorTint(Color.white.opacity(0.3))
+                                .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
                     
