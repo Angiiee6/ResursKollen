@@ -18,18 +18,8 @@ struct LoginView: View {
     @State private var password: String = ""
 
     var body: some View {
-        ZStack {
-
-            ///bakgrund
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.11, green: 0.11, blue: 0.15),
-                    Color(red: 0.20, green: 0.20, blue: 0.25),
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            ).edgesIgnoringSafeArea(.all)
-
+        ///BaseView för bakgrund
+        BaseView {
             VStack(spacing: 0) {
                 Image("ResursKollenLogo")
                     .resizable()

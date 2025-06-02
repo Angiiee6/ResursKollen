@@ -84,7 +84,7 @@ enum OrderStatus: String, Codable, CaseIterable {
         case .delayed:
             "försenad"
         case .started:
-            "påbörjad"
+            "tilldelad"
         case .done:
             "utförd"
         case .completed:

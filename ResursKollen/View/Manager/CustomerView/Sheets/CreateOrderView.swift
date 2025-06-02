@@ -20,18 +20,7 @@ struct CreateOrderView: View {
 
 
     var body: some View {
-        ZStack {
-            // Gradientbakgrund
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.11, green: 0.11, blue: 0.15),
-                    Color(red: 0.20, green: 0.20, blue: 0.25),
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .edgesIgnoringSafeArea(.all)
-            
+        BaseView {
             VStack {
                 Text("Skapa ny arbetsorder")
                     .font(.title)

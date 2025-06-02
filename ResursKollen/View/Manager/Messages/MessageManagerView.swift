@@ -49,16 +49,7 @@ struct NewMessageEditView: View {
     @State private var editingMessage: Message?
     
     var body: some View {
-        ZStack {
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.11, green: 0.11, blue: 0.15),
-                    Color(red: 0.20, green: 0.20, blue: 0.25),
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .edgesIgnoringSafeArea(.all)
+        BaseView {
             VStack{
                 List{
                     ForEach(viewmodel.messages){ message in
@@ -87,9 +78,11 @@ struct NewMessageEditView: View {
                             .font(.caption)
                         }
                         .padding(.vertical, 8)
-                    }
+                    }.listRowBackground(Color.white.opacity(0.1))
+                        .listRowSeparatorTint(Color.orange.opacity(0.3))
                     
-                }.scrollContentBackground(.hidden)
+                }
+                .scrollContentBackground(.hidden)
                 
                 Button(action: {
                     editingMessage = nil

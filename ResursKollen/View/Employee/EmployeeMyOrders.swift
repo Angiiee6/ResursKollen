@@ -21,18 +21,7 @@ struct EmployeeMyOrders: View {
     }
 
     var body: some View {
-        ZStack {
-            // Gradientbakgrund
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.11, green: 0.11, blue: 0.15),
-                    Color(red: 0.20, green: 0.20, blue: 0.25),
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .edgesIgnoringSafeArea(.all)
-            
+        BaseView {
             VStack(alignment: .leading) {
                 Text("Hej, \(dataProvider.currentUser.name) 👋")
                     .font(.largeTitle)
@@ -42,7 +31,7 @@ struct EmployeeMyOrders: View {
                 
                 List {
                     Section(
-                        header: Text("Påbörjade ordrar:").foregroundColor(
+                        header: Text("Tilldelade ordrar:").foregroundColor(
                             .orange
                         )
                     ) {
@@ -66,7 +55,8 @@ struct EmployeeMyOrders: View {
                                         }
                                         .tint(.red)
                                     }
-                            }.listRowBackground(Color.white.opacity(0.2))
+                            }                            .listRowBackground(Color.white.opacity(0.1))
+                                .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
                     
