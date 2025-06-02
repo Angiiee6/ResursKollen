@@ -94,7 +94,7 @@ struct StaffView: View {
             }
             .onAppear {
                 Task {
-                    try? await viewModel.loadUsers()
+                    //try? await viewModel.loadUsers()
 //                    try? await viewModel.loadCurrentUser()
                 }
             }
@@ -123,28 +123,26 @@ final class StaffViewViewModel: ObservableObject {
     func loadUsers() async throws {
         self.users = try await UsersManager.shared.getAllUser()
     }
+    init() {
+        listenToUsers()
+    }
     
     func updateStaff(user: UserData) throws {
         try? UsersManager.shared.updateUser(user: user)
     }
-    // Kopierade denna från staffdetailView viewmodeln, borde göra en som man kan använda överallt
-//    func loadCurrentUser() async {
-//            do {
-//                // Hämta den autentiserade användaren
-//                let authenticatedUser = try AuthenticationManager.shared.getAuthenticatedUser()
-//                let uid = authenticatedUser.uid
-//                
-//                // Hämta användardata från Firestore
-//                let userData = try await FirestoreManager.shared.fetchUserData(userId: uid)
-//                
-//                // Uppdatera currentUser på huvudtråden
-//                DispatchQueue.main.async {
-//                    self.currentUser = userData
-//                }
-//            } catch {
-//                print("Error getting user: \(error.localizedDescription)")
-//            }
-//        }
+    
+    func listenToUsers() {
+        UsersManager.shared.listenToUserChanges { [weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let users):
+                    self?.users = users
+                case .failure(let error):
+                    print("Error")
+                }
+            }
+        }
+    }
     
 }
 
