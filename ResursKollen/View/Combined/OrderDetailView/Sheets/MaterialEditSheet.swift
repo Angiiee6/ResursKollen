@@ -19,131 +19,133 @@ struct MaterialEditSheet: View {
     @State var price: Double = 0
     @State var quantity: Int = 1
     var body: some View {
-        VStack {
-            //MARK: Close button
-            HStack {
-                Spacer()
-                Button("Stäng") {
-                    dismiss()
-                }
-            }
-            Text("Förbrukat material:")
-            //MARK: Material list
-            List {
-                ForEach($materials) { $material in
-                    HStack(alignment: .top) {
-                        VStack(alignment: .leading) {
-                            Text(material.name)
-                                .padding(.bottom, 1)
-                            Text("Kr/st: \(material.price.formattedAsCurrency)")
-                                .font(.system(size: 14))
-                                .foregroundStyle(.secondary)
-
-                        }
-                        Spacer()
-                        VStack {
-                            Text("\(material.quantity)")
-                            Stepper("", value: $material.quantity)
-                                .font(.caption)
-                                .scaleEffect(0.7)
-                        }
-                        .frame(width: 100)
-                    }
-                    //MARK: Swipe actions
-                    .swipeActions(allowsFullSwipe: false) {
-                        Button(role: .destructive) {
-                            materials.removeAll(where: {
-                                $0.id == $material.id
-                            })
-                        } label: {
-                            Label("Ta bort", systemImage: "trash")
-                        }
-
-                    }
-                }
-                .listRowBackground(Color.clear)
-            }
-            Spacer()
-            Divider()
-            //MARK: Add new part
+        BaseView{
             VStack {
+                //MARK: Close button
                 HStack {
-                    Text("Lägg till ny del:")
                     Spacer()
+                    Button("Stäng") {
+                        dismiss()
+                    }
                 }
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Namn:")
-                        TextField("", text: $name)
-                    }
-                    VStack(alignment: .leading) {
-                        Text("Pris:")
-                        TextField(
-                            "",
-                            value: $price,
-                            formatter: NumberFormatter()
-                        )
-                        .keyboardType(.decimalPad)
-                    }
-                    .frame(width: 80)
-                    VStack(alignment: .leading) {
-                        Text("Antal:")
-                        TextField(
-                            "",
-                            value: $quantity,
-                            formatter: NumberFormatter()
-                        )
-                        .keyboardType(.numberPad)
-                    }
-                    .frame(width: 50)
-                }
-                .padding(10)
-                .textFieldStyle(.roundedBorder)
-                .font(.callout)
-                HStack {
-                    //MARK: Premade items list
-                    Menu("Lägg till från lista") {
-                        ForEach(viewModel.premadeMaterials) { material in
-                            Button(action: {
-                                materials.append(material)
-                            }) {
+                Text("Förbrukat material:")
+                //MARK: Material list
+                List {
+                    ForEach($materials) { $material in
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading) {
                                 Text(material.name)
+                                    .padding(.bottom, 1)
+                                Text("Kr/st: \(material.price.formattedAsCurrency)")
+                                    .font(.system(size: 14))
+                                    .foregroundStyle(.secondary)
+                                
+                            }
+                            Spacer()
+                            VStack {
+                                Text("\(material.quantity)")
+                                Stepper("", value: $material.quantity)
+                                    .font(.caption)
+                                    .scaleEffect(0.7)
+                            }
+                            .frame(width: 100)
+                        }
+                        //MARK: Swipe actions
+                        .swipeActions(allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                materials.removeAll(where: {
+                                    $0.id == $material.id
+                                })
+                            } label: {
+                                Label("Ta bort", systemImage: "trash")
+                            }
+                            
+                        }
+                    }
+                    .listRowBackground(Color.clear)
+                }.scrollContentBackground(.hidden)
+                Spacer()
+                Divider()
+                //MARK: Add new part
+                VStack {
+                    HStack {
+                        Text("Lägg till ny del:")
+                        Spacer()
+                    }
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text("Namn:")
+                            TextField("", text: $name)
+                        }
+                        VStack(alignment: .leading) {
+                            Text("Pris:")
+                            TextField(
+                                "",
+                                value: $price,
+                                formatter: NumberFormatter()
+                            )
+                            .keyboardType(.decimalPad)
+                        }
+                        .frame(width: 80)
+                        VStack(alignment: .leading) {
+                            Text("Antal:")
+                            TextField(
+                                "",
+                                value: $quantity,
+                                formatter: NumberFormatter()
+                            )
+                            .keyboardType(.numberPad)
+                        }
+                        .frame(width: 50)
+                    }
+                    .padding(10)
+                    .textFieldStyle(.roundedBorder)
+                    .font(.callout)
+                    HStack {
+                        //MARK: Premade items list
+                        Menu("Lägg till från lista") {
+                            ForEach(viewModel.premadeMaterials) { material in
+                                Button(action: {
+                                    materials.append(material)
+                                }) {
+                                    Text(material.name)
+                                }
                             }
                         }
+                        .padding()
+                        Spacer()
+                        Button("Lägg till") {
+                            let newMaterial = Material(
+                                name: name,
+                                quantity: quantity,
+                                price: price
+                            )
+                            
+                            materials.append(newMaterial)
+                            name = ""
+                            quantity = 1
+                            price = 0
+                            
+                            //Closes keyboard
+                            UIApplication.shared.sendAction(
+                                #selector(UIResponder.resignFirstResponder),
+                                to: nil,
+                                from: nil,
+                                for: nil
+                            )
+                        }.background(Color.white.opacity(0.2))
+                            .cornerRadius(10)
+                            .buttonStyle(.borderedProminent)
+                            .font(.callout)
+                            .disabled(name.isEmpty)
+                        
                     }
-                    .padding()
-                    Spacer()
-                    Button("Lägg till") {
-                        let newMaterial = Material(
-                            name: name,
-                            quantity: quantity,
-                            price: price
-                        )
-
-                        materials.append(newMaterial)
-                        name = ""
-                        quantity = 1
-                        price = 0
-
-                        //Closes keyboard
-                        UIApplication.shared.sendAction(
-                            #selector(UIResponder.resignFirstResponder),
-                            to: nil,
-                            from: nil,
-                            for: nil
-                        )
-                    }.background(Color.white.opacity(0.2))
-                        .cornerRadius(10)
-                        .buttonStyle(.borderedProminent)
-                        .font(.callout)
-                        .disabled(name.isEmpty)
-
                 }
+                .padding(.bottom, 16)
             }
-            .padding(.bottom, 16)
+            .padding()
+            .tint(.orange)
         }
-        .padding()
-        .tint(.orange)
     }
 }
 

@@ -21,18 +21,7 @@ struct EmployeeAllOrders: View {
     }
 
     var body: some View {
-        ZStack {
-            // Gradientbakgrund
-            LinearGradient(
-                gradient: Gradient(colors: [
-                    Color(red: 0.11, green: 0.11, blue: 0.15),
-                    Color(red: 0.20, green: 0.20, blue: 0.25),
-                ]),
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .edgesIgnoringSafeArea(.all)
-
+        BaseView {
             VStack(alignment: .leading, spacing: 16) {
                 List {
                     Section(
@@ -48,7 +37,7 @@ struct EmployeeAllOrders: View {
                                 )
                             ) {
                                 OrderRowAllOrders(order: order)
-                                    .listRowBackground(Color.white)
+                                    .listRowBackground(Color.white.opacity(0.1))
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
                                             self.viewModel.takeOrder(
@@ -62,7 +51,7 @@ struct EmployeeAllOrders: View {
                                         }
                                         .tint(.yellow)
                                     }
-                            }                                                        .listRowBackground(Color.white.opacity(0.2))
+                            }                                                        .listRowBackground(Color.white.opacity(0.1))
                                 .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
@@ -82,7 +71,7 @@ struct EmployeeAllOrders: View {
                                 )
                             ) {
                                 OrderRowAllOrders(order: order)
-                                    .listRowBackground(Color.white)
+                                    .listRowBackground(Color.white.opacity(0.1))
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
                                             self.viewModel.takeOrder(
@@ -114,7 +103,7 @@ struct EmployeeAllOrders: View {
                                 )
                             ) {
                                 OrderRowAllOrders(order: order)
-                                    .listRowBackground(Color.white)
+                                    .listRowBackground(Color.white.opacity(0.1))
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
                                             self.viewModel.takeOrder(
