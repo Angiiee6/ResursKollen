@@ -7,27 +7,19 @@
 
 import SwiftUI
 
-final class MaterialViewModel: ObservableObject {
-    
-    
-    
-    func saveNewMaterialPos(material: MaterialList) async throws{
-          try? await MaterialManager.shared.writeNewMaterialPost(material: material)
-    }
-    
-}
+
     struct AddMaterialView: View {
         
-        @StateObject var viewModel = MaterialViewModel()
+        
+        @StateObject var viewModel: MaterialViewModel
         @Environment(\.dismiss) var dismiss
         
-        
+        @Binding var materialToEdit: MaterialList?
         
         @State var title: String = ""
         @State var description: String = ""
         @State var priceIn: Double = 0.0
         @State var priceOut: Double = 0.0
-        @State var tax: Double = 0.0
         @State var unit: MaterialUnits = .st
         @State var category: MaterialCategory = .miscellaneous
         
@@ -87,34 +79,71 @@ final class MaterialViewModel: ObservableObject {
                     Section {
                         HStack{
                             
-                                Button("Spara material") {
+                                Button("Spara") {
                                     if !title.isEmpty{
                                         saveMaterialData()
-                                        clearForm()
+                                       
                                     }
                             }
-                                .padding()
+                            
+                            Spacer()
+                            
+                            if materialToEdit != nil{
+                                Button("RADERA"){
+                                    if let materialToDelete = materialToEdit {
+                                        Task{
+                                           try? await viewModel.deleteMaterialPost(material: materialToDelete)
+                                            print("kommer vi hit?")
+                                            print(materialToDelete)
+                                        }
+                                        }
+                                }
+                            }
                             
                             Spacer()
                             Button("Avbryt", role: .destructive){
+                                materialToEdit = nil
                             dismiss()
                             }
                         }
                     }
                 }
-                .navigationTitle("Lägg till material")
+                .toolbar{
+                    ToolbarItem(placement: .principal){
+                     //   .navigationTitle(materialToEdit == nil ? "Lägg till ny artikel" : "Redigera Artikel")
+                       Text(materialToEdit == nil ? "Lägg till ny artikel" : "Redigera Artikel")
+                    }
+                }
+                .onAppear{
+                    if let material = materialToEdit {
+                        title = material.title
+                        description = material.description
+                        priceIn = material.priceIn
+                        priceOut = material.priceOut
+                        unit = material.unit
+                        category = material.category
+                        
+                    }
+                   
+                }
             }
         }
         
         func saveMaterialData(){
-            
+            print("saveMaterialData")
             let newMaterial = MaterialList(title: title, description: description, priceIn: priceIn, priceOut: priceOut, unit: unit, category: category)
             
             Task{
-                try await viewModel.saveNewMaterialPos(material: newMaterial)
-                
-             
+                if materialToEdit == nil {
+                    try await viewModel.saveNewMaterialPos(material: newMaterial)
+                    clearForm()
+                    dismiss()
+                }else {
+                    print("Redigeringsläge")
+                    dismiss()
+                }
             }
+           
         }
         
         func clearForm(){
@@ -123,7 +152,6 @@ final class MaterialViewModel: ObservableObject {
             description = ""
             priceIn = 0.0
             priceOut = 0.0
-            tax = 0.0
             unit = .st
             category = .miscellaneous
             

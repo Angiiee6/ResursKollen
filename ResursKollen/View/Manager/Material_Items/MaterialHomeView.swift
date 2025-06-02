@@ -7,20 +7,46 @@
 
 import SwiftUI
 
-
+@MainActor
+final class MaterialViewModel: ObservableObject {
+    
+   @Published var materials: [MaterialList] = []
+    
+    func readAllMaterial() async throws {
+    
+        self.materials = try await  MaterialManager.shared.readMaterialList()
+    }
+    
+    func saveNewMaterialPos(material: MaterialList) async throws{
+          try? await MaterialManager.shared.writeNewMaterialPost(material: material)
+    }
+ 
+    func deleteMaterialPost(material: MaterialList)async throws{
+        try await MaterialManager.shared.deleteMaterialPost(materialPost: material)
+    }
+    
+    func updateMaterial(material: MaterialList)throws{
+        try? MaterialManager.shared.updateMaterialPost(material: material)
+    }
+}
 
 
 struct MaterialHomeView: View {
     
+    @ObservedObject var viewModel = MaterialViewModel()
+    
     @State private var materials: [MaterialList] = MaterialList.sampleData
     @State private var searchText = ""
     @State private var isShowAddItem = false
+   @State private var  materialToEdit: MaterialList? = nil
+    
+    
     
     var filteredMaterials: [MaterialList] {
         if searchText.isEmpty {
-            return materials
+            return viewModel.materials
         } else {
-            return materials.filter {
+            return viewModel.materials.filter {
                 $0.title.localizedCaseInsensitiveContains(searchText) ||
                 $0.category.rawValue.localizedCaseInsensitiveContains(searchText)
             }
@@ -54,11 +80,18 @@ struct MaterialHomeView: View {
                             Text("Kategori: \(material.category.rawValue)")
                                 .font(.system(.caption, design: .monospaced))
                                 .foregroundColor(.secondary)
+                            Button("Ändra"){
+                                materialToEdit = material
+                                isShowAddItem = true
+                              //  print(materialToEdit)
+                            }
+                            .font(.caption)
+                            .foregroundStyle(Color.red)
                         }
                         .padding(.vertical, 4)
                        
                     }
-                    .onDelete(perform: deletePost)
+                    
                 }
                 .navigationTitle("Material")
                 .searchable(text: $searchText, prompt: "Sök material, kategori, pris, enhet")
@@ -67,6 +100,8 @@ struct MaterialHomeView: View {
             
             Button(action: {
                 isShowAddItem = true
+                materialToEdit = nil
+            
             }) {
                 HStack {
                     Image(systemName: "plus.circle.fill")
@@ -81,17 +116,15 @@ struct MaterialHomeView: View {
                 .padding(.horizontal)
                 .padding(.bottom,20)
             }.sheet(isPresented: $isShowAddItem) {
-                AddMaterialView()
+                AddMaterialView(viewModel: viewModel, materialToEdit: $materialToEdit )
                     .presentationDragIndicator(.visible)
             }
         }
-    }
-    private func deletePost(at indexSet: IndexSet){
-        materials.remove(atOffsets: indexSet)
-        
-        //TODO Lägg till så att det raderas i från databasen också
-        
-        print(indexSet)
+        .onAppear{
+            Task{
+                try? await viewModel.readAllMaterial()
+            }
+        }
     }
     
 }

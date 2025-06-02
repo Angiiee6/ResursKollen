@@ -35,6 +35,13 @@ final class MaterialManager {
             return material
     }
     
+    
+    //Uppdatera befintlig post
+    func updateMaterialPost(material: MaterialList) throws{
+        try? materialDocuments(material: material).setData(from: material, merge: true)
+    }
+    
+    
     //radera post med material
     func deleteMaterialPost(materialPost: MaterialList)async throws{
         
