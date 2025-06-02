@@ -241,6 +241,13 @@ class FirestoreManager {
             onUpdate(.success(customers))
         }
     }
+    
+    func saveCustomer(_ customer: Customer) async throws {
+        let newDocument = customersRef.document()
+        var updatedCustomer = customer
+        updatedCustomer.id = newDocument.documentID
+        try customersRef.document(newDocument.documentID).setData(from: updatedCustomer)
+    }
 
     func fetchCustomer(id: String) async throws -> Customer {
         try await customersRef.document(id).getDocument(as: Customer.self)

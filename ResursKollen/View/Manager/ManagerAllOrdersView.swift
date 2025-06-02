@@ -96,6 +96,11 @@ struct ManagerAllOrdersView: View {
                 
                 HStack{
                     
+                    NavigationLink(destination: CustomerView()) {
+                        Text("Kundvy (flytta sen)")
+                            .foregroundStyle(.pink)
+                    }
+                    
 //                    Button(action: {
 //                        isCreateOrder = true
 //                    }) {

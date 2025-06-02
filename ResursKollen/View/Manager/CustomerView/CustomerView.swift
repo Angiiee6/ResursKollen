@@ -10,6 +10,7 @@ import SwiftUI
 
 struct CustomerView: View {
     @StateObject var viewModel = ViewModel()
+    @State var addCustomerSheetPresent = false
     var body: some View {
         VStack {
             switch viewModel.state {
@@ -40,22 +41,17 @@ struct CustomerView: View {
                     }
                 }
             }
-            Spacer()
-            Button(action: {
-            }) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("Lägg till ny kund")
+           
+        }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button("Ny kund") {
+                    addCustomerSheetPresent = true
                 }
-                .font(.headline)
-                .foregroundColor(.white)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.orange)
-                .cornerRadius(12)
-                .padding(.horizontal)
-                .padding(.bottom,20)
             }
+        }
+        .sheet(isPresented: $addCustomerSheetPresent) {
+            AddCustomerSheet()
         }
     }
 }
