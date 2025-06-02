@@ -61,7 +61,7 @@ struct AssignedUserPickerSheet: View {
                             }
                         }
                     }
-                }
+                }.scrollContentBackground(.hidden)
             case .error(let error):
                 VStack {
                     Text("Ett fel uppstod")

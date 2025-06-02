@@ -11,15 +11,29 @@ struct WorkPerformedTextSheet: View {
     @Environment(\.dismiss) var dismiss
     @Binding var workPerformedText: String
     var body: some View {
-        VStack {
-            Text("Utfört arbete: ")
-            TextEditor(text: $workPerformedText)
-            Spacer()
-            Button("Klar") {
-                dismiss()
-            }
+        BaseView {
+            VStack {
+                Text("Utfört arbete: ")
+                    ZStack(alignment: .topLeading) {
+                        TextEditor(text: $workPerformedText)
+                            .frame(height: 200)
+                        
+                        if workPerformedText.isEmpty {
+                            Text("Skriv utfört arbete här...")
+                                .foregroundColor(Color(.placeholderText))
+                                .padding(.top, 8)
+                                .padding(.leading, 5)
+                        }
+                    }
+                    Spacer()
+                    Button("Klar") {
+                        dismiss()
+                    }
+            }.scrollContentBackground(.hidden)
+                .padding()
+            .padding()
+            
         }
-        .padding()
     }
 }
 
