@@ -22,26 +22,31 @@ struct ReviewOrdersView: View {
     
     var body: some View {
         BaseView {
-            VStack {
-                switch viewModel.state {
-                case .loading:
-                    ProgressView()
-                case .hasData(let orders):
-                    List {
-                        ForEach(orders) { order in
-                            NavigationLink(
-                                destination: OrderDetailView(order: order, status: .manager)
-                            ) {
-                                OrderRowAllOrders(order: order)
-                            }
-                        }.listRowBackground(Color.white.opacity(0.1))
-                            .listRowSeparatorTint(Color.orange.opacity(0.3))
-                    }.scrollContentBackground(.hidden)
-                case .noData:
-                    Text("Just nu finns det inga ordrar som behöver granskas.").foregroundColor(.white)
-                case .error(let error):
-                    Text("Något gick fel: ")
-                    Text(error.localizedDescription)
+            ZStack {
+                // Lägg till en bakgrund som fyller hela skärmen
+                Color.clear // eller din önskade bakgrundsfärg
+                    .edgesIgnoringSafeArea(.all)
+                VStack {
+                    switch viewModel.state {
+                    case .loading:
+                        ProgressView()
+                    case .hasData(let orders):
+                        List {
+                            ForEach(orders) { order in
+                                NavigationLink(
+                                    destination: OrderDetailView(order: order, status: .manager)
+                                ) {
+                                    OrderRowAllOrders(order: order)
+                                }
+                            }.listRowBackground(Color.white.opacity(0.1))
+                                .listRowSeparatorTint(Color.orange.opacity(0.3))
+                        }.scrollContentBackground(.hidden)
+                    case .noData:
+                        Text("Just nu finns det inga ordrar som behöver granskas.").foregroundColor(.white)
+                    case .error(let error):
+                        Text("Något gick fel: ")
+                        Text(error.localizedDescription)
+                    }
                 }
             }
 //            .padding()
