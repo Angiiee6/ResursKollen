@@ -19,6 +19,7 @@ struct ContentView: View {
                 let dataProvider = MainDataProviderBuilder(currentUser: user)
                     .withActiveOrders()
                     .withCompletedOrders()
+                    .withCustomers()
                     .build()
                 ManagerHomeView(
                     dataProvider: dataProvider

@@ -164,7 +164,7 @@ struct EmployeeAllOrders: View {
     func filteredOrders(for orders: [Order]) -> [Order] {
         orders.filter {
             searchText.isEmpty
-                || $0.customer.name.lowercased().contains(
+                || $0.customerName.lowercased().contains(
                     searchText.lowercased()
                 )
                 || $0.orderNumber.lowercased().contains(

@@ -102,25 +102,25 @@ struct ManagerAllOrdersView: View {
                 
                 HStack{
                     
-                    Button(action: {
-                        isCreateOrder = true
-                    }) {
-                        HStack {
-                            Image(systemName: "plus.circle.fill")
-                            Text("Skapa ny arbetsorder")
-                        }
-                        .font(.headline)
-                        .foregroundColor(.white)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.orange)
-                        .cornerRadius(12)
-                        .padding(.horizontal)
-                        .padding(.bottom,20)
-                    }.sheet(isPresented: $isCreateOrder) {
-                        CreateOrderView()
-                            .presentationDragIndicator(.visible)
-                    }
+//                    Button(action: {
+//                        isCreateOrder = true
+//                    }) {
+//                        HStack {
+//                            Image(systemName: "plus.circle.fill")
+//                            Text("Skapa ny arbetsorder")
+//                        }
+//                        .font(.headline)
+//                        .foregroundColor(.white)
+//                        .padding()
+//                        .frame(maxWidth: .infinity)
+//                        .background(Color.orange)
+//                        .cornerRadius(12)
+//                        .padding(.horizontal)
+//                        .padding(.bottom,20)
+//                    }.sheet(isPresented: $isCreateOrder) {
+//                        CreateOrderView()
+//                            .presentationDragIndicator(.visible)
+//                    }
                     
                     
                 }
@@ -134,7 +134,7 @@ struct ManagerAllOrdersView: View {
     func filteredOrders(for orders: [Order]) -> [Order] {
         orders.filter {
             searchText.isEmpty
-                || $0.customer.name.lowercased().contains(
+                || $0.customerName.lowercased().contains(
                     searchText.lowercased()
                 )
                 || $0.orderNumber.lowercased().contains(

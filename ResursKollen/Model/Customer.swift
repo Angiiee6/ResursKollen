@@ -11,10 +11,11 @@ import CoreLocation
 
 
 
-struct Customer: Codable {
+struct Customer: Codable, Identifiable {
+    var id: String = ""
     var name: String
     var phoneNumber: String
-    var orders: [Order]
+//    var orders: [Order]
     var streetName: String
     var city: String
     var postalCode: String

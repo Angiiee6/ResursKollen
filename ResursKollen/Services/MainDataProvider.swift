@@ -14,6 +14,7 @@ import SwiftUI
 class MainDataProvider: ObservableObject {
     @Published var activeOrders: [Order] = []
     @Published var completedOrders: [Order] = []
+    @Published var customers: [Customer] = []
     //Not in use yet
     @Published var error: Error?
     //@Published var allUsers: [UserData] = []
@@ -25,7 +26,8 @@ class MainDataProvider: ObservableObject {
         currentUser: UserData,
         withActiveOrders: Bool,
         withCompletedOrders: Bool,
-        withAllUsers: Bool
+        withAllUsers: Bool,
+        withCustomers: Bool
     ) {
         self.currentUser = currentUser
         if withActiveOrders {
@@ -37,9 +39,13 @@ class MainDataProvider: ObservableObject {
         if withAllUsers {
             //Not yet implemented
         }
+        if withCustomers {
+            listenToCustomers()
+        }
 
     }
-    
+
+    //For preview mock data
     private init() {
         self.currentUser = UserData(name: "Test user")
         self.activeOrders = [Order.orderMockUpData]
@@ -67,7 +73,20 @@ class MainDataProvider: ObservableObject {
             }
         )
     }
-    
+
+    private func listenToCustomers() {
+        listeners.append(
+            FirestoreManager.shared.listenToCustomers{ result in
+                switch result {
+                case .success(let customers):
+                    self.customers = customers
+                case .failure(let error):
+                    self.error = error
+                }
+            }
+        )
+    }
+
     static func asPreview() -> MainDataProvider {
         MainDataProvider()
     }
@@ -92,6 +111,7 @@ class MainDataProviderBuilder {
     private var activeOrdersAdded = false
     private var completedOrdersAdded = false
     private var allUsersAdded = false
+    private var customersAdded = false
     let currentUser: UserData
 
     /// Initializes the builder with the current user.
@@ -102,7 +122,7 @@ class MainDataProviderBuilder {
     }
 
     /// Adds a listener for active orders Firestore collection.
-        func withActiveOrders() -> MainDataProviderBuilder {
+    func withActiveOrders() -> MainDataProviderBuilder {
         self.activeOrdersAdded = true
         return self
     }
@@ -119,8 +139,12 @@ class MainDataProviderBuilder {
         self.allUsersAdded = true
         return self
     }
-    
-    //TODO: Add Customer collection here
+
+    ///Adds a listeners for all customers Firestore collection.
+    func withCustomers() -> MainDataProviderBuilder {
+        self.customersAdded = true
+        return self
+    }
 
     /// Builds the configured `MainDataProvider`.
     ///
@@ -130,7 +154,8 @@ class MainDataProviderBuilder {
             currentUser: currentUser,
             withActiveOrders: activeOrdersAdded,
             withCompletedOrders: completedOrdersAdded,
-            withAllUsers: allUsersAdded
+            withAllUsers: allUsersAdded,
+            withCustomers: customersAdded
         )
     }
 }

@@ -11,19 +11,13 @@ import SwiftUI
 struct CreateOrderView: View {
     @Environment(\.dismiss) var dismiss
     @StateObject var viewModel = ViewModel()
+    let customer: Customer
 
     //Order
     @State var title: String = ""
     @State var description: String = ""
     @State var selectedDate: Date = Date().addingTimeInterval(60 * 60 * 24 * 7)
 
-    //Customer
-    @State var name: String = ""
-    @State var phoneNumber: String = ""
-    @State var streetName: String = ""
-    @State var postalCode: String = ""
-    @State var city: String = ""
-    @State var email: String = ""
 
     var body: some View {
         ZStack {
@@ -39,13 +33,15 @@ struct CreateOrderView: View {
             .edgesIgnoringSafeArea(.all)
             
             VStack {
+                Text("Skapa ny arbetsorder")
+                    .font(.title)
                 //MARK: Form
                 Form {
                     Section("Arbetsorder") {
                         TextField("Titel *", text: $title)
                         ZStack(alignment: .topLeading) {
                             TextEditor(text: $description)
-                                .frame(height: 100)
+                                .frame(height: 160)
                             if description.isEmpty {
                                 Text("Beskrivning")
                                     .foregroundColor(.gray.opacity(0.55))
@@ -62,36 +58,16 @@ struct CreateOrderView: View {
                             displayedComponents: [.date]
                         )
                     }
-                    //TODO: Add search existing customer function here?
-                    Section("Kundinformation") {
-                        TextField("Namn *", text: $name)
-                            .textInputAutocapitalization(.words)
-                        TextField("Gata *", text: $streetName)
-                        TextField("Postnummer *", text: $postalCode)
-                            .keyboardType(.numberPad)
-                        TextField("Stad *", text: $city)
-                        TextField("Telefonnummer *", text: $phoneNumber)
-                            .keyboardType(.numberPad)
-                        TextField("Email", text: $email)
-                            .keyboardType(.emailAddress)
-                            .textInputAutocapitalization(.never)
+                    Section("Kundinformation"){
+                        CustomerInfoDisplay(customer: customer)
                     }
                 }
                 .scrollContentBackground(.hidden)
                 .background(Color.clear)
                 
+
                 //MARK: Save button
                 Button("Skapa") {
-                    let newCustomer = Customer(
-                        name: name,
-                        phoneNumber: phoneNumber,
-                        orders: [],
-                        streetName: streetName,
-                        city: city,
-                        postalCode: postalCode,
-                        emailAddress: email,
-                        customerNumber: UUID()
-                    )
                     let newOrder = Order(
                         id: "",
                         title: title,
@@ -99,7 +75,9 @@ struct CreateOrderView: View {
                         orderNumber: UUID().uuidString,
                         status: .registered,
                         dueDate: selectedDate,
-                        customer: newCustomer
+                        customerId: customer.id,
+                        customerName: customer.name,
+                        customerStreetName: customer.streetName
                     )
                     Task {
                         await viewModel.saveOrder(newOrder)
@@ -108,9 +86,7 @@ struct CreateOrderView: View {
                 .buttonStyle(.borderedProminent)
                 .padding()
                 .disabled(
-                    name.isEmpty || streetName.isEmpty || postalCode.isEmpty
-                        || city.isEmpty
-                        || phoneNumber.isEmpty || title.isEmpty
+                    title.isEmpty
                 )
             }
         }
@@ -133,7 +109,14 @@ struct CreateOrderView: View {
 }
 
 #Preview {
-    CreateOrderView()
+    CreateOrderView(customer: Customer(
+        name: "Arne Ankasson",
+        phoneNumber: "070-123456",
+        streetName: "Kungsgatan 23",
+        city: "Uppsala",
+        postalCode: "75521",
+        emailAddress: "ankanarne@gmail.com"
+    ))
 }
 
 //MARK: View Model
