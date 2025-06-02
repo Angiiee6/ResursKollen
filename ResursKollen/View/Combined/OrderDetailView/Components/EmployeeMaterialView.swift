@@ -7,36 +7,7 @@
 
 import SwiftUI
 
-@MainActor
-final class MaterialViewModel: ObservableObject {
-    
-   @Published var materials: [MaterialList] = []
-    
-    init(){
-        Task{
-         try? await readAllMaterial()
-        }
-    }
-    func readAllMaterial() async throws {
-    
-        self.materials = try await  MaterialManager.shared.readMaterialList()
-    }
-    
-    func saveNewMaterialPos(material: MaterialList) async throws{
-          try? await MaterialManager.shared.writeNewMaterialPost(material: material)
-    }
- 
-    func deleteMaterialPost(material: MaterialList)async throws{
-        try await MaterialManager.shared.deleteMaterialPost(materialPost: material)
-    }
-    
-    func updateMaterial(material: MaterialList)throws{
-        try? MaterialManager.shared.updateMaterialPost(material: material)
-    }
-}
-
-
-struct MaterialHomeView: View {
+struct EmployeeMaterialView: View {
     
     @ObservedObject var viewModel = MaterialViewModel()
     
@@ -86,13 +57,9 @@ struct MaterialHomeView: View {
                             Text("Kategori: \(material.category.rawValue)")
                                 .font(.system(.caption, design: .monospaced))
                                 .foregroundColor(.secondary)
-                            Button("Ändra"){
-                                materialToEdit = material
-                                isShowAddItem = true
-                              //  print(materialToEdit)
+                           
                             }
-                            .font(.caption)
-                            .foregroundStyle(Color.red)
+                            
                         }
                         .padding(.vertical, 4)
                        
@@ -104,6 +71,8 @@ struct MaterialHomeView: View {
                
             }
             
+           /*
+                Till en början kanske bara chefen som kan lägga til mtrl?
             Button(action: {
                 isShowAddItem = true
                 materialToEdit = nil
@@ -124,13 +93,17 @@ struct MaterialHomeView: View {
             }.sheet(isPresented: $isShowAddItem) {
                 AddMaterialView(viewModel: viewModel, materialToEdit: $materialToEdit )
                     .presentationDragIndicator(.visible)
-            }
-           
+            } */
+            .task{
+                
+                    try? await viewModel.readAllMaterial()
+                        }
         }
       
     }
     
-}
+
 #Preview {
   //  MaterialHomeView()
 }
+

@@ -264,7 +264,9 @@ struct OrderDetailView: View {
             case .workPerformedText:
                 WorkPerformedTextSheet(workPerformedText: $order.workPerformed)
             case .material:
-                MaterialEditSheet(materials: $order.materialConsumption)
+                // DA ändrat 02/6
+             //   MaterialEditSheet(materials: $order.materialConsumption)
+               EmployeeMaterialView()
             case .assignedUser:
                 AssignedUserPickerSheet(viewModel: viewModel)
             case .timeUnits:

@@ -97,7 +97,7 @@ struct ManagerHomeView: View {
                 NewMessageEditView()
             }
             .navigationDestination(isPresented: $navToMaterial) {
-                MaterialHomeView()
+                MaterialHomeView().navigationBarBackButtonHidden(false)
             }
             .navigationDestination(isPresented: $isLoggedOut) {
                 ContentView().navigationBarBackButtonHidden(true)
