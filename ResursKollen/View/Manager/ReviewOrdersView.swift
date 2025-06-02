@@ -34,7 +34,8 @@ struct ReviewOrdersView: View {
                             ) {
                                 OrderRowAllOrders(order: order)
                             }
-                        }
+                        }.listRowBackground(Color.white.opacity(0.1))
+                            .listRowSeparatorTint(Color.orange.opacity(0.3))
                     }.scrollContentBackground(.hidden)
                 case .noData:
                     Text("Just nu finns det inga ordrar som behöver granskas.").foregroundColor(.white)
@@ -43,7 +44,7 @@ struct ReviewOrdersView: View {
                     Text(error.localizedDescription)
                 }
             }
-            .padding()
+//            .padding()
           /* Pluset för att skapa en ny order
            .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

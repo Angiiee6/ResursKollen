@@ -231,7 +231,7 @@ extension SummaryView {
 
             return [
                 OrderChartData(
-                    status: "Påbörjade",
+                    status: "Tilldelade",
                     count: grouped[.started]?.count ?? 0
                 ),
                 OrderChartData(

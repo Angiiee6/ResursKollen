@@ -51,11 +51,12 @@ struct EmployeeAllOrders: View {
                                         }
                                         .tint(.yellow)
                                     }
-                            }.listRowBackground(Color.white.opacity(0.2))
+                            }                                                        .listRowBackground(Color.white.opacity(0.2))
+                                .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
                     Section(
-                        header: Text("Påbörjade").foregroundColor(
+                        header: Text("Tilldelade").foregroundColor(
                             .orange
                         )
                     ) {
@@ -84,7 +85,8 @@ struct EmployeeAllOrders: View {
                                         }
                                         .tint(.yellow)
                                     }
-                            }.listRowBackground(Color.white.opacity(0.2))
+                            }                                                        .listRowBackground(Color.white.opacity(0.1))
+                                .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
                     Section(
@@ -115,7 +117,8 @@ struct EmployeeAllOrders: View {
                                         }
                                         .tint(.yellow)
                                     }
-                            }.listRowBackground(Color.white.opacity(0.2))
+                            }                                                        .listRowBackground(Color.white.opacity(0.1))
+                                .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
 
