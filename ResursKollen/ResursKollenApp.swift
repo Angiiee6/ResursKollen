@@ -23,7 +23,6 @@ struct ResursKollenApp: App {
             WindowGroup {
                 
                 AddMaterialView()
-                
 //                ManagerHomeView()
             // this  ContentView()
             //   this     .environment(\.colorScheme, .dark)

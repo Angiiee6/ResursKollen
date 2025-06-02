@@ -8,7 +8,7 @@
 import Foundation
 
 struct MaterialList: Identifiable, Codable {
-    var id: String
+    var id: String = UUID().uuidString
     var title: String
     var description: String
     var priceIn: Double
@@ -38,5 +38,30 @@ enum MaterialCategory: String, Codable, CaseIterable {
        case plumbing = "VVS & rör"
        case consumables = "Förbrukning & städ"
        case miscellaneous = "Övrigt"
+    
+    var MaterialCategorySymbol: String {
+        switch self{
+        case .fasteners:
+            return "screwdriver"
+        case .protectiveGear:
+            return "shield.lefthalf.fill"
+        case .timber:
+            return "square.split.2x2"
+        case .tools:
+            return "wrench.and.screwdriver"
+        case .carpentry:
+            return "hammer.fill"
+        case .insulation:
+            return "drop.triangle.fill"
+        case .electrical:
+            return "bolt.fill"
+        case .plumbing:
+            return "drop.fill"
+        case .consumables:
+            return "trash.fill"
+        case .miscellaneous:
+            return "cube.transparent"
+        }
+    }
     
 }
