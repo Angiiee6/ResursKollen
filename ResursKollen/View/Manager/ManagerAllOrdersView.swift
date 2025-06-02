@@ -44,11 +44,12 @@ struct ManagerAllOrdersView: View {
                             ) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white.opacity(0.2))
+                            .listRowBackground(Color.white.opacity(0.1))
+                            .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
                     Section(
-                        header: Text("Påbörjade ordrar").foregroundColor(.orange)
+                        header: Text("Tilldelade ordrar").foregroundColor(.orange)
                     ) {
                         ForEach(filteredOrders(for: viewModel.startedOrders)) { order in
                             NavigationLink(
@@ -59,7 +60,8 @@ struct ManagerAllOrdersView: View {
                             ) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white.opacity(0.2))
+                            .listRowBackground(Color.white.opacity(0.1))
+                            .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
                     Section(header: Text("Försenade ordrar").foregroundColor(.red))
@@ -73,7 +75,8 @@ struct ManagerAllOrdersView: View {
                             ) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white.opacity(0.2))
+                            .listRowBackground(Color.white.opacity(0.1))
+                            .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
                     Section(
@@ -88,7 +91,8 @@ struct ManagerAllOrdersView: View {
                             ) {
                                 OrderRowAllOrders(order: order)
                             }
-                            .listRowBackground(Color.white.opacity(0.2))
+                            .listRowBackground(Color.white.opacity(0.1))
+                            .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                         
                     }
@@ -127,7 +131,7 @@ struct ManagerAllOrdersView: View {
                 
                 
                 
-            }
+            }.padding(.top, 1)
         }
     }
 

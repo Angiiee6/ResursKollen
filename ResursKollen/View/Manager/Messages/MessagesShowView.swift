@@ -19,19 +19,39 @@ final class MessageShowViewModel: ObservableObject{
 struct MessagesShowView: View {
     
     @ObservedObject var viewModel = MessageShowViewModel()
+    @State private var expandedMessageID: String? = nil
+    @State private var isCollapsed = false
     
-   
-
+    
+    
     var body: some View {
-        VStack(alignment: .leading){
+        HStack {
             Text("Meddelanden och information:")
                 .foregroundStyle(Color.orange)
-            
-            
+                .font(.headline)
+
+            Spacer()
+
+            Button(action: {
+                withAnimation(.easeInOut) {
+                    isCollapsed.toggle()
+                    expandedMessageID = nil
+                }
+            }) {
+                Image(systemName: isCollapsed ? "chevron.up.circle.fill" : "chevron.down.circle.fill")
+                    .font(.title2)
+                    .foregroundColor(.orange)
+            }
+
+        }
+        .padding(.horizontal)
+        .padding(.bottom, 15)
+        if !isCollapsed {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 16){
                     
                     ForEach(viewModel.messages, id: \.id) { message in
+                        let isExpanded = expandedMessageID == message.id
                         VStack(alignment: .leading, spacing: 8) {
                             Text(message.title)
                                 .font(.headline)
@@ -40,9 +60,10 @@ struct MessagesShowView: View {
                             Text(message.text)
                                 .font(.subheadline)
                                 .foregroundColor(.white.opacity(0.8))
-                                .lineLimit(4)
+                                .lineLimit(isExpanded ? nil : 3)
                                 .fixedSize(horizontal: false, vertical: false)
-                                .padding(.bottom, 16)
+                                .multilineTextAlignment(.leading)
+                                .padding(.bottom, 8)
                             
                             
                             Text("\(formattedDate(message.date))")
@@ -54,31 +75,37 @@ struct MessagesShowView: View {
                                 .foregroundColor(.black)
                         }
                         .padding()
-                        .frame(width: 300, height: 160)
+                        .frame(width: isExpanded ? 300 : 200, height: isExpanded ? 200 : 100)
                         .background(message.category.color)
                         .cornerRadius(20)
+                        .onTapGesture {
+                            withAnimation(.easeInOut) {
+                                expandedMessageID = isExpanded ? nil : message.id
+                            }
+                        }
                     }
+                    .padding(8)
                 }
-                .padding(8)
+            }
+                .task {
+                    try? await viewModel.readMessages()
+                }
+                
             }
             
-            .task {
-                try? await viewModel.readMessages()
-            }
-            
-        }
+        
         
     }
-        
-
-            func formattedDate(_ date: Date) -> String {
-                let formatter = DateFormatter()
-                formatter.dateStyle = .medium
-                return formatter.string(from: date)
-            }
+        func formattedDate(_ date: Date) -> String {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            return formatter.string(from: date)
         }
+    }
 
+    
+    
+    #Preview {
+        //   MessagesShowView()
+    }
 
-#Preview {
- //   MessagesShowView()
-}

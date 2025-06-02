@@ -66,7 +66,8 @@ struct StaffDetailView: View {
                         )
 
                     }
-                    .listRowBackground(Color.white.opacity(0.2))
+                    .listRowBackground(Color.white.opacity(0.1))
+                    .listRowSeparatorTint(Color.orange.opacity(0.3))
 
                     Section(
                         header: Text("Anställningsinformation").foregroundColor(
@@ -93,7 +94,8 @@ struct StaffDetailView: View {
                             isPhoneNumber: false
                         )
 
-                    }.listRowBackground(Color.white.opacity(0.2))
+                    }     .listRowBackground(Color.white.opacity(0.1))
+                        .listRowSeparatorTint(Color.orange.opacity(0.3))
 
                     //NOTE: här har jag lagt till logik för en listan med mer information, @Angie, @Vivanne plocka bort om ni tycker jag kladdat för mycket /Da
                     if currentUser.status == .manager {
@@ -110,7 +112,8 @@ struct StaffDetailView: View {
                                     isPhoneNumber: false
                                 )
                             }
-                        }.listRowBackground(Color.white.opacity(0.2))
+                        }                                                        .listRowBackground(Color.white.opacity(0.1))
+                            .listRowSeparatorTint(Color.orange.opacity(0.3))
 
                         if isShowMoreInfo {
 

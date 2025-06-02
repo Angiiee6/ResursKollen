@@ -42,7 +42,7 @@ struct EmployeeMyOrders: View {
                 
                 List {
                     Section(
-                        header: Text("Påbörjade ordrar:").foregroundColor(
+                        header: Text("Tilldelade ordrar:").foregroundColor(
                             .orange
                         )
                     ) {
@@ -66,7 +66,8 @@ struct EmployeeMyOrders: View {
                                         }
                                         .tint(.red)
                                     }
-                            }.listRowBackground(Color.white.opacity(0.2))
+                            }                            .listRowBackground(Color.white.opacity(0.1))
+                                .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
                     
