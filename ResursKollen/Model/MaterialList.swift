@@ -27,6 +27,7 @@ enum MaterialUnits: String, CaseIterable, Codable{
     
 }
 
+
 enum MaterialCategory: String, Codable, CaseIterable {
         case fasteners = "Fästelement"
        case tools = "Verktyg och tillbehör"

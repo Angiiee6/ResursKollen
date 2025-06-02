@@ -8,6 +8,51 @@ import Foundation
 
 // Här finns en samling med mockData för olika klasserna
 
+extension MaterialList {
+    static let sampleData: [MaterialList] = [
+        MaterialList(
+            title: "Gipsskiva 13mm",
+            description: "Standard gipsskiva för väggar.",
+            priceIn: 39.90,
+            priceOut: 69.00,
+            unit: .st,
+            category: .carpentry
+        ),
+        MaterialList(
+            title: "Skruv 4.2x55mm",
+            description: "För montering av gips.",
+            priceIn: 0.15,
+            priceOut: 0.35,
+            unit: .st,
+            category: .fasteners
+        ),
+        MaterialList(
+            title: "Regel 45x70x2400mm",
+            description: "Byggregel för väggkonstruktion.",
+            priceIn: 18.50,
+            priceOut: 34.00,
+            unit: .st,
+            category: .timber
+        ),
+        MaterialList(
+            title: "Tätningslist",
+            description: "För dörr och fönster.",
+            priceIn: 12.00,
+            priceOut: 24.90,
+            unit: .M,
+            category: .insulation
+        ),
+        MaterialList(
+            title: "Skyddsglasögon",
+            description: "Personlig skyddsutrustning.",
+            priceIn: 25.00,
+            priceOut: 45.00,
+            unit: .st,
+            category: .protectiveGear
+        )
+    ]
+}
+
 
 //MARK: Mockdata för klassen UserData
 extension UserData{
