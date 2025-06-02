@@ -42,7 +42,7 @@ struct EmployeeMyOrders: View {
                 
                 List {
                     Section(
-                        header: Text("Påbörjade ordrar:").foregroundColor(
+                        header: Text("Tilldelade ordrar:").foregroundColor(
                             .orange
                         )
                     ) {

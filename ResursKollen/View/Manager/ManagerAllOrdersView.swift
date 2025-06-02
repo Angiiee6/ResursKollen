@@ -49,7 +49,7 @@ struct ManagerAllOrdersView: View {
                         }
                     }
                     Section(
-                        header: Text("Påbörjade ordrar").foregroundColor(.orange)
+                        header: Text("Tilldelade ordrar").foregroundColor(.orange)
                     ) {
                         ForEach(filteredOrders(for: viewModel.startedOrders)) { order in
                             NavigationLink(

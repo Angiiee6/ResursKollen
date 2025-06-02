@@ -67,7 +67,7 @@ struct EmployeeAllOrders: View {
                         }
                     }
                     Section(
-                        header: Text("Påbörjade").foregroundColor(
+                        header: Text("Tilldelade").foregroundColor(
                             .orange
                         )
                     ) {
