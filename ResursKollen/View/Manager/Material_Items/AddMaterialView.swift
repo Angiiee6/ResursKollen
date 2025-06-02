@@ -19,6 +19,9 @@ final class MaterialViewModel: ObservableObject {
     struct AddMaterialView: View {
         
         @StateObject var viewModel = MaterialViewModel()
+        @Environment(\.dismiss) var dismiss
+        
+        
         
         @State var title: String = ""
         @State var description: String = ""
@@ -65,10 +68,7 @@ final class MaterialViewModel: ObservableObject {
                         }
                     }
                     
-                    Section(header: Text("Moms och enhet")) {
-                        TextField("Moms %", value: $tax, formatter: numberFormatter)
-                            .keyboardType(.decimalPad)
-                        
+                    Section(header: Text("Enhet")) {
                         Picker("Enhet", selection: $unit) {
                             ForEach(MaterialUnits.allCases, id: \.self) { unit in
                                 Text(unit.rawValue).tag(unit)
@@ -85,10 +85,19 @@ final class MaterialViewModel: ObservableObject {
                     }
                     
                     Section {
-                        if !title.isEmpty{
-                            Button("Spara material") {
-                                saveMaterialData()
-                                clearForm()
+                        HStack{
+                            
+                                Button("Spara material") {
+                                    if !title.isEmpty{
+                                        saveMaterialData()
+                                        clearForm()
+                                    }
+                            }
+                                .padding()
+                            
+                            Spacer()
+                            Button("Avbryt", role: .destructive){
+                            dismiss()
                             }
                         }
                     }

@@ -21,13 +21,7 @@ struct EmployeeHomeView: View {
 
     var body: some View {
         NavigationStack {
-            NavigationLink(
-                destination: ContentView().navigationBarBackButtonHidden(true),
-                isActive: $isLoggedOut
-            ) {
-                EmptyView()
-            }
-
+        
             TabView {
                 EmployeeMyOrders(dataProvider: dataProvider)
                     .tabItem {
@@ -67,6 +61,9 @@ struct EmployeeHomeView: View {
                         .tint(.orange)
                     }
                 }
+            }
+            .navigationDestination(isPresented: $isLoggedOut) {
+                ContentView().navigationBarBackButtonHidden(true)
             }
         }.tint(Color.orange)
     }
