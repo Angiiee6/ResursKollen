@@ -85,10 +85,11 @@ final class MaterialViewModel: ObservableObject {
                     }
                     
                     Section {
-                        Button("Spara material") {
-                           saveMaterialData()
-                            clearForm()
-                           
+                        if !title.isEmpty{
+                            Button("Spara material") {
+                                saveMaterialData()
+                                clearForm()
+                            }
                         }
                     }
                 }
