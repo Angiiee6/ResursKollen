@@ -5,18 +5,23 @@
 //  Created by Magnus Freidenfelt on 2025-06-02.
 //
 
+import Combine
 import FirebaseFirestore
 import SwiftUI
 
 struct CustomerDetailView: View {
     let customer: Customer
+
     @StateObject var viewModel: ViewModel
     @State var addOrderSheetPresent = false
 
-    init(customer: Customer) {
+    init(dataProvider: MainDataProvider, customer: Customer) {
         self.customer = customer
         _viewModel = StateObject(
-            wrappedValue: ViewModel(customerId: customer.id)
+            wrappedValue: ViewModel(
+                dataProvider: dataProvider,
+                customerId: customer.id
+            )
         )
     }
 
@@ -25,39 +30,23 @@ struct CustomerDetailView: View {
             CustomerInfoDisplay(customer: customer)
             Spacer()
             VStack {
-                switch viewModel.state {
-                case .loading:
-                    ProgressView()
-                case .error(_):
-                    VStack {
-                        Text("Kunde inte ladda ordrar.")
-                            .foregroundStyle(.red)
-                            .italic()
-                        //                        Button("Försök igen") {
-                        //                            Task {
-                        //                                await viewModel.fetchOrdersForCustomer()
-                        //                            }
-                        //                        }
-                    }
-                case .hasData(let orders):
-                    if orders.isEmpty {
-                        Text("Inga ordrar registrerade...")
-                            .foregroundStyle(.secondary)
-                            .italic()
-                    } else {
-                        List {
-                            ForEach(orders) { order in
-                                HStack(alignment: .top) {
-                                    VStack(alignment: .leading) {
-                                        Text(order.title)
-                                        Text(order.description)
-                                            .font(.caption2)
-                                            .lineLimit(3)
-                                    }
-                                    Spacer()
-                                    Text(order.status.nameSE)
-                                        .foregroundStyle(order.status.color)
+                if viewModel.customerOrders.isEmpty {
+                    Text("Inga ordrar registrerade...")
+                        .foregroundStyle(.secondary)
+                        .italic()
+                } else {
+                    List {
+                        ForEach(viewModel.customerOrders) { order in
+                            HStack(alignment: .top) {
+                                VStack(alignment: .leading) {
+                                    Text(order.title)
+                                    Text(order.description)
+                                        .font(.caption2)
+                                        .lineLimit(3)
                                 }
+                                Spacer()
+                                Text(order.status.nameSE)
+                                    .foregroundStyle(order.status.color)
                             }
                         }
                     }
@@ -84,9 +73,6 @@ struct CustomerDetailView: View {
         }
         .padding()
         .navigationTitle("Kundinformation")
-        //        .task {
-        //            await viewModel.fetchOrdersForCustomer()
-        //        }
         .sheet(isPresented: $addOrderSheetPresent) {
             CreateOrderView(customer: customer)
         }
@@ -98,82 +84,36 @@ extension CustomerDetailView {
     @MainActor
     class ViewModel: ObservableObject {
         let customerId: String
-        @Published var state: CustomerOrdersDataState = .loading
+        let dataProvider: MainDataProvider
 
-        private var activeOrders: [Order] = []
-        private var completedOrders: [Order] = []
-        private var listeners: [ListenerRegistration] = []
+        @Published var customerOrders: [Order] = []
 
-        init(customerId: String) {
+        init(dataProvider: MainDataProvider, customerId: String) {
+            self.dataProvider = dataProvider
             self.customerId = customerId
-            listenToCustomerOrders()
-        }
-
-        deinit {
-            listeners.forEach { $0.remove() }
-            listeners.removeAll()
-        }
-
-        enum CustomerOrdersDataState {
-            case loading
-            case error(Error)
-            case hasData([Order])
-        }
-
-        private func listenToCustomerOrders() {
-            listeners.append(
-                FirestoreManager.shared.listenToActiveOrdersForCustomer(
-                    customerId: customerId
-                ) { result in
-                    switch result {
-                    case .success(let orders):
-                        self.activeOrders = orders
-                        self.combineListeners()
-                    case .failure(let error):
-                        self.state = .error(error)
-                    }
-                }
+            let combinedPublisher = Publishers.CombineLatest(
+                dataProvider.$activeOrders,
+                dataProvider.$completedOrders
             )
-            listeners.append(
-                FirestoreManager.shared.listenToCompletedOrdersForCustomer(
-                    customerId: customerId
-                ) { result in
-                    switch result {
-                    case .success(let orders):
-                        self.completedOrders = orders
-                        self.combineListeners()
-                    case .failure(let error):
-                        self.state = .error(error)
-                    }
+            let customerOrdersPublisher = combinedPublisher.map {
+                active,
+                completed in
+                let allOrders = active + completed
+
+                let filteredOrders = allOrders.filter {
+                    $0.customerId == self.customerId
                 }
-            )
+                return filteredOrders
+            }
+            customerOrdersPublisher.assign(to: &$customerOrders)
         }
-        
-        private func combineListeners(){
-            let combinedOrders = (activeOrders + completedOrders).sorted{ $0.creationDate > $1.creationDate}
-            state = .hasData(combinedOrders)
-        }
-
-        //        func fetchOrdersForCustomer() async {
-        //            state = .loading
-        //            do {
-        //                let orders =
-        //                    try await FirestoreManager.shared.fetchOrdersForCustomer(
-        //                        customerId: customerId
-        //                    )
-        //                state = .hasData(orders)
-        //            } catch {
-        //                state = .error(error)
-        //            }
-        //        }
-
     }
-
 }
 
 #Preview {
     NavigationStack {
         CustomerDetailView(
+            dataProvider: MainDataProvider.asPreview(),
             customer: Customer(
                 name: "Arne Ankasson",
                 phoneNumber: "070-123456",
