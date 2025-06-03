@@ -23,15 +23,13 @@ struct ResursKollenApp: App {
             WindowGroup {
                 
               // MaterialHomeView()
-           //     EmployeeMaterialView()
+            //    EmployeeMaterialView()
               //  AddMaterialView()
 //                ManagerHomeView()
-            ContentView()
+           ContentView()
             .environment(\.colorScheme, .dark)
             .preferredColorScheme(.dark) // Säkerställer att sheets också får dark mode
-            
-            
-                
+               
             }
         }
         

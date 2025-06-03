@@ -7,31 +7,20 @@
 
 import SwiftUI
 
-class Varukorg: Identifiable, ObservableObject{
+struct Varukorg {
     var quantity: Int = 0
     var materials: MaterialList?
-    
-    @Published var selectedItem: [Varukorg] = []
-    
-    init(quantity: Int = 0, materials: MaterialList? = nil, selectedItem: [Varukorg] = []) {
-        self.quantity = quantity
-        self.materials = materials
-        self.selectedItem = selectedItem
-    }
-    
 }
 
 struct EmployeeMaterialView: View {
     
     @ObservedObject var viewModel = MaterialViewModel()
-    @StateObject var selectedMaterial = Varukorg()
-    
-   // @State private var materials: [MaterialList] = MaterialList.sampleData
+   
     @State private var searchText = ""
     @State private var isShowAddItem = false
     @State private var  materialToEdit: MaterialList? = nil
     
-  //  @State var selectedItems: Dictionary<String, SelectedMaterial> = [:]
+  @State var selectedItems: Dictionary<String, Varukorg> = [:]
     
     
     
@@ -76,7 +65,7 @@ struct EmployeeMaterialView: View {
                                 .font(.system(.caption, design: .monospaced))
                                 .foregroundColor(.secondary)
                             
-                            MaterialStepperView(pickedItem: material)
+                            MaterialStepperView(pickedItem: material, varukorg: $selectedItems)
                             
                             }
                            

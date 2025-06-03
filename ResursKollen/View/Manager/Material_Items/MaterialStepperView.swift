@@ -12,15 +12,15 @@ import SwiftUI
 struct MaterialStepperView: View {
     
     var pickedItem: MaterialList  //vilket material är valt?
-   // @Binding var varukorg: Dictionary<String, Varukorg>
+    @Binding var varukorg: Dictionary<String, Varukorg>
     
-    @ObservedObject var varukorg: Varukorg
+    //@ObservedObject var varukorg: Varukorg
     
     var body: some View {
         
         ZStack {
                    Stepper("", onIncrement: {    //ökar, finns objektet öka med ett annars skapa objektet
-                       if let item = varukorg.selectedItem[pickedItem.id] {
+                       if var item = varukorg[pickedItem.id] {
                            item.quantity += 1
                            varukorg[pickedItem.id] = item
                        } else {
@@ -28,19 +28,19 @@ struct MaterialStepperView: View {
                            varukorg[pickedItem.id] = newItem
                        }
                    }, onDecrement: {            //minskar, <= 1 tas objekt bort annars öka med 1
-                       if let item = varukorg.selectedItem[pickedItem.id] {
+                       if var item = varukorg[pickedItem.id] {
                            if item.quantity <= 1 {
-                               varukorg.selectedItem[pickedItem.id] = nil
+                               varukorg[pickedItem.id] = nil
                            } else {
                                item.quantity -= 1
-                               varukorg.selectedItem[pickedItem.id] = item
+                               varukorg[pickedItem.id] = item
                            }
                        }
                    })
                    .labelsHidden()
                    .scaleEffect(0.50)
 
-                   Text("\(varukorg[pickedItem.id]?.quantity ?? 0)")
+            Text("\(varukorg[pickedItem.id]?.quantity ?? 0)")
                }
            }
        }
