@@ -260,6 +260,37 @@ class FirestoreManager {
         ).getDocuments()
         return snapshot.documents.compactMap { try? $0.data(as: Order.self) }
     }
+    
+    func listenToActiveOrdersForCustomer(customerId: String, onUpdate: @escaping (Result<[Order], Error>) -> Void) -> ListenerRegistration {
+        return activeOrdersRef.whereField("customerId", isEqualTo: customerId).addSnapshotListener { snaphot, error in
+            if let error = error {
+                onUpdate(.failure(error))
+                return
+                
+            }
+            guard let documents = snaphot?.documents else {
+                onUpdate(.success([]))
+                return
+            }
+            let orders = documents.compactMap{ try? $0.data(as: Order.self)}
+            onUpdate(.success(orders))
+        }
+    }
+    func listenToCompletedOrdersForCustomer(customerId: String, onUpdate: @escaping (Result<[Order], Error>) -> Void) -> ListenerRegistration {
+        return completedOrdersRef.whereField("customerId", isEqualTo: customerId).addSnapshotListener { snaphot, error in
+            if let error = error {
+                onUpdate(.failure(error))
+                return
+                
+            }
+            guard let documents = snaphot?.documents else {
+                onUpdate(.success([]))
+                return
+            }
+            let orders = documents.compactMap{ try? $0.data(as: Order.self)}
+            onUpdate(.success(orders))
+        }
+    }
 
     //    func listenToUserCollection(onUpdate: (Result<[UserData], Error>) -> Void) {
     //        usersRef.addSnapshotListener { snapshot, error in
