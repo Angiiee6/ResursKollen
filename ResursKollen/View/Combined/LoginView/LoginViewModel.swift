@@ -40,5 +40,8 @@ final class LoginViewViewmodel: ObservableObject {
          }
          
          }
+    func forgotPw(email:String) async throws {
+       try await AuthenticationManager.shared.resetPassword(email: email)
+    }
     
 }
