@@ -96,7 +96,7 @@ struct ManagerAllOrdersView: View {
                 
                 HStack{
                     
-                    NavigationLink(destination: CustomerView()) {
+                    NavigationLink(destination: CustomerView(dataProvider: dataProvider)) {
                         Text("Kundvy (flytta sen)")
                             .foregroundStyle(.pink)
                     }

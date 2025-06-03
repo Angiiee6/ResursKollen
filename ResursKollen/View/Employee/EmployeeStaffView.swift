@@ -65,7 +65,9 @@ extension EmployeeStaffView {
 
             timeWorkedPublisher
                 .assign(to: &$hoursWorkedThisMonth)
+            
         }
+        
     }
 }
 

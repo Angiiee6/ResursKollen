@@ -14,7 +14,7 @@ import SwiftUI
 class MainDataProvider: ObservableObject {
     @Published var activeOrders: [Order] = []
     @Published var completedOrders: [Order] = []
-    @Published var customers: [Customer] = []
+    @Published var allCustomers: [Customer] = []
     //Not in use yet
     @Published var error: Error?
     //@Published var allUsers: [UserData] = []
@@ -40,7 +40,7 @@ class MainDataProvider: ObservableObject {
             //Not yet implemented
         }
         if withCustomers {
-            listenToCustomers()
+            listenToAllCustomers()
         }
 
     }
@@ -74,12 +74,12 @@ class MainDataProvider: ObservableObject {
         )
     }
 
-    private func listenToCustomers() {
+    private func listenToAllCustomers() {
         listeners.append(
             FirestoreManager.shared.listenToCustomers{ result in
                 switch result {
                 case .success(let customers):
-                    self.customers = customers
+                    self.allCustomers = customers
                 case .failure(let error):
                     self.error = error
                 }
@@ -141,7 +141,7 @@ class MainDataProviderBuilder {
     }
 
     ///Adds a listeners for all customers Firestore collection.
-    func withCustomers() -> MainDataProviderBuilder {
+    func withAllCustomers() -> MainDataProviderBuilder {
         self.customersAdded = true
         return self
     }
