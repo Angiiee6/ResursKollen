@@ -9,6 +9,16 @@ import Foundation
 // Här finns en samling med mockData för olika klasserna
 
 extension MaterialList {
+    
+    static let singelSample = MaterialList(
+        title: "Gipsskiva 13mm",
+        description: "Standard gipsskiva för väggar.",
+        priceIn: 39.90,
+        priceOut: 69.00,
+        unit: .st,
+        category: .carpentry
+    )
+    
     static let sampleData: [MaterialList] = [
         MaterialList(
             title: "Gipsskiva 13mm",

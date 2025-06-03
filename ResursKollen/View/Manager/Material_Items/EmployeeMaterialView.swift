@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+struct SelectedMaterial{
+    var quantity: Int
+    var materials: MaterialList
+}
+
 struct EmployeeMaterialView: View {
     
     @ObservedObject var viewModel = MaterialViewModel()
@@ -14,7 +19,10 @@ struct EmployeeMaterialView: View {
    // @State private var materials: [MaterialList] = MaterialList.sampleData
     @State private var searchText = ""
     @State private var isShowAddItem = false
-   @State private var  materialToEdit: MaterialList? = nil
+    @State private var  materialToEdit: MaterialList? = nil
+    
+    @State var selectedItems: Dictionary<String, SelectedMaterial> = [:]
+    
     
     
     
@@ -48,7 +56,7 @@ struct EmployeeMaterialView: View {
                             }
                             
                             HStack {
-                                Text("Inköp: \(material.priceIn, specifier: "%.2f") kr")
+                              // behöver inte visa inköps pris för anställda!  Text("Inköp: \(material.priceIn, specifier: "%.2f") kr")
                                 Spacer()
                                 Text("Kund: \(material.priceOut, specifier: "%.2f") kr")
                             }
@@ -57,9 +65,11 @@ struct EmployeeMaterialView: View {
                             Text("Kategori: \(material.category.rawValue)")
                                 .font(.system(.caption, design: .monospaced))
                                 .foregroundColor(.secondary)
-                           
-                            }
                             
+                                MaterialStepperView(pickedItem: material, varukorg: $selectedItems)
+                            
+                            }
+                           
                         }
                         .padding(.vertical, 4)
                        
@@ -104,6 +114,6 @@ struct EmployeeMaterialView: View {
     
 
 #Preview {
-  //  MaterialHomeView()
+   MaterialHomeView()
 }
 
