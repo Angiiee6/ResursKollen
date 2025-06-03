@@ -14,6 +14,7 @@ struct CustomerDetailView: View {
 
     @StateObject var viewModel: ViewModel
     @State var addOrderSheetPresent = false
+    @State var searchText: String = ""
 
     init(dataProvider: MainDataProvider, customer: Customer) {
         self.customer = customer
@@ -29,6 +30,13 @@ struct CustomerDetailView: View {
         VStack {
             CustomerInfoDisplay(customer: customer)
             Spacer()
+            Divider()
+            HStack {
+                Text("Ordrar:")
+                    .font(.headline)
+                Spacer()
+            }
+            .padding(.vertical)
             VStack {
                 if viewModel.customerOrders.isEmpty {
                     Text("Inga ordrar registrerade...")
@@ -36,23 +44,18 @@ struct CustomerDetailView: View {
                         .italic()
                 } else {
                     List {
-                        ForEach(viewModel.customerOrders) { order in
-                            HStack(alignment: .top) {
-                                VStack(alignment: .leading) {
-                                    Text(order.title)
-                                    Text(order.description)
-                                        .font(.caption2)
-                                        .lineLimit(3)
-                                }
-                                Spacer()
-                                Text(order.status.nameSE)
-                                    .foregroundStyle(order.status.color)
-                            }
+                        ForEach(
+                            filteredAndSortedOrders(
+                                for: viewModel.customerOrders
+                            )
+                        ) {
+                            order in
+                            CustomerOrderListItem(order: order)
                         }
                     }
                 }
             }
-            .padding()
+            //            .padding()
             Spacer()
             Button(action: {
                 addOrderSheetPresent = true
@@ -75,6 +78,26 @@ struct CustomerDetailView: View {
         .navigationTitle("Kundinformation")
         .sheet(isPresented: $addOrderSheetPresent) {
             CreateOrderView(customer: customer)
+        }
+        .searchable(
+            text: $searchText,
+            placement: .sidebar,
+            prompt: Text("Sök ordrar")
+        )
+    }
+
+    private func filteredAndSortedOrders(for orders: [Order]) -> [Order] {
+        orders.filter {
+            searchText.isEmpty
+                || $0.orderNumber.lowercased().contains(searchText.lowercased())
+                || $0.title.lowercased().contains(searchText.lowercased())
+                || $0.description.lowercased().contains(searchText.lowercased())
+        }
+        .sorted {
+            if $0.status.priority == $1.status.priority {
+                return $0.creationDate > $1.creationDate
+            }
+            return $0.status.priority < $1.status.priority
         }
     }
 }
@@ -112,16 +135,10 @@ extension CustomerDetailView {
 
 #Preview {
     NavigationStack {
+        let dataProvider = MainDataProvider.asPreview()
         CustomerDetailView(
-            dataProvider: MainDataProvider.asPreview(),
-            customer: Customer(
-                name: "Arne Ankasson",
-                phoneNumber: "070-123456",
-                streetName: "Kungsgatan 23",
-                city: "Uppsala",
-                postalCode: "75521",
-                emailAddress: "ankanarne@gmail.com"
-            )
+            dataProvider: dataProvider,
+            customer: dataProvider.allCustomers[0]
         )
     }
 }

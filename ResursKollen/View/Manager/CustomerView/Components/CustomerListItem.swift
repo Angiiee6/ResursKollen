@@ -9,25 +9,37 @@ import SwiftUI
 
 struct CustomerListItem: View {
     let customer: Customer
+    
     var body: some View {
-        HStack(alignment: .top) {
-            VStack(alignment: .leading) {
-                Text(customer.name)
-                Text(customer.streetName)
-                HStack {
-                    Text(customer.postalCode)
-                    Text(customer.city)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(customer.name)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Text(customer.streetName)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    HStack(spacing: 8) {
+                        Text(customer.postalCode)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        Text(customer.city)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
                 }
-                
+                Spacer()
+                    Text(customer.phoneNumber)
+                        .font(.subheadline)
+                        .foregroundColor(.blue)
             }
-            Spacer()
-            VStack(alignment: .leading) {
-                Text(customer.phoneNumber)
-                Text(customer.emailAddress)
-            }
+            Text(customer.emailAddress)
+                .font(.caption)
+                .foregroundColor(.blue)
+                .lineLimit(1)
+                .truncationMode(.middle)
         }
-        .padding(8)
-        
     }
 }
 

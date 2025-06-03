@@ -164,6 +164,81 @@ extension MaterialEditSheet{
             ]
         )
         
+        static let mockOrders : [Order] = [
+            Order(
+                id: "1",
+                title: "Renovation Project",
+                description: "Kitchen remodel for client, needs help with everything, also check for bedbugs. Key is hidden under tree in at the back of the house. This is just some random text to fill, good luck.",
+                workPerformed: "Installed cabinets",
+                creationDate: Date(),
+                orderNumber: "RNV-001",
+                materialConsumption: [],
+                status: .started,
+                dueDate: Date().addingTimeInterval(604800), // 1 week from now
+                customerId: "1",
+                customerName: "John Doe",
+                customerStreetName: "123 Elm St",
+                assignedUserId: "user_101",
+                timeUnits: [  OrderTimeUnit(time: 2.5, date: Date(timeIntervalSinceNow: -5 * 24 * 3600), userId: "1"), // 5 days ago
+                              OrderTimeUnit(time: 3.0, date: Date(timeIntervalSinceNow: -4 * 24 * 3600), userId: "2"),  // 4 days ago
+                              OrderTimeUnit(time: 1.5, date: Date(timeIntervalSinceNow: -3 * 24 * 3600), userId: "3"), // 3 days ago
+                              OrderTimeUnit(time: 4.0, date: Date(timeIntervalSinceNow: -2 * 24 * 3600), userId: "4"), // 2 days ago
+                              OrderTimeUnit(time: 2.0, date: Date(), userId: "5") ]
+            )
+,
+            Order(
+                id: "2",
+                title: "Plumbing Fix",
+                description: "Leaky pipe repair",
+                workPerformed: "Replaced pipe section",
+                creationDate: Date(),
+                orderNumber: "PLB-002",
+                materialConsumption: [],
+                status: .done,
+                dueDate: Date().addingTimeInterval(259200), // 3 days from now
+                customerId: "2",
+                customerName: "Jane Smith",
+                customerStreetName: "456 Oak Ave",
+                assignedUserId: "user_102",
+                timeUnits: [  OrderTimeUnit(time: 2.5, date: Date(timeIntervalSinceNow: -5 * 24 * 3600), userId: "1"), // 5 days ago
+                              OrderTimeUnit(time: 3.0, date: Date(timeIntervalSinceNow: -4 * 24 * 3600), userId: "2"),  // 4 days ago
+                              OrderTimeUnit(time: 1.5, date: Date(timeIntervalSinceNow: -3 * 24 * 3600), userId: "3"), // 3 days ago
+                              OrderTimeUnit(time: 4.0, date: Date(timeIntervalSinceNow: -2 * 24 * 3600), userId: "4"), // 2 days ago
+                              OrderTimeUnit(time: 2.0, date: Date(), userId: "5") ]
+            )
+
+           ,
+            Order(
+                id: "3",
+                title: "Electrical Upgrade",
+                description: "Install new wiring",
+                workPerformed: "Rewired main panel",
+                creationDate: Date(),
+                orderNumber: "ELC-003",
+                materialConsumption: [],
+                status: .completed,
+                dueDate: Date(),
+                customerId: "3",
+                customerName: "Alex Brown",
+                customerStreetName: "789 Pine Rd",
+                assignedUserId: "user_103",
+                timeUnits: [  OrderTimeUnit(time: 2.5, date: Date(timeIntervalSinceNow: -5 * 24 * 3600), userId: "1"), // 5 days ago
+                              OrderTimeUnit(time: 3.0, date: Date(timeIntervalSinceNow: -4 * 24 * 3600), userId: "2"),  // 4 days ago
+                              OrderTimeUnit(time: 1.5, date: Date(timeIntervalSinceNow: -3 * 24 * 3600), userId: "3"), // 3 days ago
+                              OrderTimeUnit(time: 4.0, date: Date(timeIntervalSinceNow: -2 * 24 * 3600), userId: "4"), // 2 days ago
+                              OrderTimeUnit(time: 2.0, date: Date(), userId: "5") ]
+            )
+        ]
+        
     
     
+}
+
+extension Customer {
+    
+    static let mockCustomers : [Customer] = [
+        Customer(id: "1", name: "Josefin Smirnov", phoneNumber: "070-6617890", streetName: "Vagnsvägen 29", city: "Linköping", postalCode: "78921", emailAddress: "josemi@telia.se"),
+        Customer(id: "2", name: "Roger Alexandersson", phoneNumber: "073-765321", streetName: "Lärkvägen 29", city: "Göteborg", postalCode: "32491", emailAddress: "roggan@gmail.com"),
+        Customer(id: "3", name: "Arne Vikinsson", phoneNumber: "070-345897", streetName: "Bergsmossen-Haga 379", city: "Skogen", postalCode: "99045", emailAddress: "bossebildoktor@bofors.se")
+    ]
 }

@@ -31,7 +31,9 @@ struct CustomerView: View {
                             CustomerDetailView(dataProvider: dataProvider, customer: customer)
                         } label: {
                             CustomerListItem(customer: customer)
+                                .listItemTint(.clear)
                         }
+                        
                     }
                 }
             }
@@ -65,5 +67,7 @@ extension CustomerView {
 }
 
 #Preview {
-    CustomerView(dataProvider: MainDataProvider.asPreview())
+    NavigationStack {
+        CustomerView(dataProvider: MainDataProvider.asPreview())
+    }
 }

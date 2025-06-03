@@ -127,4 +127,19 @@ extension OrderStatus {
             return "checkmark.seal"
         }
     }
+    
+    var priority: Int {
+        switch self {
+        case .registered:
+            3
+        case .delayed:
+            1
+        case .started:
+            2
+        case .done:
+            4
+        case .completed:
+            5
+        }
+    }
 }

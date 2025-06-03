@@ -48,8 +48,11 @@ class MainDataProvider: ObservableObject {
     //For preview mock data
     private init() {
         self.currentUser = UserData(name: "Test user")
-        self.activeOrders = [Order.orderMockUpData]
-        self.completedOrders = [Order.orderMockUpData]
+        self.activeOrders = Order.mockOrders.filter { $0.status != .completed }
+        self.completedOrders = Order.mockOrders.filter {
+            $0.status == .completed
+        }
+        self.allCustomers = Customer.mockCustomers
     }
 
     private func listenToActiveOrders() {
@@ -76,7 +79,7 @@ class MainDataProvider: ObservableObject {
 
     private func listenToAllCustomers() {
         listeners.append(
-            FirestoreManager.shared.listenToCustomers{ result in
+            FirestoreManager.shared.listenToCustomers { result in
                 switch result {
                 case .success(let customers):
                     self.allCustomers = customers
