@@ -158,7 +158,7 @@ struct OrderDetailView: View {
                                     .font(.headline)
                                 Spacer()
                             }
-                            if order.materialConsumption.isEmpty {
+                            if !order.materialConsumption.isEmpty {  //DA testing la till '!'
                                 Text("Inget material tillagt.")
                                     .font(.callout)
                                     .italic()

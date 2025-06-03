@@ -9,6 +9,9 @@ import SwiftUI
 
 ///Shows a list of all `Material` on an order.
 struct MaterialDetailList: View {
+    
+   // let selectedMaterial: SelectedMaterial
+    
     let materials: [Material]
     var body: some View {
        
@@ -53,5 +56,5 @@ struct MaterialDetailList: View {
 }
 
 #Preview {
-    MaterialDetailList(materials: [])
+  //  MaterialDetailList(materials: [])
 }
