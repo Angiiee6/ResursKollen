@@ -152,15 +152,9 @@ extension MaterialEditSheet{
             ],
             status: .registered,
             dueDate: Date(),
-            customer: Customer(
-                name: "Saga Andersson",
-                phoneNumber: "070-2358914",
-                orders: [],
-                streetName: "Kungsgatan 61",
-                city: "Uppsala",
-                postalCode: "75579",
-                emailAddress: "saga.andersson@gmail.com"
-            ),
+            customerId: "123456",
+            customerName: "Test customer name",
+            customerStreetName: "Testgatan 23",
             timeUnits: [
                 OrderTimeUnit(time: 2.5, date: Date(timeIntervalSinceNow: -5 * 24 * 3600), userId: "1"), // 5 days ago
                 OrderTimeUnit(time: 3.0, date: Date(timeIntervalSinceNow: -4 * 24 * 3600), userId: "2"),  // 4 days ago

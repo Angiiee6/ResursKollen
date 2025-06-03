@@ -14,11 +14,15 @@ class FirestoreManager {
 
     let db = Firestore.firestore()
 
+    //MARK: Collection references
     var activeOrdersRef: CollectionReference { db.collection("activeOrders") }
     var completedOrdersRef: CollectionReference {
         db.collection("completedOrders")
     }
     var usersRef: CollectionReference { db.collection("users") }
+    var customersRef: CollectionReference { db.collection("customers") }
+
+    //MARK: Orders
 
     func saveOrder(_ order: Order) async throws {
         let newDocument = activeOrdersRef.document()
@@ -108,6 +112,56 @@ class FirestoreManager {
         }
     }
 
+    //    func listenToDelayed(onUpdate: @escaping ([Order]) -> Void) {
+    //        activeOrdersRef.whereField("status", isEqualTo: "delayed")
+    //            .addSnapshotListener { snapShot, error in
+    //                if let error = error {
+    //                    print(
+    //                        "Error listening to Orders \(error.localizedDescription)"
+    //                    )
+    //                    return
+    //                }
+    //
+    //                guard let documents = snapShot?.documents else {
+    //                    print("No documents")
+    //                    return
+    //                }
+    //
+    //                let orders = documents.compactMap { doc in
+    //                    try? doc.data(as: Order.self)
+    //
+    //                }
+    //                onUpdate(orders)
+    //            }
+    //    }
+
+    //    /// Listens to any order with status `done`.
+    //    /// - Parameter onUpdate: Contains a `Result<[Order], Error>` with succesfully fetched orders or `Error` in case of errors.
+    //    /// - Returns: A listener registration used for closing the listener.
+    //    func listenToDoneOrders(
+    //        onUpdate: @escaping (Result<[Order], Error>) -> Void
+    //    ) -> ListenerRegistration {
+    //        activeOrdersRef.whereField(
+    //            "status",
+    //            isEqualTo: OrderStatus.done.rawValue
+    //        ).addSnapshotListener {
+    //            snapshot,
+    //            error in
+    //            if let error = error {
+    //                onUpdate(.failure(error))
+    //                return
+    //            }
+    //            guard let documents = snapshot?.documents else {
+    //                onUpdate(.success([]))
+    //                return
+    //            }
+    //            let orders = documents.compactMap { document in
+    //                try? document.data(as: Order.self)
+    //            }
+    //            onUpdate(.success(orders))
+    //        }
+    //    }
+
     func listenToCompletedOrders(
         onUpdate: @escaping (Result<[Order], Error>) -> Void
     ) -> ListenerRegistration {
@@ -126,6 +180,8 @@ class FirestoreManager {
             onUpdate(.success(orders))
         }
     }
+
+    //MARK: Users
 
     /// Fetches a specific user's data.
     /// - Parameter userId: The id of the user to fetch.
@@ -164,6 +220,76 @@ class FirestoreManager {
             forDocument: activeOrdersRef.document(order.id)
         )
         try await batch.commit()
+    }
+
+    //MARK: Customers
+
+    func listenToCustomers(
+        onUpdate: @escaping (Result<[Customer], Error>) -> Void
+    ) -> ListenerRegistration {
+        return customersRef.addSnapshotListener { snapshot, error in
+            if let error = error {
+                onUpdate(.failure(error))
+            }
+            guard let documents = snapshot?.documents else {
+                onUpdate(.success([]))
+                return
+            }
+            let customers = documents.compactMap {
+                try? $0.data(as: Customer.self)
+            }
+            onUpdate(.success(customers))
+        }
+    }
+    
+    func saveCustomer(_ customer: Customer) async throws {
+        let newDocument = customersRef.document()
+        var updatedCustomer = customer
+        updatedCustomer.id = newDocument.documentID
+        try customersRef.document(newDocument.documentID).setData(from: updatedCustomer)
+    }
+
+    func fetchCustomer(id: String) async throws -> Customer {
+        try await customersRef.document(id).getDocument(as: Customer.self)
+    }
+
+    func fetchOrdersForCustomer(customerId: String) async throws -> [Order] {
+        let snapshot = try await activeOrdersRef.whereField(
+            "customerId",
+            isEqualTo: customerId
+        ).getDocuments()
+        return snapshot.documents.compactMap { try? $0.data(as: Order.self) }
+    }
+    
+    func listenToActiveOrdersForCustomer(customerId: String, onUpdate: @escaping (Result<[Order], Error>) -> Void) -> ListenerRegistration {
+        return activeOrdersRef.whereField("customerId", isEqualTo: customerId).addSnapshotListener { snaphot, error in
+            if let error = error {
+                onUpdate(.failure(error))
+                return
+                
+            }
+            guard let documents = snaphot?.documents else {
+                onUpdate(.success([]))
+                return
+            }
+            let orders = documents.compactMap{ try? $0.data(as: Order.self)}
+            onUpdate(.success(orders))
+        }
+    }
+    func listenToCompletedOrdersForCustomer(customerId: String, onUpdate: @escaping (Result<[Order], Error>) -> Void) -> ListenerRegistration {
+        return completedOrdersRef.whereField("customerId", isEqualTo: customerId).addSnapshotListener { snaphot, error in
+            if let error = error {
+                onUpdate(.failure(error))
+                return
+                
+            }
+            guard let documents = snaphot?.documents else {
+                onUpdate(.success([]))
+                return
+            }
+            let orders = documents.compactMap{ try? $0.data(as: Order.self)}
+            onUpdate(.success(orders))
+        }
     }
 
     //    func listenToUserCollection(onUpdate: (Result<[UserData], Error>) -> Void) {

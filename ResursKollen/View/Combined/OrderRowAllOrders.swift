@@ -23,7 +23,7 @@ struct OrderRowAllOrders: View {
                     Text("\(order.title)")
                         .font(.headline)
 
-                    Text(order.customer.name)
+                    Text(order.customerName)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }

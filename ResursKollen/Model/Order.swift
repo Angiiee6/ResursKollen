@@ -18,8 +18,9 @@ struct Order: Codable, Identifiable, Equatable {
     var materialConsumption: [Material] = []
     var status: OrderStatus
     var dueDate: Date
-    //TODO: Replace customer with only customer id
-    var customer: Customer
+    var customerId: String
+    var customerName: String
+    var customerStreetName: String
     var assignedUserId: String?
     var timeUnits: [OrderTimeUnit] = []
 

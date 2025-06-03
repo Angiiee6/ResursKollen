@@ -107,7 +107,7 @@ struct OrderDetailView: View {
                         }
 
                         //MARK: Customer
-                        CustomerDetailCard(customer: order.customer)
+                        CustomerDetailCard(customerId: order.customerId)
                         Divider()
 
                         //MARK: Description
