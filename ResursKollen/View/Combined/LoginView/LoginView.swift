@@ -10,13 +10,16 @@
 import SwiftUI
 
 struct LoginView: View {
-
+    
     @ObservedObject var viewModel: LoginViewViewmodel
     //för logga in knappens utseende
     @State private var isLoggingIn = false
     @State private var email: String = ""
     @State private var password: String = ""
-
+    @State private var showResetAlert = false
+    @State private var resetEmail = ""
+    
+    
     var body: some View {
         ///BaseView för bakgrund
         BaseView {
@@ -27,7 +30,7 @@ struct LoginView: View {
                     .frame(width: 200, height: 200)
                     .padding(.top, 20)
                     .padding(.bottom, 10)
-
+                
                 VStack(spacing: 20) {
                     // Rubrik med ikon
                     HStack {
@@ -39,7 +42,7 @@ struct LoginView: View {
                     }
                     .foregroundColor(.white)
                     .padding(.bottom, 20)
-
+                    
                     // Email-fält
                     HStack {
                         Image(systemName: "envelope")
@@ -56,7 +59,7 @@ struct LoginView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.orange.opacity(0.5), lineWidth: 1)
                     )
-
+                    
                     // Lösenord-fält
                     HStack {
                         Image(systemName: "lock")
@@ -72,7 +75,7 @@ struct LoginView: View {
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(Color.orange.opacity(0.5), lineWidth: 1)
                     )
-
+                    
                     // Logga in-knapp
                     Button(action: {
                         // Hantera inloggning, blir true i 2 sek, sedan false igen
@@ -114,14 +117,27 @@ struct LoginView: View {
                         )
                     }
                     .disabled(isLoggingIn)
-
+                    
                     // Glömt lösenord-knapp
-                    Button(action: {}) {
+                    Button(action: {showResetAlert = true}) {
                         Text("Glömt lösenord?")
                             .foregroundColor(.orange)
                             .font(.footnote)
                     }
                     .padding(.top, 10)
+                    
+                    .alert("Återställ lösenord", isPresented: $showResetAlert, actions: {
+                        TextField("Skriv in din E-post", text: $resetEmail)
+                        Button("Skicka") {
+                            Task {
+                                do {
+                                   try await viewModel.forgotPw(email: resetEmail)
+                                } catch {
+                                    
+                                }
+                            }
+                        }
+                    })
                 }
                 //Hela containerns utseende
                 .padding(30)
@@ -130,7 +146,7 @@ struct LoginView: View {
                 .shadow(radius: 20)
                 .padding(.horizontal)
                 Spacer()
-
+                
                 //TODO: Remove this after testing.
                 VStack {
                     Text("Test-logins:")
@@ -144,7 +160,7 @@ struct LoginView: View {
                                         password: "KalleAnka"
                                     )
                                 } catch {}
-
+                                
                             }
                         }
                         Button("Johan") {
@@ -156,14 +172,14 @@ struct LoginView: View {
                                     )
                                 } catch {}
                             }
-
+                            
                         }
                     }
                 }
             }
         }
     }
-
+    
 }
 
 #Preview {
