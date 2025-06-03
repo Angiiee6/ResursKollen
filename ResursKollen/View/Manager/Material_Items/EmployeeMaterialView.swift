@@ -10,6 +10,8 @@ import SwiftUI
 struct Varukorg {
     var quantity: Int = 0
     var materials: MaterialList?
+    
+    
 }
 
 struct EmployeeMaterialView: View {
@@ -20,8 +22,7 @@ struct EmployeeMaterialView: View {
     @State private var isShowAddItem = false
     @State private var  materialToEdit: MaterialList? = nil
     
-  @State var selectedItems: Dictionary<String, Varukorg> = [:]
-    
+    @State var varukorg: Dictionary<String, Varukorg> = [:]
     
     
     
@@ -38,7 +39,7 @@ struct EmployeeMaterialView: View {
     }
     
     var body: some View {
-        
+       
         VStack{
             NavigationStack {
                 List {
@@ -54,6 +55,8 @@ struct EmployeeMaterialView: View {
                                     .foregroundColor(.gray)
                             }
                             
+                        
+                            
                             HStack {
                               // behöver inte visa inköps pris för anställda!  Text("Inköp: \(material.priceIn, specifier: "%.2f") kr")
                                 Spacer()
@@ -65,7 +68,7 @@ struct EmployeeMaterialView: View {
                                 .font(.system(.caption, design: .monospaced))
                                 .foregroundColor(.secondary)
                             
-                            MaterialStepperView(pickedItem: material, varukorg: $selectedItems)
+                            MaterialStepperView(pickedItem: material, varukorg: $varukorg)
                             
                             }
                            

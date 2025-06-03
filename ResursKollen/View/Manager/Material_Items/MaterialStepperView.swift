@@ -14,8 +14,7 @@ struct MaterialStepperView: View {
     var pickedItem: MaterialList  //vilket material är valt?
     @Binding var varukorg: Dictionary<String, Varukorg>
     
-    //@ObservedObject var varukorg: Varukorg
-    
+
     var body: some View {
         
         ZStack {

@@ -10,12 +10,12 @@ import SwiftUI
 ///Shows a list of all `Material` on an order.
 struct MaterialDetailList: View {
   
+     
     let materials: [Material]
     var body: some View {
        
         VStack {
-            
-            
+         
             HStack {
                 Text("Namn")
                 Spacer()
