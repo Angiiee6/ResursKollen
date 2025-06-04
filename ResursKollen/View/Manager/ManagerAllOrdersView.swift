@@ -10,6 +10,7 @@ import Combine
 
 struct ManagerAllOrdersView: View {
     @ObservedObject var dataProvider: MainDataProvider
+    @EnvironmentObject var loginvm : LoginViewViewmodel
     @StateObject var viewModel : ViewModel
     @State var searchText: String = ""
     @State var isCreateOrder = false
@@ -122,6 +123,21 @@ struct ManagerAllOrdersView: View {
 //                    }
                     
                     
+                }
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            do {
+                                try AuthenticationManager.shared.signOut()
+                                loginvm.currentUser = nil
+                            } catch {
+                                print("Kunde inte logga ut användaren")
+                            }
+                        } label: {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .tint(.orange)
+                        }
+                    }
                 }
                 
                 

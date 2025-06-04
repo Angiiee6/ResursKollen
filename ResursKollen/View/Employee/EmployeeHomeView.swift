@@ -10,7 +10,6 @@ import SwiftUI
 struct EmployeeHomeView: View {
     @ObservedObject var dataProvider: MainDataProvider
     @StateObject var viewModel: ViewModel
-    @State private var isLoggedOut = false
 
     init(dataProvider: MainDataProvider) {
         self.dataProvider = dataProvider
@@ -20,57 +19,38 @@ struct EmployeeHomeView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            NavigationLink(
-                destination: ContentView().navigationBarBackButtonHidden(true),
-                isActive: $isLoggedOut
-            ) {
-                EmptyView()
-            }
-
-            TabView {
+        
+        TabView {
+            NavigationStack {
                 EmployeeMyOrders(dataProvider: dataProvider)
-                    .tabItem {
-                        Label(
-                            "Mina Ordrar",
-                            systemImage: "list.bullet.clipboard"
-                        )
-                    }.badge(viewModel.myOrdersCount)
-
-                EmployeeAllOrders(dataProvider: dataProvider)
-                    .tabItem {
-                        Label(
-                            "Alla Ordrar",
-                            systemImage: "list.bullet.clipboard"
-                        )
-                    }.badge(viewModel.unassignedOrdersCount)
-                
-               
-                EmployeeStaffView(dataProvider: dataProvider)
-                    .tabItem {
-                        Label("Kontakter", systemImage: "person.3")
-                    }
             }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        do {
-                            try AuthenticationManager.shared.signOut()
-                            isLoggedOut = true
-                        } catch {
-                            print("Kunde inte logga ut användaren")
-                        }
-                    } label: {
-                        Image(
-                            systemName: "rectangle.portrait.and.arrow.right"
-                        )
-                        .tint(.orange)
-                    }
+            .tabItem {
+                Label(
+                    "Mina Ordrar",
+                    systemImage: "list.bullet.clipboard"
+                )
+            }.badge(viewModel.myOrdersCount)
+            
+            NavigationStack {
+                EmployeeAllOrders(dataProvider: dataProvider)
+            }
+            .tabItem {
+                Label(
+                    "Alla Ordrar",
+                    systemImage: "list.bullet.clipboard"
+                )
+            }.badge(viewModel.unassignedOrdersCount)
+            
+            NavigationStack {
+                EmployeeStaffView(dataProvider: dataProvider)
+            }
+            .tabItem {
+                Label("Kontakter", systemImage: "person.3")
                 }
             }
-        }.tint(Color.orange)
+        }
     }
-}
+
 
 extension EmployeeHomeView {
 

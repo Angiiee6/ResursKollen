@@ -13,6 +13,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 
 @main
 struct ResursKollenApp: App {
+    
+    @StateObject var viewModel = LoginViewViewmodel()
   // register app delegate for Firebase setup
   @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
         init() {
@@ -23,6 +25,7 @@ struct ResursKollenApp: App {
             WindowGroup {
 //                ManagerHomeView()
                 ContentView()
+                    .environmentObject(viewModel)
                     .environment(\.colorScheme, .dark)
                     .preferredColorScheme(.dark) // Säkerställer att sheets också får dark mode
                // StaffView()
