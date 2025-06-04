@@ -10,65 +10,52 @@ import SwiftUI
 struct ManagerHomeView: View {
     @ObservedObject var dataProvider: MainDataProvider
     @State private var isLoggedOut = false
-
+    
     var body: some View {
-        NavigationStack {
-            NavigationLink(
-                destination: ContentView().navigationBarBackButtonHidden(true),
-                isActive: $isLoggedOut
-            ) {
-                EmptyView()
-            }.navigationBarBackButtonHidden(true)
-
-            TabView {
+        
+        TabView {
+            NavigationStack {
                 ManagerAllOrdersView(dataProvider: dataProvider)
-                    .tabItem {
-                        Label(
-                            "Aktiva ordrar",
-                            systemImage: "list.bullet.clipboard"
-                        )
-                    }
+            }
+            .tabItem {
+                Label(
+                    "Aktiva ordrar",
+                    systemImage: "list.bullet.clipboard"
+                )
+            }
+            NavigationStack {
                 ReviewOrdersView(dataProvider: dataProvider)
-                    .tabItem {
-                        Label(
-                            "Utförda ordrar",
-                            systemImage: "text.page.badge.magnifyingglass"
-                        )
-                    }
+            }
+            .tabItem {
+                Label(
+                    "Utförda ordrar",
+                    systemImage: "text.page.badge.magnifyingglass"
+                )
+            }
+            NavigationStack {
                 SummaryView(dataProvider: dataProvider)
-                    .tabItem {
-                        Label(
-                            "Statistik",
-                            systemImage: "waveform.badge.magnifyingglass"
-                        )
-                    }
+            }
+            .tabItem {
+                Label(
+                    "Statistik",
+                    systemImage: "waveform.badge.magnifyingglass"
+                )
+            }
+            NavigationStack {
                 StaffView(currentUser: dataProvider.currentUser)
-                    .tabItem {
-                        Label("Personal", systemImage: "person.3")
-                    }
-
+            }
+            .tabItem {
+                Label("Personal", systemImage: "person.3")
+            }
+            
+            NavigationStack {
                 NewMessageEditView()
+            }
                     .tabItem {
                         Label("Meddlanden", systemImage: "message")
                     }
-            }
-            //            NavigationStack {
+            
             .tint(Color.orange)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        do {
-                            try AuthenticationManager.shared.signOut()
-                            isLoggedOut = true
-                        } catch {
-                            print("Kunde inte logga ut användaren")
-                        }
-                    } label: {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
-                            .tint(.orange)
-                    }
-                }
-            }
         }
     }
 }
