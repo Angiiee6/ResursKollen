@@ -21,11 +21,14 @@ struct ManagerAllOrdersView: View {
     }
    
 
-    var body: some View {
-        BaseView{
-            VStack(spacing: 16) {
-                List {
-                    Section(header: Text("Lediga ordrar").foregroundColor(.blue)) {
+    @State private var showCompletedOrders = false // Ny state för navigation
+
+        var body: some View {
+            BaseView {
+                VStack(spacing: 16) {
+                    List {
+                        
+                    Section(header: Text("Lediga").foregroundColor(.blue)) {
                         ForEach(filteredOrders(for: viewModel.registeredOrders)) { order in
                             NavigationLink(
                                 destination: OrderDetailView(
@@ -40,7 +43,7 @@ struct ManagerAllOrdersView: View {
                         }
                     }
                     Section(
-                        header: Text("Tilldelade ordrar").foregroundColor(.orange)
+                        header: Text("Tilldelade").foregroundColor(.orange)
                     ) {
                         ForEach(filteredOrders(for: viewModel.startedOrders)) { order in
                             NavigationLink(
@@ -55,7 +58,7 @@ struct ManagerAllOrdersView: View {
                             .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
-                    Section(header: Text("Försenade ordrar").foregroundColor(.red))
+                    Section(header: Text("Försenade").foregroundColor(.red))
                     {
                         ForEach(filteredOrders(for: viewModel.delayedOrders)) { order in
                             NavigationLink(
@@ -70,23 +73,6 @@ struct ManagerAllOrdersView: View {
                             .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
-                    Section(
-                        header: Text("Avslutade ordrar").foregroundColor(.green)
-                    ) {
-                        ForEach(filteredOrders(for: viewModel.completedOrders)) { order in
-                            NavigationLink(
-                                destination: OrderDetailView(
-                                    order: order,
-                                    status: .manager
-                                )
-                            ) {
-                                OrderRowAllOrders(order: order)
-                            }
-                            .listRowBackground(Color.white.opacity(0.1))
-                            .listRowSeparatorTint(Color.orange.opacity(0.3))
-                        }
-                        
-                    }
                     
                 }
                 .listStyle(.insetGrouped)
@@ -100,6 +86,7 @@ struct ManagerAllOrdersView: View {
                     NavigationLink(destination: CustomerView(dataProvider: dataProvider)) {
                         Text("Kundvy (flytta sen)")
                             .foregroundStyle(.pink)
+                        
                     }
                     
 //                    Button(action: {
@@ -138,7 +125,22 @@ struct ManagerAllOrdersView: View {
                                 .tint(.orange)
                         }
                     }
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            showCompletedOrders = true
+                        } label: {
+                            HStack {
+                                Text("Avslutade")
+                                Image(systemName: "archivebox")
+                            }
+                            .foregroundColor(.orange)
+                        }
+                    }
                 }
+                .navigationDestination(isPresented: $showCompletedOrders) {
+                     CompletedOrders(dataProvider: dataProvider)
+                        .toolbar(.hidden, for: .tabBar)
+                 }
                 
                 
                 
