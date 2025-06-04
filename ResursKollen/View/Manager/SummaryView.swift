@@ -9,25 +9,57 @@ import Charts
 import SwiftUI
 
 struct SummaryView: View {
-    @ObservedObject var dataProvider : MainDataProvider
-    @StateObject var vm : SummaryViewModel
+    @ObservedObject var dataProvider: MainDataProvider
+    @StateObject var vm: SummaryViewModel
+    @State private var selectedDate = Date()
+    @State private var showingCalendar = false
     
     init(dataProvider: MainDataProvider) {
         self.dataProvider = dataProvider
         _vm = StateObject(wrappedValue: SummaryViewModel(dataProvider: dataProvider))
     }
 
-   
-
     var body: some View {
         BaseView {
             // Titel
             ScrollView {
                 VStack {
-                    Text("Orderöversikt")
-                        .font(.title)
-                        .foregroundColor(.white)
-                        .bold()
+                    // Calendar Navigation Button
+                    HStack {
+                        Text("Orderöversikt")
+                            .font(.title)
+                            .foregroundColor(.white)
+                            .bold()
+                        
+                        Spacer()
+                        
+                        Button(action: {
+                            showingCalendar.toggle()
+                        }) {
+                            HStack {
+                                Image(systemName: "calendar")
+                                Text(selectedDate.formatted(.dateTime.month(.wide).year()))
+                                    .font(.subheadline)
+                            }
+                            .foregroundColor(.orange)
+                        }
+                        .sheet(isPresented: $showingCalendar) {
+                            NavigationStack {
+                                MonthCalendarView(selectedDate: $selectedDate, orders: dataProvider.activeOrders)
+                                    .toolbar {
+                                        ToolbarItem(placement: .navigationBarTrailing) {
+                                            Button("Klar") {
+                                                showingCalendar = false
+                                            }
+                                            .foregroundColor(.orange)
+                                        }
+                                    }
+                            }
+                            .presentationDetents([.medium, .large])
+                        }
+                    }
+                    .padding(.horizontal)
+                    .padding(.bottom, 8)
 
                     // Chart
                     Chart {
@@ -37,7 +69,6 @@ struct SummaryView: View {
                                 y: .value("Antal", data.count)
                             )
                             .foregroundStyle(.blue)
-
                         }
                     }
                     // X Led
@@ -61,6 +92,7 @@ struct SummaryView: View {
                     }
                     .frame(height: 200)
                     .padding()
+                    
                     VStack(alignment: .leading) {
                         Text("Månadens Statistik")
                             .foregroundColor(.white)
@@ -91,13 +123,14 @@ struct SummaryView: View {
                             value: vm.totalOrderCost,
                             iconName: "hammer"
                         )
-
                     }
+                    
                     ShowCaseView(
                         title: "Profit",
                         value: vm.ProfitThisMonth,
                         iconName: "creditcard"
                     )
+                    
                     Spacer()
                 }
             }
@@ -110,11 +143,9 @@ struct SummaryView: View {
 }
 
 extension SummaryView {
-
     @MainActor
     class SummaryViewModel: ObservableObject {
-
-       init(dataProvider: MainDataProvider) {
+        init(dataProvider: MainDataProvider) {
             dataProvider.$activeOrders.assign(to: &$orders)
         }
 
@@ -145,7 +176,6 @@ extension SummaryView {
             let now = Date()
 
             let total = orders.filter {
-
                 calendar.isDate(
                     $0.creationDate,
                     equalTo: now,
@@ -163,7 +193,6 @@ extension SummaryView {
             let now = Date()
 
             let total = orders.filter {
-
                 calendar.isDate(
                     $0.creationDate,
                     equalTo: now,
@@ -248,6 +277,5 @@ extension SummaryView {
                 ),
             ]
         }
-
     }
 }

@@ -33,15 +33,10 @@ struct StatusPicker: View {
     private func filterStatuses() -> [OrderStatus] {
         switch status {
         case .manager:
-            if selection == .completed {
-                OrderStatus.allCases
-            }
-            else {
-                OrderStatus.allCases.filter {
-                    $0 != .completed
-                }
-            }
+            // Managers kan se och välja alla statusar inklusive completed
+            OrderStatus.allCases
         case .employee:
+            // Anställda kan bara se vissa statusar
             OrderStatus.allCases.filter {
                 $0 != .completed && $0 != .done
             }

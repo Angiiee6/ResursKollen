@@ -98,25 +98,21 @@ extension OrderStatus {
         switch self {
         case .registered:
             return .blue
-        // case .booked:
-        //   return .blue
         case .delayed:
             return .red
         case .started:
-            return .orange
+            return .yellow
         case .done:
             return .purple
         case .completed:
             return .green
         }
     }
-
+//MARK: what is this
     var icon: String {
         switch self {
         case .registered:
             return "doc"
-        //case .booked:
-        //  return "calendar"
         case .delayed:
             return "exclamationmark.triangle"
         case .started:
