@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
 
-    @StateObject var viewModel = LoginViewViewmodel()
+    @EnvironmentObject var viewModel : LoginViewViewmodel
 
     var body: some View {
 
@@ -40,4 +40,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(LoginViewViewmodel())
 }
