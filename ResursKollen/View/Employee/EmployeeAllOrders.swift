@@ -25,7 +25,7 @@ struct EmployeeAllOrders: View {
             VStack(alignment: .leading, spacing: 16) {
                 List {
                     Section(
-                        header: Text("Lediga ordrar").foregroundColor(.blue)
+                        header: Text("Lediga").foregroundColor(.blue)
                     ) {
                         ForEach(filteredOrders(for: viewModel.registeredOrders))
                         {
