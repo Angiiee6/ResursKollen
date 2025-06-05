@@ -130,7 +130,7 @@ struct StaffDetailView: View {
             }
 
         }.sheet(isPresented: $isEditUser) {
-            EditStaffView(viewModel: viewModel, user: $user)
+            EditStaffView(viewModel: viewModel, user: user)
                 .presentationDragIndicator(.visible)
         }
         //        .onAppear {
