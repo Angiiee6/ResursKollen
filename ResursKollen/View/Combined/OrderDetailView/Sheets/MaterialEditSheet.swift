@@ -144,7 +144,6 @@ struct MaterialEditSheet: View {
                 .padding(.bottom, 16)
             }
             .padding()
-            .tint(.orange)
         }
     }
 }

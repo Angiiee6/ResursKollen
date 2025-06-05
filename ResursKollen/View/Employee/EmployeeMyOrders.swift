@@ -9,17 +9,19 @@ import SwiftUI
 
 struct EmployeeMyOrders: View {
     @ObservedObject var dataProvider: MainDataProvider
+    @EnvironmentObject var loginVm : LoginViewViewmodel
     @StateObject var viewModel: ViewModel
     @State var isLoading = true
-
-
+    @State var isLoggedOut = false
+    
+    
     init(dataProvider: MainDataProvider) {
         self.dataProvider = dataProvider
         _viewModel = StateObject(
             wrappedValue: ViewModel(dataProvider: dataProvider)
         )
     }
-
+    
     var body: some View {
         BaseView {
             VStack(alignment: .leading) {
@@ -31,7 +33,7 @@ struct EmployeeMyOrders: View {
                 
                 List {
                     Section(
-                        header: Text("Tilldelade ordrar:").foregroundColor(
+                        header: Text("Tilldelade").foregroundColor(
                             .orange
                         )
                     ) {
@@ -68,34 +70,53 @@ struct EmployeeMyOrders: View {
                 //fejka lite fördröjning för att fåt meddelande listan i sync
                 
                 
-                    Group{
-                        if isLoading {
-                            HStack(alignment: .center) {
-                                ProgressView("Laddar...")
-                                    .progressViewStyle(CircularProgressViewStyle())
-                                    .padding()
-                            }
-                            .onAppear {
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {  // <--- ändra antalet sekunder här
-                                    isLoading = false
-                                }
-                            }
-                        } else {
-                            MessagesShowView()
+                Group{
+                    if isLoading {
+                        HStack(alignment: .center) {
+                            ProgressView("Laddar...")
+                                .progressViewStyle(CircularProgressViewStyle())
+                                .padding()
                         }
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {  // <--- ändra antalet sekunder här
+                                isLoading = false
+                            }
+                        }
+                    } else {
+                        MessagesShowView()
                     }
-                    .animation(.easeInOut, value: isLoading)
-                    .transition(.opacity)
                 }
-            
+                .animation(.easeInOut, value: isLoading)
+                .transition(.opacity)
                 
-                
-                
-           
+                NavigationLink(
+                            destination: ContentView().navigationBarBackButtonHidden(true),
+                            isActive: $isLoggedOut
+                        ) {
+                            EmptyView()
+                        }
             }
         }
-       // MessagesShowView()
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    do {
+                        try AuthenticationManager.shared.signOut()
+                        loginVm.currentUser = nil
+                    } catch {
+                        print("Kunde inte logga ut användaren")
+                    }
+                } label: {
+                    Image(
+                        systemName: "rectangle.portrait.and.arrow.right"
+                    )
+                    .tint(.orange)
+                }
+            }
+        }
     }
+    // MessagesShowView()
+}
 
 
 #Preview {
@@ -103,12 +124,12 @@ struct EmployeeMyOrders: View {
 }
 
 extension EmployeeMyOrders {
-
+    
     @MainActor
     class ViewModel: ObservableObject {
-
+        
         @Published var myOrders: [Order] = []
-
+        
         init(dataProvider: MainDataProvider) {
             dataProvider.$activeOrders.map { orders in
                 orders.filter { $0.assignedUserId == dataProvider.currentUser.id
@@ -117,7 +138,7 @@ extension EmployeeMyOrders {
             }
             .assign(to: &$myOrders)
         }
-
+        
         ///Sets an order's `assignedUserId` to `nil`.
         func leaveOrder(_ order: Order) {
             var updatedOrder = order
