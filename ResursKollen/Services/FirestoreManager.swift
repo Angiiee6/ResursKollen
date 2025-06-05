@@ -34,7 +34,12 @@ class FirestoreManager {
     }
 
     func updateOrder(_ order: Order) throws {
-        try activeOrdersRef.document(order.id).setData(from: order)
+        if order.status == .completed {
+            try completedOrdersRef.document(order.id).setData(from: order)
+        }
+        else {
+            try activeOrdersRef.document(order.id).setData(from: order)
+        }
     }
 
     //Snapshot lyssnare för order collectionen som kallas i viewmodels och använder closure i viewmodel
@@ -199,7 +204,6 @@ class FirestoreManager {
     }
 
     func moveOrderFromActiveToCompleted(order: Order) async throws {
-        print("active -> completed")
         let batch = db.batch()
         batch.deleteDocument(activeOrdersRef.document(order.id))
         let data = try Firestore.Encoder().encode(order)
@@ -211,7 +215,6 @@ class FirestoreManager {
     }
 
     func moveOrderFromCompletedToActive(order: Order) async throws {
-        print("completed -> active")
         let batch = db.batch()
         batch.deleteDocument(completedOrdersRef.document(order.id))
         let data = try Firestore.Encoder().encode(order)
@@ -253,13 +256,13 @@ class FirestoreManager {
         try await customersRef.document(id).getDocument(as: Customer.self)
     }
 
-    func fetchOrdersForCustomer(customerId: String) async throws -> [Order] {
-        let snapshot = try await activeOrdersRef.whereField(
-            "customerId",
-            isEqualTo: customerId
-        ).getDocuments()
-        return snapshot.documents.compactMap { try? $0.data(as: Order.self) }
-    }
+//    func fetchOrdersForCustomer(customerId: String) async throws -> [Order] {
+//        let snapshot = try await activeOrdersRef.whereField(
+//            "customerId",
+//            isEqualTo: customerId
+//        ).getDocuments()
+//        return snapshot.documents.compactMap { try? $0.data(as: Order.self) }
+//    }
     
     func listenToActiveOrdersForCustomer(customerId: String, onUpdate: @escaping (Result<[Order], Error>) -> Void) -> ListenerRegistration {
         return activeOrdersRef.whereField("customerId", isEqualTo: customerId).addSnapshotListener { snaphot, error in
