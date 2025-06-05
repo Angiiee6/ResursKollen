@@ -7,6 +7,7 @@
 
 import FirebaseFirestore
 import SwiftUI
+import Factory
 
 ///This class handles Firestore listeners for the main data used in the app, like order collections and users collection.
 /// Initialized by using [`MainDataProviderBuilder`](MainDataProviderBuilder).
@@ -161,4 +162,27 @@ class MainDataProviderBuilder {
             withCustomers: customersAdded
         )
     }
+}
+
+extension Container {
+    
+    var employeeDataProvider: ParameterFactory<UserData, MainDataProvider> {
+        ParameterFactory<UserData, MainDataProvider>({ user in
+            MainDataProviderBuilder(currentUser: user)
+                .withActiveOrders()
+                .withCompletedOrders()
+                .build()
+        })
+    }
+
+    var managerDataProvider: ParameterFactory<UserData, MainDataProvider> {
+        ParameterFactory<UserData, MainDataProvider>(factory: { user in
+            MainDataProviderBuilder(currentUser: user)
+                .withActiveOrders()
+                .withCompletedOrders()
+                .withAllCustomers()
+                .build()
+        })
+    }
+
 }
