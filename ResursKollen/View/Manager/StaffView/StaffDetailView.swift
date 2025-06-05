@@ -1,11 +1,10 @@
 import SwiftUI
 
 struct StaffDetailView: View {
-
+    @ObservedObject var viewModel : StaffViewViewModel
     @State private var isEditUser = false
     @State var user: UserData
     @State private var isShowMoreInfo = false
-    @StateObject var vm = StaffDetailViewModel()
     let currentUser: UserData
 
     var body: some View {
@@ -131,7 +130,7 @@ struct StaffDetailView: View {
             }
 
         }.sheet(isPresented: $isEditUser) {
-            EditStaffView(user: $user)
+            EditStaffView(viewModel: viewModel, user: $user)
                 .presentationDragIndicator(.visible)
         }
         //        .onAppear {
@@ -159,7 +158,6 @@ struct DetailRow: View {
     var isEmail: Bool = false
     @State private var showOptions = false
     
-    @ObservedObject private var vm = StaffViewViewModel()
     
     var body: some View {
         HStack {
@@ -248,7 +246,7 @@ private func sendMail(to address: String) {
 #Preview {
     NavigationStack {
         
-        StaffDetailView(user: UserData.UserDataMockData as UserData, currentUser: UserData.UserDataMockData as UserData)
+        StaffDetailView(viewModel: StaffViewViewModel(), user: UserData.UserDataMockData as UserData, currentUser: UserData.UserDataMockData as UserData)
         
     }
 }

@@ -9,7 +9,7 @@ import SwiftUI
 struct EditStaffView: View {
     @Environment(\.dismiss) var dismiss
     //TODO: This initializes a new view model, not observing an existing one?
-    @ObservedObject private var viewModel = StaffViewViewModel()
+    @ObservedObject var viewModel : StaffViewViewModel
     @Binding var user: UserData
     @State private var isDeletingStaff: Bool = false
 
@@ -84,9 +84,11 @@ struct EditStaffView: View {
 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Spara") {
-                        try? viewModel.updateStaff(user: user)
-                        print("Sparar...")
-                        dismiss()
+                        Task {
+                            try await viewModel.updateStaff(user: user)
+                            print("Sparar...")
+                            dismiss()
+                        }
                     }
                     .disabled(user.name.isEmpty || user.email.isEmpty)
                 }
@@ -113,6 +115,6 @@ struct EditStaffView: View {
     )
 
     NavigationStack {
-        EditStaffView(user: .constant(testuser))
+        EditStaffView(viewModel: StaffViewViewModel(), user: .constant(testuser))
     }
 }
