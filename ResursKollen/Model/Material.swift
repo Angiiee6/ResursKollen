@@ -9,26 +9,26 @@ import Foundation
 
 
 struct Material: Codable, Identifiable, Equatable {
-    var name: String
+    var title: String = ""
     var quantity: Int = 1
-    var price: Double
+    var priceOut: Double = 0.0
     var id: String = UUID().uuidString
     
     //Da
     var priceIn: Double = 0.0
     var description: String = ""
     var unit: MaterialUnits = .st
-    var categorey: MaterialCategory = .electrical
+    var category: MaterialCategory = .electrical
     
     /// - Returns the `price * quantity`.
     var totalPrice: Double {
-        price * Double(quantity)
+        priceOut * Double(quantity)
     }
     
     //Makes Material comform to Equatable
     static func ==(lhs: Material, rhs: Material) -> Bool {
             return lhs.id == rhs.id &&
-                   lhs.name == rhs.name &&
+                   lhs.title == rhs.title &&
                    lhs.totalPrice == rhs.totalPrice
         }
 }

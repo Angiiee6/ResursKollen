@@ -34,9 +34,9 @@ struct MaterialEditSheet: View {
                     ForEach($materials) { $material in
                         HStack(alignment: .top) {
                             VStack(alignment: .leading) {
-                                Text(material.name)
+                                Text(material.title)
                                     .padding(.bottom, 1)
-                                Text("Kr/st: \(material.price.formattedAsCurrency)")
+                                Text("Kr/st: \(material.priceOut.formattedAsCurrency)")
                                     .font(.system(size: 14))
                                     .foregroundStyle(.secondary)
                                 
@@ -108,7 +108,7 @@ struct MaterialEditSheet: View {
                                 Button(action: {
                                     materials.append(material)
                                 }) {
-                                    Text(material.name)
+                                    Text(material.title)
                                 }
                             }
                         }
@@ -116,9 +116,9 @@ struct MaterialEditSheet: View {
                         Spacer()
                         Button("Lägg till") {
                             let newMaterial = Material(
-                                name: name,
+                                title: name,
                                 quantity: quantity,
-                                price: price
+                                priceOut: price
                             )
                             
                             materials.append(newMaterial)
@@ -161,16 +161,16 @@ extension MaterialEditSheet {
 #Preview {
     MaterialEditSheet(
         materials: .constant([
-            Material(name: "Copper Wire", quantity: 50, price: 2.50),
-            Material(name: "Oak Plank", quantity: 10, price: 15.00),
-            Material(name: "Steel Handle", quantity: 8, price: 7.25),
-            Material(name: "Rose Bush", quantity: 5, price: 12.99),
-            Material(name: "PVC Pipe", quantity: 20, price: 3.75),
-            Material(name: "Brass Knob", quantity: 12, price: 4.50),
-            Material(name: "Mulch Bag", quantity: 15, price: 6.00),
-            Material(name: "LED Bulb", quantity: 25, price: 8.99),
-            Material(name: "Ceramic Tile", quantity: 30, price: 2.20),
-            Material(name: "Paint Can", quantity: 3, price: 25.50),
+            Material(title: "Copper Wire", quantity: 50, priceOut: 2.50),
+            Material(title: "Oak Plank", quantity: 10, priceOut: 15.00),
+            Material(title: "Steel Handle", quantity: 8, priceOut: 7.25),
+            Material(title: "Rose Bush", quantity: 5, priceOut: 12.99),
+            Material(title: "PVC Pipe", quantity: 20, priceOut: 3.75),
+            Material(title: "Brass Knob", quantity: 12, priceOut: 4.50),
+            Material(title: "Mulch Bag", quantity: 15, priceOut: 6.00),
+            Material(title: "LED Bulb", quantity: 25, priceOut: 8.99),
+            Material(title: "Ceramic Tile", quantity: 30, priceOut: 2.20),
+            Material(title: "Paint Can", quantity: 3, priceOut: 25.50),
         ])
     )
 }

@@ -28,10 +28,10 @@ struct MaterialDetailList: View {
             ScrollView {
                 ForEach(materials) { material in
                     HStack {
-                        Text(material.name)
+                        Text(material.title)
                         Spacer()
                         Text(
-                            "\(material.price.formattedAsCurrency)"
+                            "\(material.priceOut.formattedAsCurrency)"
                         )
                         .frame(width: 80, alignment: .leading)
                         Text("\(material.quantity)")
