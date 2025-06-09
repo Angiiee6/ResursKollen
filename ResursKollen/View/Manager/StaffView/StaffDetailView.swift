@@ -3,7 +3,7 @@ import SwiftUI
 struct StaffDetailView: View {
     @ObservedObject var viewModel : StaffViewViewModel
     @State private var isEditUser = false
-    @State var user: UserData
+    let user: UserData
     @State private var isShowMoreInfo = false
     let currentUser: UserData
 
