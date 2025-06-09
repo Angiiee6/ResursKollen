@@ -8,19 +8,19 @@
 import Combine
 import FirebaseFirestore
 import SwiftUI
+import Factory
 
 struct CustomerDetailView: View {
     let customer: Customer
 
-    @StateObject var viewModel: ViewModel
+    @StateObject var viewModel : ViewModel
     @State var addOrderSheetPresent = false
     @State var searchText: String = ""
 
-    init(dataProvider: MainDataProvider, customer: Customer) {
+    init(customer: Customer) {
         self.customer = customer
         _viewModel = StateObject(
             wrappedValue: ViewModel(
-                dataProvider: dataProvider,
                 customerId: customer.id
             )
         )
@@ -106,13 +106,12 @@ extension CustomerDetailView {
 
     @MainActor
     class ViewModel: ObservableObject {
+        @Injected(\.managerDataProvider) var dataProvider: MainDataProvider
         let customerId: String
-        let dataProvider: MainDataProvider
 
         @Published var customerOrders: [Order] = []
 
-        init(dataProvider: MainDataProvider, customerId: String) {
-            self.dataProvider = dataProvider
+        init(customerId: String) {
             self.customerId = customerId
             let combinedPublisher = Publishers.CombineLatest(
                 dataProvider.$activeOrders,
@@ -135,9 +134,8 @@ extension CustomerDetailView {
 
 #Preview {
     NavigationStack {
-        let dataProvider = MainDataProvider.asPreview()
+        let dataProvider = MainDataProvider.withMockData()
         CustomerDetailView(
-            dataProvider: dataProvider,
             customer: dataProvider.allCustomers[0]
         )
     }

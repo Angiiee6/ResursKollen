@@ -5,7 +5,6 @@ struct StaffDetailView: View {
     @State private var isEditUser = false
     @State var user: UserData
     @State private var isShowMoreInfo = false
-    @StateObject var vm = StaffDetailViewModel()
     let currentUser: UserData
 
     var body: some View {
@@ -134,12 +133,6 @@ struct StaffDetailView: View {
             EditStaffView(user: $user)
                 .presentationDragIndicator(.visible)
         }
-        //        .onAppear {
-        //            Task {
-        //                await vm.loadCurrentUser()
-        //            }
-        //        }
-
     }
 
     private func formatDate(_ date: Date) -> String {
@@ -250,34 +243,5 @@ private func sendMail(to address: String) {
         
         StaffDetailView(user: UserData.UserDataMockData as UserData, currentUser: UserData.UserDataMockData as UserData)
         
-    }
-}
-
-extension StaffDetailView {
-    
-    class StaffDetailViewModel: ObservableObject {
-        //        @Published var currentUser : UserData?
-
-        // Hämta current User
-        //        func loadCurrentUser() async {
-        //            do {
-        //                // Hämta den autentiserade användaren
-        //                let authenticatedUser = try AuthenticationManager.shared.getAuthenticatedUser()
-        //                let uid = authenticatedUser.uid
-        //
-        //                // Hämta användardata från Firestore
-        //                let userData = try await FirestoreManager.shared.fetchUserData(userId: uid)
-        //
-        //                // Uppdatera currentUser på huvudtråden
-        //                DispatchQueue.main.async {
-        //                    self.currentUser = userData
-        //                }
-        //            } catch {
-        //                print("Error getting user: \(error.localizedDescription)")
-        //            }
-        //        }
-        func startPhone() {
-
-        }
     }
 }

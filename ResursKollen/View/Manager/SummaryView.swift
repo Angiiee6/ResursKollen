@@ -6,18 +6,13 @@
 //
 
 import Charts
+import Factory
 import SwiftUI
 
 struct SummaryView: View {
-    @ObservedObject var dataProvider: MainDataProvider
-    @StateObject var vm: SummaryViewModel
+    @StateObject var vm = SummaryViewModel()
     @State private var selectedDate = Date()
     @State private var showingCalendar = false
-    
-    init(dataProvider: MainDataProvider) {
-        self.dataProvider = dataProvider
-        _vm = StateObject(wrappedValue: SummaryViewModel(dataProvider: dataProvider))
-    }
 
     var body: some View {
         BaseView {
@@ -30,30 +25,39 @@ struct SummaryView: View {
                             .font(.title)
                             .foregroundColor(.white)
                             .bold()
-                        
+
                         Spacer()
-                        
+
                         Button(action: {
                             showingCalendar.toggle()
                         }) {
                             HStack {
                                 Image(systemName: "calendar")
-                                Text(selectedDate.formatted(.dateTime.month(.wide).year()))
-                                    .font(.subheadline)
+                                Text(
+                                    selectedDate.formatted(
+                                        .dateTime.month(.wide).year()
+                                    )
+                                )
+                                .font(.subheadline)
                             }
                             .foregroundColor(.orange)
                         }
                         .sheet(isPresented: $showingCalendar) {
                             NavigationStack {
-                                MonthCalendarView(selectedDate: $selectedDate, orders: dataProvider.activeOrders)
-                                    .toolbar {
-                                        ToolbarItem(placement: .navigationBarTrailing) {
-                                            Button("Klar") {
-                                                showingCalendar = false
-                                            }
-                                            .foregroundColor(.orange)
+                                MonthCalendarView(
+                                    selectedDate: $selectedDate,
+                                    orders: vm.orders
+                                )
+                                .toolbar {
+                                    ToolbarItem(
+                                        placement: .navigationBarTrailing
+                                    ) {
+                                        Button("Klar") {
+                                            showingCalendar = false
                                         }
+                                        .foregroundColor(.orange)
                                     }
+                                }
                             }
                             .presentationDetents([.medium, .large])
                         }
@@ -92,7 +96,7 @@ struct SummaryView: View {
                     }
                     .frame(height: 200)
                     .padding()
-                    
+
                     VStack(alignment: .leading) {
                         Text("Månadens Statistik")
                             .foregroundColor(.white)
@@ -124,13 +128,13 @@ struct SummaryView: View {
                             iconName: "hammer"
                         )
                     }
-                    
+
                     ShowCaseView(
                         title: "Profit",
                         value: vm.ProfitThisMonth,
                         iconName: "creditcard"
                     )
-                    
+
                     Spacer()
                 }
             }
@@ -139,13 +143,14 @@ struct SummaryView: View {
 }
 
 #Preview {
-    SummaryView(dataProvider: MainDataProvider.asPreview())
+    SummaryView()
 }
 
 extension SummaryView {
     @MainActor
     class SummaryViewModel: ObservableObject {
-        init(dataProvider: MainDataProvider) {
+        @Injected(\.managerDataProvider) var dataProvider: MainDataProvider
+        init() {
             dataProvider.$activeOrders.assign(to: &$orders)
         }
 

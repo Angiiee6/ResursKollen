@@ -150,7 +150,6 @@ extension AddCustomerSheet {
         @Published var searchText: String = ""
         @Published var searchSuggestions: [MKLocalSearchCompletion] = []
 
-        //@Published var streetName: String = ""
         @Published var postalCode: String = ""
         @Published var city: String = ""
 
@@ -177,9 +176,6 @@ extension AddCustomerSheet {
         func updateSearchQuery(_ query: String) {
             searchText = query
             completer.queryFragment = query
-            //            if query.isEmpty {
-            //                searchSuggestions.removeAll()
-            //            }
         }
 
         func selectAddress(_ completion: MKLocalSearchCompletion) {

@@ -35,5 +35,5 @@ struct CustomerOrderListItem: View {
 }
 
 #Preview {
-    CustomerOrderListItem(order: MainDataProvider.asPreview().activeOrders[0])
+    CustomerOrderListItem(order: MainDataProvider.withMockData().activeOrders[0])
 }

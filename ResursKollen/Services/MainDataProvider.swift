@@ -5,6 +5,7 @@
 //  Created by Magnus Freidenfelt on 2025-05-28.
 //
 
+import Factory
 import FirebaseFirestore
 import SwiftUI
 
@@ -15,9 +16,11 @@ class MainDataProvider: ObservableObject {
     @Published var activeOrders: [Order] = []
     @Published var completedOrders: [Order] = []
     @Published var allCustomers: [Customer] = []
+    //@Published var allUsers: [UserData] = []
+
     //Not in use yet
     @Published var error: Error?
-    //@Published var allUsers: [UserData] = []
+
     let currentUser: UserData
 
     private var listeners = [ListenerRegistration]()
@@ -90,7 +93,7 @@ class MainDataProvider: ObservableObject {
         )
     }
 
-    static func asPreview() -> MainDataProvider {
+    static func withMockData() -> MainDataProvider {
         MainDataProvider()
     }
 
@@ -160,5 +163,74 @@ class MainDataProviderBuilder {
             withAllUsers: allUsersAdded,
             withCustomers: customersAdded
         )
+    }
+}
+
+//MARK: Factory
+//Dependency injection with Factory package
+extension Container {
+
+    //Used to pass current user to the data provider
+    private var _employeeDataProvider:
+        ParameterFactory<UserData, MainDataProvider>
+    {
+        self {
+            @MainActor
+            _ in
+            //Overwritten when registering
+            MainDataProvider.withMockData()
+        }.shared
+    }
+
+    //Used to pass current user to the data provider
+    private var _managerDataProvider:
+        ParameterFactory<UserData, MainDataProvider>
+    {
+        self {
+            @MainActor
+            user in
+            //Overwritten when registering
+            MainDataProvider.withMockData()
+        }.shared
+    }
+
+    //Used for injection in employee views
+    var employeeDataProvider: Factory<MainDataProvider> {
+        self {
+            @MainActor in
+            self._employeeDataProvider.callAsFunction(UserData())
+        }.shared
+    }
+
+    //Used for injection in manager views
+    var managerDataProvider: Factory<MainDataProvider> {
+        self {
+            @MainActor in
+            self._managerDataProvider.callAsFunction(UserData())
+        }.shared
+    }
+
+    //Needs to be called once on setup (in LoginViewModel) to register the current user and get the correct build of the data provider.
+    func registerDataProvider(forUser user: UserData) {
+        if user.status == .employee {
+            self._employeeDataProvider.register {
+                @MainActor
+                _ in
+                MainDataProviderBuilder(currentUser: user)
+                    .withActiveOrders()
+                    .withCompletedOrders()
+                    .build()
+            }
+        } else {
+            self._managerDataProvider.register {
+                @MainActor
+                _ in
+                MainDataProviderBuilder(currentUser: user)
+                    .withActiveOrders()
+                    .withCompletedOrders()
+                    .withAllCustomers()
+                    .build()
+            }
+        }
     }
 }

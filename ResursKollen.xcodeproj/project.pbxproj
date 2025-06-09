@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A27B7A322DF6CA6D0086D2B5 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = A27B7A312DF6CA6D0086D2B5 /* Factory */; };
+		A27B7A342DF6CA6D0086D2B5 /* FactoryKit in Frameworks */ = {isa = PBXBuildFile; productRef = A27B7A332DF6CA6D0086D2B5 /* FactoryKit */; };
 		FD2607D32DD4B3F6009ADDEF /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = FD2607D22DD4B3F6009ADDEF /* FirebaseAnalytics */; };
 		FD2607D52DD4B3F6009ADDEF /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = FD2607D42DD4B3F6009ADDEF /* FirebaseAuth */; };
 		FD2607D72DD4B3F6009ADDEF /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = FD2607D62DD4B3F6009ADDEF /* FirebaseCore */; };
@@ -30,7 +32,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A27B7A342DF6CA6D0086D2B5 /* FactoryKit in Frameworks */,
 				FD2607D32DD4B3F6009ADDEF /* FirebaseAnalytics in Frameworks */,
+				A27B7A322DF6CA6D0086D2B5 /* Factory in Frameworks */,
 				FD2607D92DD4B3F6009ADDEF /* FirebaseFirestore in Frameworks */,
 				FD2607D72DD4B3F6009ADDEF /* FirebaseCore in Frameworks */,
 				FD2607D52DD4B3F6009ADDEF /* FirebaseAuth in Frameworks */,
@@ -80,6 +84,8 @@
 				FD2607D42DD4B3F6009ADDEF /* FirebaseAuth */,
 				FD2607D62DD4B3F6009ADDEF /* FirebaseCore */,
 				FD2607D82DD4B3F6009ADDEF /* FirebaseFirestore */,
+				A27B7A312DF6CA6D0086D2B5 /* Factory */,
+				A27B7A332DF6CA6D0086D2B5 /* FactoryKit */,
 			);
 			productName = ResursKollen;
 			productReference = FD2607B92DD4B070009ADDEF /* ResursKollen.app */;
@@ -111,6 +117,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				FD2607D12DD4B3F6009ADDEF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				A27B7A302DF6CA6D0086D2B5 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = FD2607BA2DD4B070009ADDEF /* Products */;
@@ -348,6 +355,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		A27B7A302DF6CA6D0086D2B5 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.3;
+			};
+		};
 		FD2607D12DD4B3F6009ADDEF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
@@ -359,6 +374,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		A27B7A312DF6CA6D0086D2B5 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A27B7A302DF6CA6D0086D2B5 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
+		A27B7A332DF6CA6D0086D2B5 /* FactoryKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A27B7A302DF6CA6D0086D2B5 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = FactoryKit;
+		};
 		FD2607D22DD4B3F6009ADDEF /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = FD2607D12DD4B3F6009ADDEF /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

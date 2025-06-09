@@ -7,19 +7,13 @@
 
 import SwiftUI
 import Combine
+import Factory
 
 struct ManagerAllOrdersView: View {
-    @ObservedObject var dataProvider: MainDataProvider
     @EnvironmentObject var loginvm : LoginViewViewmodel
-    @StateObject var viewModel : ViewModel
+    @StateObject var viewModel = ViewModel()
     @State var searchText: String = ""
     @State var isCreateOrder = false
-    
-    init(dataProvider: MainDataProvider) {
-        self.dataProvider = dataProvider
-        _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
-    }
-   
 
     @State private var showCompletedOrders = false // Ny state för navigation
 
@@ -83,7 +77,7 @@ struct ManagerAllOrdersView: View {
                 
                 HStack{
                     
-                    NavigationLink(destination: CustomerView(dataProvider: dataProvider)) {
+                    NavigationLink(destination: CustomerView()) {
                         Text("Kundvy (flytta sen)")
                             .foregroundStyle(.pink)
                         
@@ -138,7 +132,7 @@ struct ManagerAllOrdersView: View {
                     }
                 }
                 .navigationDestination(isPresented: $showCompletedOrders) {
-                     CompletedOrders(dataProvider: dataProvider)
+                     CompletedOrders()
                         .toolbar(.hidden, for: .tabBar)
                  }
                 
@@ -165,7 +159,7 @@ extension ManagerAllOrdersView {
     
     @MainActor
     class ViewModel: ObservableObject {
-        
+        @Injected(\.managerDataProvider) var dataProvider: MainDataProvider
         @Published var registeredOrders: [Order] = []
         @Published var startedOrders: [Order] = []
         @Published var delayedOrders: [Order] = []
@@ -173,7 +167,7 @@ extension ManagerAllOrdersView {
 
         private var cancellables = Set<AnyCancellable>()
 
-        init(dataProvider: MainDataProvider) {
+        init() {
             dataProvider.$activeOrders
                 .sink { [weak self] allOrders in
                     self?.registeredOrders = allOrders.filter {
@@ -201,6 +195,6 @@ extension ManagerAllOrdersView {
 }
 
 #Preview {
-    ManagerAllOrdersView(dataProvider: MainDataProvider.asPreview())
+    ManagerAllOrdersView()
 }
 
