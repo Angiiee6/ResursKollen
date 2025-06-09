@@ -14,32 +14,47 @@ struct CustomerView: View {
     @State var addCustomerSheetPresent = false
 
     var body: some View {
-        VStack {
-            if viewModel.allCustomers.isEmpty {
-                Text("Inga kunder tillagda.")
-            } else {
-                List {
-                    ForEach(viewModel.allCustomers) { customer in
-                        NavigationLink {
-                            CustomerDetailView(customer: customer)
-                        } label: {
-                            CustomerListItem(customer: customer)
-                                .listItemTint(.clear)
+        
+        BaseView {
+            VStack {
+                if viewModel.allCustomers.isEmpty {
+                    Text("Inga kunder tillagda.")
+                } else {
+                    List {
+                        ForEach(viewModel.allCustomers) { customer in
+                            ZStack {
+                                // Denna bakgrund kommer täcka hela bredden inklusive pilområdet
+                                Color.white.opacity(0.1)
+                                    .padding(.horizontal, -20) // Kompensera för listans inbyggda padding
+                                
+                                NavigationLink(destination: CustomerDetailView(customer: customer)) {
+                                    EmptyView()
+                                }
+                                .padding(.horizontal)
+                                
+                                CustomerListItem(customer: customer)
+                                    .padding(.leading, 16)
+                                    .padding(.trailing, 40)
+                            }
+                            .listRowBackground(Color.clear)
+                            .listRowInsets(EdgeInsets())
+                            .listRowSeparatorTint(Color.orange)
                         }
-                        
+                    }
+                    .listStyle(.plain)
+                    
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Ny kund") {
+                        addCustomerSheetPresent = true
                     }
                 }
             }
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button("Ny kund") {
-                    addCustomerSheetPresent = true
-                }
+            .sheet(isPresented: $addCustomerSheetPresent) {
+                AddCustomerSheet()
             }
-        }
-        .sheet(isPresented: $addCustomerSheetPresent) {
-            AddCustomerSheet()
         }
     }
 }
