@@ -10,17 +10,10 @@ import Combine
 import Factory
 
 struct ManagerAllOrdersView: View {
-//    @ObservedObject var dataProvider: MainDataProvider
     @EnvironmentObject var loginvm : LoginViewViewmodel
     @StateObject var viewModel = ViewModel()
     @State var searchText: String = ""
     @State var isCreateOrder = false
-    
-//    init(dataProvider: MainDataProvider) {
-//        self.dataProvider = dataProvider
-//        _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
-//    }
-   
 
     @State private var showCompletedOrders = false // Ny state för navigation
 

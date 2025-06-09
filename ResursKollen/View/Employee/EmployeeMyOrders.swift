@@ -5,33 +5,24 @@
 //  Created by Robin jakobsson on 2025-05-20.
 //
 
-import SwiftUI
 import Factory
+import SwiftUI
 
 struct EmployeeMyOrders: View {
-//    @ObservedObject var dataProvider: MainDataProvider
-    @EnvironmentObject var loginVm : LoginViewViewmodel
+    @EnvironmentObject var loginVm: LoginViewViewmodel
     @StateObject var viewModel = ViewModel()
     @State var isLoading = true
     @State var isLoggedOut = false
-    
-    
-//    init(dataProvider: MainDataProvider) {
-//        self.dataProvider = dataProvider
-//        _viewModel = StateObject(
-//            wrappedValue: ViewModel(dataProvider: dataProvider)
-//        )
-//    }
-    
+
     var body: some View {
         BaseView {
             VStack(alignment: .leading) {
-                Text("Hej, \(loginVm.currentUser?.name) 👋")
+                Text("Hej, \(loginVm.currentUser?.name ?? "Okänd") 👋")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.top)
                     .padding(.leading)
-                
+
                 List {
                     Section(
                         header: Text("Tilldelade").foregroundColor(
@@ -46,7 +37,7 @@ struct EmployeeMyOrders: View {
                                 )
                             ) {
                                 OrderRowMyOrders(order: order)
-                                
+
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
                                             self.viewModel.leaveOrder(order)
@@ -58,20 +49,19 @@ struct EmployeeMyOrders: View {
                                         }
                                         .tint(.red)
                                     }
-                            }                            .listRowBackground(Color.white.opacity(0.1))
+                            }.listRowBackground(Color.white.opacity(0.1))
                                 .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
-                    
+
                 }
                 .listStyle(.insetGrouped)
-                .scrollContentBackground(.hidden) // Make list background transparent
-                .background(Color.clear) // Clear background for the list
-                
+                .scrollContentBackground(.hidden)  // Make list background transparent
+                .background(Color.clear)  // Clear background for the list
+
                 //fejka lite fördröjning för att fåt meddelande listan i sync
-                
-                
-                Group{
+
+                Group {
                     if isLoading {
                         HStack(alignment: .center) {
                             ProgressView("Laddar...")
@@ -79,7 +69,9 @@ struct EmployeeMyOrders: View {
                                 .padding()
                         }
                         .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {  // <--- ändra antalet sekunder här
+                            DispatchQueue.main.asyncAfter(
+                                deadline: .now() + 2.0
+                            ) {  // <--- ändra antalet sekunder här
                                 isLoading = false
                             }
                         }
@@ -89,13 +81,15 @@ struct EmployeeMyOrders: View {
                 }
                 .animation(.easeInOut, value: isLoading)
                 .transition(.opacity)
-                
+
                 NavigationLink(
-                            destination: ContentView().navigationBarBackButtonHidden(true),
-                            isActive: $isLoggedOut
-                        ) {
-                            EmptyView()
-                        }
+                    destination: ContentView().navigationBarBackButtonHidden(
+                        true
+                    ),
+                    isActive: $isLoggedOut
+                ) {
+                    EmptyView()
+                }
             }
         }
         .toolbar {
@@ -119,28 +113,28 @@ struct EmployeeMyOrders: View {
     // MessagesShowView()
 }
 
-
 #Preview {
     EmployeeMyOrders()
 }
 
 extension EmployeeMyOrders {
-    
+
     @MainActor
     class ViewModel: ObservableObject {
         @Injected(\.employeeDataProvider) var dataProvider: MainDataProvider
-        @EnvironmentObject var loginViewModel: LoginViewViewmodel
         @Published var myOrders: [Order] = []
-        
+
         init() {
             dataProvider.$activeOrders.map { orders in
-                orders.filter { $0.assignedUserId == self.loginViewModel.currentUser?.id
-                    && $0.status != .completed
-                    && $0.status != .done}
+                orders.filter {
+                    $0.assignedUserId == self.dataProvider.currentUser.id
+                        && $0.status != .completed
+                        && $0.status != .done
+                }
             }
             .assign(to: &$myOrders)
         }
-        
+
         ///Sets an order's `assignedUserId` to `nil`.
         func leaveOrder(_ order: Order) {
             var updatedOrder = order

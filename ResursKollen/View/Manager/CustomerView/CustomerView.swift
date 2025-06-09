@@ -10,16 +10,8 @@ import SwiftUI
 import Factory
 
 struct CustomerView: View {
-//    @ObservedObject var dataProvider: MainDataProvider
     @StateObject var viewModel = ViewModel()
     @State var addCustomerSheetPresent = false
-
-//    init(dataProvider: MainDataProvider) {
-//        self.dataProvider = dataProvider
-//        _viewModel = StateObject(
-//            wrappedValue: ViewModel(dataProvider: dataProvider)
-//        )
-//    }
 
     var body: some View {
         VStack {

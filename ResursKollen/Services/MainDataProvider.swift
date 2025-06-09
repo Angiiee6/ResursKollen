@@ -5,9 +5,9 @@
 //  Created by Magnus Freidenfelt on 2025-05-28.
 //
 
+import Factory
 import FirebaseFirestore
 import SwiftUI
-import Factory
 
 ///This class handles Firestore listeners for the main data used in the app, like order collections and users collection.
 /// Initialized by using [`MainDataProviderBuilder`](MainDataProviderBuilder).
@@ -16,21 +16,23 @@ class MainDataProvider: ObservableObject {
     @Published var activeOrders: [Order] = []
     @Published var completedOrders: [Order] = []
     @Published var allCustomers: [Customer] = []
+    //@Published var allUsers: [UserData] = []
+
     //Not in use yet
     @Published var error: Error?
-    //@Published var allUsers: [UserData] = []
-//    let currentUser: UserData
+
+    let currentUser: UserData
 
     private var listeners = [ListenerRegistration]()
 
     fileprivate init(
-//        currentUser: UserData,
+        currentUser: UserData,
         withActiveOrders: Bool,
         withCompletedOrders: Bool,
         withAllUsers: Bool,
         withCustomers: Bool
     ) {
-//        self.currentUser = currentUser
+        self.currentUser = currentUser
         if withActiveOrders {
             listenToActiveOrders()
         }
@@ -48,7 +50,7 @@ class MainDataProvider: ObservableObject {
 
     //For preview mock data
     private init() {
-//        self.currentUser = UserData(name: "Test user")
+        self.currentUser = UserData(name: "Test user")
         self.activeOrders = Order.mockOrders.filter { $0.status != .completed }
         self.completedOrders = Order.mockOrders.filter {
             $0.status == .completed
@@ -91,7 +93,7 @@ class MainDataProvider: ObservableObject {
         )
     }
 
-    static func asPreview() -> MainDataProvider {
+    static func withMockData() -> MainDataProvider {
         MainDataProvider()
     }
 
@@ -116,14 +118,14 @@ class MainDataProviderBuilder {
     private var completedOrdersAdded = false
     private var allUsersAdded = false
     private var customersAdded = false
-//    let currentUser: UserData
+    let currentUser: UserData
 
     /// Initializes the builder with the current user.
     ///
     /// - Parameter currentUser: The current user of the session.
-//    init(currentUser: UserData) {
-//        self.currentUser = currentUser
-//    }
+    init(currentUser: UserData) {
+        self.currentUser = currentUser
+    }
 
     /// Adds a listener for active orders Firestore collection.
     func withActiveOrders() -> MainDataProviderBuilder {
@@ -155,7 +157,7 @@ class MainDataProviderBuilder {
     /// - Returns: A fully configured `MainDataProvider` instance.
     @MainActor func build() -> MainDataProvider {
         MainDataProvider(
-//            currentUser: currentUser,
+            currentUser: currentUser,
             withActiveOrders: activeOrdersAdded,
             withCompletedOrders: completedOrdersAdded,
             withAllUsers: allUsersAdded,
@@ -164,25 +166,71 @@ class MainDataProviderBuilder {
     }
 }
 
+//MARK: Factory
+//Dependency injection with Factory package
 extension Container {
-    
-    var employeeDataProvider: Factory<MainDataProvider> {
-        Factory(self) { @MainActor in
-            MainDataProviderBuilder()
-                .withActiveOrders()
-                .withCompletedOrders()
-                .build()
-        }
+
+    //Used to pass current user to the data provider
+    private var _employeeDataProvider:
+        ParameterFactory<UserData, MainDataProvider>
+    {
+        self {
+            @MainActor
+            _ in
+            //Overwritten when registering
+            MainDataProvider.withMockData()
+        }.shared
     }
-    
-    var managerDataProvider: Factory<MainDataProvider> {
-        Factory(self) {
+
+    //Used to pass current user to the data provider
+    private var _managerDataProvider:
+        ParameterFactory<UserData, MainDataProvider>
+    {
+        self {
+            @MainActor
+            user in
+            //Overwritten when registering
+            MainDataProvider.withMockData()
+        }.shared
+    }
+
+    //Used for injection in employee views
+    var employeeDataProvider: Factory<MainDataProvider> {
+        self {
             @MainActor in
-            MainDataProviderBuilder()
-                .withActiveOrders()
-                .withCompletedOrders()
-                .withAllCustomers()
-                .build()
+            self._employeeDataProvider.callAsFunction(UserData())
+        }.shared
+    }
+
+    //Used for injection in manager views
+    var managerDataProvider: Factory<MainDataProvider> {
+        self {
+            @MainActor in
+            self._managerDataProvider.callAsFunction(UserData())
+        }.shared
+    }
+
+    //Needs to be called once on setup (in LoginViewModel) to register the current user and get the correct build of the data provider.
+    func registerDataProvider(forUser user: UserData) {
+        if user.status == .employee {
+            self._employeeDataProvider.register {
+                @MainActor
+                _ in
+                MainDataProviderBuilder(currentUser: user)
+                    .withActiveOrders()
+                    .withCompletedOrders()
+                    .build()
+            }
+        } else {
+            self._managerDataProvider.register {
+                @MainActor
+                _ in
+                MainDataProviderBuilder(currentUser: user)
+                    .withActiveOrders()
+                    .withCompletedOrders()
+                    .withAllCustomers()
+                    .build()
+            }
         }
     }
 }

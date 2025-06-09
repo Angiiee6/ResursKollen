@@ -12,14 +12,7 @@ import Factory
 
 ///Shows a list of orders that need review (manager only).
 struct ReviewOrdersView: View {
-//    @ObservedObject var dataProvider: MainDataProvider
     @StateObject var viewModel = ViewModel()
-    
-//    init(dataProvider: MainDataProvider) {
-//        self.dataProvider = dataProvider
-//        _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
-//    }
-    
     
     var body: some View {
         BaseView {

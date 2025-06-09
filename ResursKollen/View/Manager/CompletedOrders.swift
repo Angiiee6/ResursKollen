@@ -10,14 +10,8 @@ import Factory
 import SwiftUI
 
 struct CompletedOrders: View {
-    //    @ObservedObject var dataProvider: MainDataProvider
     @StateObject var completedOrdersVm = ViewModel()
     @State var searchText: String = ""
-
-    //    init(dataProvider: MainDataProvider) {
-    //        self.dataProvider = dataProvider
-    //        _completedOrdersVm = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
-    //    }
 
     var body: some View {
         NavigationStack {

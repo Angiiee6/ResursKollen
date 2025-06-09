@@ -10,15 +10,9 @@ import Factory
 import SwiftUI
 
 struct SummaryView: View {
-    //    @ObservedObject var dataProvider: MainDataProvider
     @StateObject var vm = SummaryViewModel()
     @State private var selectedDate = Date()
     @State private var showingCalendar = false
-
-    //    init(dataProvider: MainDataProvider) {
-    //        self.dataProvider = dataProvider
-    //        _vm = StateObject(wrappedValue: SummaryViewModel(dataProvider: dataProvider))
-    //    }
 
     var body: some View {
         BaseView {

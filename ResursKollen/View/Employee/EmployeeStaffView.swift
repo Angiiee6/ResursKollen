@@ -10,16 +10,8 @@ import SwiftUI
 import Factory
 
 struct EmployeeStaffView: View {
-//    @ObservedObject var dataProvider: MainDataProvider
     @StateObject var viewModel = ViewModel()
     @EnvironmentObject var loginViewModel: LoginViewViewmodel
-
-//    init(dataProvider: MainDataProvider) {
-//        self.dataProvider = dataProvider
-//        _viewModel = StateObject(
-//            wrappedValue: ViewModel(dataProvider: dataProvider)
-//        )
-//    }
 
     var body: some View {
         BaseView {
@@ -37,7 +29,6 @@ extension EmployeeStaffView {
 
     @MainActor
     class ViewModel: ObservableObject {
-        @EnvironmentObject var loginViewModel: LoginViewViewmodel
         @Injected(\.employeeDataProvider) var dataProvider: MainDataProvider
         @Published var hoursWorkedThisMonth: Double = 0
 
@@ -53,13 +44,12 @@ extension EmployeeStaffView {
                     let allOrders = active + completed
                     //Turn list of lists into one single list
                     let timeUnits = allOrders.flatMap { $0.timeUnits }
-                    let currentUserId = self.loginViewModel.currentUser?.id
 
                     return
                         timeUnits
                         //Select only dates this month and for the current user
                         .filter {
-                            $0.date.isThisMonth && $0.userId == currentUserId
+                            $0.date.isThisMonth && $0.userId == self.dataProvider.currentUser.id
                         }
                         //Use only the time
                         .map { $0.time }

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
-//    @ObservedObject var dataProvider: MainDataProvider
     @State private var isLoggedOut = false
     @EnvironmentObject var loginViewModel: LoginViewViewmodel
     

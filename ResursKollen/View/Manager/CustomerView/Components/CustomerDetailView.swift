@@ -134,7 +134,7 @@ extension CustomerDetailView {
 
 #Preview {
     NavigationStack {
-        let dataProvider = MainDataProvider.asPreview()
+        let dataProvider = MainDataProvider.withMockData()
         CustomerDetailView(
             customer: dataProvider.allCustomers[0]
         )
