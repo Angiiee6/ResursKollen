@@ -9,32 +9,20 @@ import SwiftUI
 
 struct ContentView: View {
 
-    @EnvironmentObject var viewModel : LoginViewViewmodel
+    @EnvironmentObject var viewModel: LoginViewViewmodel
 
     var body: some View {
 
         if let user = viewModel.currentUser {
             switch user.status {
             case .manager:
-                let dataProvider = MainDataProviderBuilder(currentUser: user)
-                    .withActiveOrders()
-                    .withCompletedOrders()
-                    .withAllCustomers()
-                    .build()
-                ManagerHomeView(
-                    dataProvider: dataProvider
-                )
+                ManagerHomeView()
             case .employee:
-                let dataProvider = MainDataProviderBuilder(currentUser: user)
-                    .withActiveOrders()
-                    .withCompletedOrders()
-                    .build()
-                EmployeeHomeView(dataProvider: dataProvider)
+                EmployeeHomeView()
             }
         } else {
             LoginView(viewModel: viewModel)
         }
-
     }
 }
 

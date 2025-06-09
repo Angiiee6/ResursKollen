@@ -257,14 +257,6 @@ class FirestoreManager {
     func fetchCustomer(id: String) async throws -> Customer {
         try await customersRef.document(id).getDocument(as: Customer.self)
     }
-
-//    func fetchOrdersForCustomer(customerId: String) async throws -> [Order] {
-//        let snapshot = try await activeOrdersRef.whereField(
-//            "customerId",
-//            isEqualTo: customerId
-//        ).getDocuments()
-//        return snapshot.documents.compactMap { try? $0.data(as: Order.self) }
-//    }
     
     func listenToActiveOrdersForCustomer(customerId: String, onUpdate: @escaping (Result<[Order], Error>) -> Void) -> ListenerRegistration {
         return activeOrdersRef.whereField("customerId", isEqualTo: customerId).addSnapshotListener { snaphot, error in

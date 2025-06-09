@@ -7,18 +7,11 @@
 
 import Combine
 import SwiftUI
+import Factory
 
 struct EmployeeAllOrders: View {
-    @ObservedObject var dataProvider: MainDataProvider
     @State var searchText: String = ""
-    @StateObject var viewModel: ViewModel
-
-    init(dataProvider: MainDataProvider) {
-        self.dataProvider = dataProvider
-        _viewModel = StateObject(
-            wrappedValue: ViewModel(dataProvider: dataProvider, currentUserId: dataProvider.currentUser.id)
-        )
-    }
+    @StateObject var viewModel = ViewModel()
 
     var body: some View {
         BaseView {
@@ -170,17 +163,15 @@ extension EmployeeAllOrders {
 
     @MainActor
     class ViewModel: ObservableObject {
-
+        @Injected(\.employeeDataProvider) var dataProvider: MainDataProvider
         @Published var registeredOrders: [Order] = []
         @Published var startedOrders: [Order] = []
         @Published var delayedOrders: [Order] = []
         @Published var completedOrders: [Order] = []
-        let currentUserId :String
 
         private var cancellables = Set<AnyCancellable>()
 
-        init(dataProvider: MainDataProvider, currentUserId: String) {
-            self.currentUserId = dataProvider.currentUser.id
+        init() {
             dataProvider.$activeOrders
                 .sink { [weak self] allOrders in
                     let unassignedOrders = allOrders.filter {
@@ -205,7 +196,7 @@ extension EmployeeAllOrders {
         ///Sets the order's `assignedUserId` to the current user's id.
         func takeOrder(order: Order) {
             var updatedOrder = order
-            updatedOrder.assignedUserId = currentUserId
+            updatedOrder.assignedUserId = dataProvider.currentUser.id
             do {
                 try FirestoreManager.shared.updateOrder(updatedOrder)
             } catch {
@@ -224,6 +215,6 @@ extension EmployeeAllOrders {
 
 #Preview {
     NavigationStack {
-        EmployeeAllOrders(dataProvider: MainDataProvider.asPreview())
+        EmployeeAllOrders()
     }
 }

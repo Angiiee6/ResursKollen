@@ -15,8 +15,6 @@ struct OrderDetailView: View {
     @State var order: Order
     @State var newTimeUnit: OrderTimeUnit
 
-    //let orderOriginal: Order
-    //To be able to build different UI's depending on the current user's status.
     let employmentStatus: EmploymentStatus
 
     init(order: Order, status: EmploymentStatus) {
@@ -330,6 +328,7 @@ extension OrderDetailView {
     class ViewModel: ObservableObject {
         let firestoreManager = FirestoreManager.shared
 
+        //Immutable copy of order, used for comparing changes when user presses back without saving.
         let orderOriginal: Order
 
         @Published var currentUserInfo: (id: String, name: String)?

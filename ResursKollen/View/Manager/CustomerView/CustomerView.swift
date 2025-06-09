@@ -7,18 +7,11 @@
 
 import FirebaseFirestore
 import SwiftUI
+import Factory
 
 struct CustomerView: View {
-    @ObservedObject var dataProvider: MainDataProvider
-    @StateObject var viewModel: ViewModel
+    @StateObject var viewModel = ViewModel()
     @State var addCustomerSheetPresent = false
-
-    init(dataProvider: MainDataProvider) {
-        self.dataProvider = dataProvider
-        _viewModel = StateObject(
-            wrappedValue: ViewModel(dataProvider: dataProvider)
-        )
-    }
 
     var body: some View {
         VStack {
@@ -28,7 +21,7 @@ struct CustomerView: View {
                 List {
                     ForEach(viewModel.allCustomers) { customer in
                         NavigationLink {
-                            CustomerDetailView(dataProvider: dataProvider, customer: customer)
+                            CustomerDetailView(customer: customer)
                         } label: {
                             CustomerListItem(customer: customer)
                                 .listItemTint(.clear)
@@ -55,12 +48,10 @@ extension CustomerView {
 
     @MainActor
     class ViewModel: ObservableObject {
-        let dataProvider: MainDataProvider
-
+        @Injected(\.managerDataProvider) var dataProvider: MainDataProvider
         @Published var allCustomers: [Customer] = []
 
-        init(dataProvider: MainDataProvider) {
-            self.dataProvider = dataProvider
+        init() {
             dataProvider.$allCustomers.assign(to: &$allCustomers)
         }
     }
@@ -68,6 +59,6 @@ extension CustomerView {
 
 #Preview {
     NavigationStack {
-        CustomerView(dataProvider: MainDataProvider.asPreview())
+        CustomerView()
     }
 }
