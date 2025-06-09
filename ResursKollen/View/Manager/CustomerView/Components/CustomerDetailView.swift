@@ -27,63 +27,70 @@ struct CustomerDetailView: View {
     }
 
     var body: some View {
-        VStack {
-            CustomerInfoDisplay(customer: customer)
-            Spacer()
-            Divider()
-            HStack {
-                Text("Ordrar:")
-                    .font(.headline)
-                Spacer()
-            }
-            .padding(.vertical)
+        BaseView {
             VStack {
-                if viewModel.customerOrders.isEmpty {
-                    Text("Inga ordrar registrerade...")
-                        .foregroundStyle(.secondary)
-                        .italic()
-                } else {
-                    List {
-                        ForEach(
-                            filteredAndSortedOrders(
-                                for: viewModel.customerOrders
-                            )
-                        ) {
-                            order in
-                            CustomerOrderListItem(order: order)
-                        }
+                CustomerInfoDisplay(customer: customer)
+                Spacer()
+                Divider()
+                HStack {
+                    Text("Ordrar:")
+                        .font(.headline)
+                    Spacer()
+                }
+                .padding(.vertical)
+                VStack {
+                    if viewModel.customerOrders.isEmpty {
+                        Text("Inga ordrar registrerade...")
+                            .foregroundStyle(.secondary)
+                            .italic()
+                    } else {
+                        List {
+                            ForEach(
+                                filteredAndSortedOrders(
+                                    for: viewModel.customerOrders
+                                )
+                               
+                            ) {
+                                order in
+                                CustomerOrderListItem(order: order)
+                                    .listRowBackground(Color.white.opacity(0.1))
+                            }
+                        }.scrollContentBackground(.hidden)
+                        
                     }
                 }
-            }
-            //            .padding()
-            Spacer()
-            Button(action: {
-                addOrderSheetPresent = true
-            }) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("Skapa ny arbetsorder")
+                //            .padding()
+                Spacer()
+                Button(action: {
+                    addOrderSheetPresent = true
+                }) {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Skapa ny arbetsorder")
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.orange)
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+
+                    
+                    
                 }
-                .font(.headline)
-                .foregroundColor(.white)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.orange)
-                .cornerRadius(12)
-                .padding(.horizontal)
-                .padding(.bottom, 20)
             }
+            .padding()
+            .navigationTitle("Kundinformation")
+            .sheet(isPresented: $addOrderSheetPresent) {
+                CreateOrderView(customer: customer)
+            }
+            .searchable(
+                text: $searchText,
+                placement: .sidebar,
+                prompt: Text("Sök ordrar")
+            )
         }
-        .padding()
-        .navigationTitle("Kundinformation")
-        .sheet(isPresented: $addOrderSheetPresent) {
-            CreateOrderView(customer: customer)
-        }
-        .searchable(
-            text: $searchText,
-            placement: .sidebar,
-            prompt: Text("Sök ordrar")
-        )
     }
 
     private func filteredAndSortedOrders(for orders: [Order]) -> [Order] {
