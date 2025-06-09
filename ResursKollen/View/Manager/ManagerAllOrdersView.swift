@@ -77,11 +77,12 @@ struct ManagerAllOrdersView: View {
                 
                 HStack{
                     
+                   /* ligger under flervalsknap
                     NavigationLink(destination: CustomerView()) {
                         Text("Kundvy (flytta sen)")
                             .foregroundStyle(.pink)
                         
-                    }
+                    } */
                     
 //                    Button(action: {
 //                        isCreateOrder = true
