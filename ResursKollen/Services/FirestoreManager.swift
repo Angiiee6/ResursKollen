@@ -41,6 +41,28 @@ class FirestoreManager {
             try activeOrdersRef.document(order.id).setData(from: order)
         }
     }
+    
+    func moveOrderFromActiveToCompleted(order: Order) async throws {
+        let batch = db.batch()
+        batch.deleteDocument(activeOrdersRef.document(order.id))
+        let data = try Firestore.Encoder().encode(order)
+        batch.setData(
+            data,
+            forDocument: completedOrdersRef.document(order.id)
+        )
+        try await batch.commit()
+    }
+
+    func moveOrderFromCompletedToActive(order: Order) async throws {
+        let batch = db.batch()
+        batch.deleteDocument(completedOrdersRef.document(order.id))
+        let data = try Firestore.Encoder().encode(order)
+        batch.setData(
+            data,
+            forDocument: activeOrdersRef.document(order.id)
+        )
+        try await batch.commit()
+    }
 
     //Snapshot lyssnare för order collectionen som kallas i viewmodels och använder closure i viewmodel
     func listenToOrderCollection(onUpdate: @escaping ([Order]) -> Void)
@@ -203,27 +225,7 @@ class FirestoreManager {
         }
     }
 
-    func moveOrderFromActiveToCompleted(order: Order) async throws {
-        let batch = db.batch()
-        batch.deleteDocument(activeOrdersRef.document(order.id))
-        let data = try Firestore.Encoder().encode(order)
-        batch.setData(
-            data,
-            forDocument: completedOrdersRef.document(order.id)
-        )
-        try await batch.commit()
-    }
-
-    func moveOrderFromCompletedToActive(order: Order) async throws {
-        let batch = db.batch()
-        batch.deleteDocument(completedOrdersRef.document(order.id))
-        let data = try Firestore.Encoder().encode(order)
-        batch.setData(
-            data,
-            forDocument: activeOrdersRef.document(order.id)
-        )
-        try await batch.commit()
-    }
+    
 
     //MARK: Customers
 
