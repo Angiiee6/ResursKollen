@@ -28,7 +28,7 @@ struct StaffView: View {
                             Section(header: Text(EmploymentStatus.manager.nameSE.capitalized).foregroundColor(.orange)) {
                                 ForEach(managers, id: \.id) { user in
                                     NavigationLink {
-                                        StaffDetailView(user: user, currentUser: currentUser)
+                                        StaffDetailView(viewModel: viewModel,user: user, currentUser: currentUser)
                                     } label: {
                                         StaffRowView(user: user)
                                     }
@@ -42,7 +42,7 @@ struct StaffView: View {
                         Section(header: Text(EmploymentStatus.employee.nameSE.capitalized).foregroundColor(.orange)) {
                             ForEach(employees, id: \.id) { user in
                                 NavigationLink {
-                                    StaffDetailView(user: user, currentUser: currentUser)
+                                    StaffDetailView(viewModel: viewModel,user: user, currentUser: currentUser)
                                 } label: {
                                     StaffRowView(user: user)
                                 }
@@ -117,8 +117,8 @@ final class StaffViewViewModel: ObservableObject {
         listenToUsers()
     }
     
-    func updateStaff(user: UserData) throws {
-        try? UsersManager.shared.updateUser(user: user)
+    func updateStaff(user: UserData) async throws {
+        try await UsersManager.shared.updateUser(user: user)
     }
     
     func listenToUsers() {

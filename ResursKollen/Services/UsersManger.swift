@@ -42,7 +42,7 @@ final class UsersManager {
             return users
     }
     //Update a User
-    func updateUser(user: UserData)  throws {
+    func updateUser(user: UserData) async throws {
         try  userDocuments(userId: user.id).setData(from: user, merge: true)
     }
     

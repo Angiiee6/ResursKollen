@@ -9,35 +9,50 @@ import SwiftUI
 struct EditStaffView: View {
     @Environment(\.dismiss) var dismiss
     //TODO: This initializes a new view model, not observing an existing one?
-    @ObservedObject private var viewModel = StaffViewViewModel()
-    @Binding var user: UserData
+    @ObservedObject var viewModel : StaffViewViewModel
+    let user: UserData
+    @State var name: String
+    @State var phone: String
+    @State var email: String
+    @State var status: EmploymentStatus
+    @State var detailedInfo: DetailedInfo
     @State private var isDeletingStaff: Bool = false
+    
+    init(viewModel: StaffViewViewModel, user: UserData) {
+        self.viewModel = viewModel
+        self.user = user
+        self.name = user.name
+        self.phone = user.phoneNumber
+        self.email = user.email
+        self.status = user.status
+        self.detailedInfo = user.detailedInfo
+    }
 
     var body: some View {
         NavigationStack {
             Form{
                 Section(header: Text("Personuppgifter")) {
-                    TextField("Namn", text: $user.name)
-                    TextField("Personnummer", text: $user.detailedInfo.personNummer)
+                    TextField("Namn", text: $name)
+                    TextField("Personnummer", text: $detailedInfo.personNummer)
                         .keyboardType(.numberPad)
                 }
 
                 Section(header: Text("Kontaktuppgifter")) {
-                    TextField("E-post", text: $user.email)
+                    TextField("E-post", text: $email)
                         .keyboardType(.emailAddress)
-                    TextField("Telefonnummer", text: $user.phoneNumber)
+                    TextField("Telefonnummer", text: $phone)
                         .keyboardType(.phonePad)
                 }
 
                 Section(header: Text("Anställning")) {
                     Text("Cheftjänst motsvarande?")
-                    Picker("Chefstjänst?", selection: $user.status) {
+                    Picker("Chefstjänst?", selection: $status) {
                         Text("Ja").tag(EmploymentStatus.manager)
                         Text("Nej").tag(EmploymentStatus.employee)
                     }
                     .pickerStyle(.segmented)
 
-                    Picker("Anställningsform", selection: $user.detailedInfo.employmentType) {
+                    Picker("Anställningsform", selection: $detailedInfo.employmentType) {
                         ForEach(EmploymentType.allCases) { empltype in
                             Text(empltype.employmentTypeSE).tag(empltype)
                         }
@@ -46,19 +61,19 @@ struct EditStaffView: View {
                 }
 
                 Section(header: Text("Löneuppgifter")) {
-                    TextField("Bankkonto", text: $user.detailedInfo.bankkonto)
+                    TextField("Bankkonto", text: $detailedInfo.bankkonto)
                         .keyboardType(.numberPad)
                     HStack {
                         Text("Lön:")
                         Spacer()
-                        Text("\(user.detailedInfo.salary) kr")
+                        Text("\(detailedInfo.salary) kr")
                             .foregroundColor(.gray)
                     }
                 }
 
                 Section(header: Text("Övriga uppgifter")) {
-                    TextField("Närmast anhörig", text: $user.detailedInfo.emergencyContact)
-                    TextField("Övrig information", text: $user.detailedInfo.extraInfo)
+                    TextField("Närmast anhörig", text: $detailedInfo.emergencyContact)
+                    TextField("Övrig information", text: $detailedInfo.extraInfo)
                 }
                 
                 Button("Radera Anställd", role: .destructive){
@@ -71,7 +86,7 @@ struct EditStaffView: View {
                     Button("Ångra", role: .cancel){}
                     
                 }message: {
-                    Text("Säker på att du vill radera \(user.name)")
+                    Text("Säker på att du vill radera \(name)")
                 }
             }
             .navigationTitle("Redigera uppgifter")
@@ -84,9 +99,17 @@ struct EditStaffView: View {
 
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Spara") {
-                        try? viewModel.updateStaff(user: user)
-                        print("Sparar...")
-                        dismiss()
+                        Task {
+                            var updatedUser = user
+                            updatedUser.name = name
+                            updatedUser.phoneNumber = phone
+                            updatedUser.email = email
+                            updatedUser.status = status
+                            updatedUser.detailedInfo = detailedInfo
+                            try await viewModel.updateStaff(user: updatedUser)
+                            print("Sparar: \(updatedUser)")
+                            dismiss()
+                        }
                     }
                     .disabled(user.name.isEmpty || user.email.isEmpty)
                 }
@@ -113,6 +136,6 @@ struct EditStaffView: View {
     )
 
     NavigationStack {
-        EditStaffView(user: .constant(testuser))
+        EditStaffView(viewModel: StaffViewViewModel(), user: testuser)
     }
 }
