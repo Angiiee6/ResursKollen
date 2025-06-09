@@ -10,7 +10,7 @@ import SwiftUI
 
 struct EditMessagesView: View {
     
-    @StateObject var viewmodel: MessagesManagerViewModel
+    @ObservedObject var viewmodel: MessagesManagerViewModel
    
     @State var messageToEdit: Message?
     @State var title: String = ""
