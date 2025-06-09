@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
-    @ObservedObject var dataProvider: MainDataProvider
+//    @ObservedObject var dataProvider: MainDataProvider
     @State private var isLoggedOut = false
+    @EnvironmentObject var loginViewModel: LoginViewViewmodel
     
     var body: some View {
         
         TabView {
             NavigationStack {
-                ManagerAllOrdersView(dataProvider: dataProvider)
+                ManagerAllOrdersView()
             }
             .tabItem {
                 Label(
@@ -24,7 +25,7 @@ struct ManagerHomeView: View {
                 )
             }
             NavigationStack {
-                ReviewOrdersView(dataProvider: dataProvider)
+                ReviewOrdersView()
             }
             .tabItem {
                 Label(
@@ -33,7 +34,7 @@ struct ManagerHomeView: View {
                 )
             }
             NavigationStack {
-                SummaryView(dataProvider: dataProvider)
+                SummaryView()
             }
             .tabItem {
                 Label(
@@ -42,7 +43,7 @@ struct ManagerHomeView: View {
                 )
             }
             NavigationStack {
-                StaffView(currentUser: dataProvider.currentUser)
+                StaffView(currentUser: loginViewModel.currentUser ?? UserData())
             }
             .tabItem {
                 Label("Personal", systemImage: "person.3")
@@ -61,5 +62,5 @@ struct ManagerHomeView: View {
 }
 
 #Preview {
-    ManagerHomeView(dataProvider: MainDataProvider.asPreview())
+    ManagerHomeView()
 }

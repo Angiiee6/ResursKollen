@@ -7,22 +7,24 @@
 
 import Combine
 import SwiftUI
+import Factory
 
 struct EmployeeStaffView: View {
-    @ObservedObject var dataProvider: MainDataProvider
-    @StateObject var viewModel: ViewModel
+//    @ObservedObject var dataProvider: MainDataProvider
+    @StateObject var viewModel = ViewModel()
+    @EnvironmentObject var loginViewModel: LoginViewViewmodel
 
-    init(dataProvider: MainDataProvider) {
-        self.dataProvider = dataProvider
-        _viewModel = StateObject(
-            wrappedValue: ViewModel(dataProvider: dataProvider)
-        )
-    }
+//    init(dataProvider: MainDataProvider) {
+//        self.dataProvider = dataProvider
+//        _viewModel = StateObject(
+//            wrappedValue: ViewModel(dataProvider: dataProvider)
+//        )
+//    }
 
     var body: some View {
         BaseView {
             VStack {
-                StaffView(currentUser: dataProvider.currentUser)
+                StaffView(currentUser: loginViewModel.currentUser ?? UserData())
                 EmployeeMonthlySummaryDisplay(
                     hoursWorkedThisMonth: viewModel.hoursWorkedThisMonth
                 )
@@ -35,9 +37,11 @@ extension EmployeeStaffView {
 
     @MainActor
     class ViewModel: ObservableObject {
+        @EnvironmentObject var loginViewModel: LoginViewViewmodel
+        @Injected(\.employeeDataProvider) var dataProvider: MainDataProvider
         @Published var hoursWorkedThisMonth: Double = 0
 
-        init(dataProvider: MainDataProvider) {
+        init() {
             let ordersPublisher = Publishers.CombineLatest(
                 dataProvider.$activeOrders,
                 dataProvider.$completedOrders
@@ -49,7 +53,7 @@ extension EmployeeStaffView {
                     let allOrders = active + completed
                     //Turn list of lists into one single list
                     let timeUnits = allOrders.flatMap { $0.timeUnits }
-                    let currentUserId = dataProvider.currentUser.id
+                    let currentUserId = self.loginViewModel.currentUser?.id
 
                     return
                         timeUnits
@@ -73,6 +77,6 @@ extension EmployeeStaffView {
 
 #Preview {
     NavigationStack {
-        EmployeeStaffView(dataProvider: MainDataProvider.asPreview())
+        EmployeeStaffView()
     }
 }

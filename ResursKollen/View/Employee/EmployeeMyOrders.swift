@@ -6,26 +6,27 @@
 //
 
 import SwiftUI
+import Factory
 
 struct EmployeeMyOrders: View {
-    @ObservedObject var dataProvider: MainDataProvider
+//    @ObservedObject var dataProvider: MainDataProvider
     @EnvironmentObject var loginVm : LoginViewViewmodel
-    @StateObject var viewModel: ViewModel
+    @StateObject var viewModel = ViewModel()
     @State var isLoading = true
     @State var isLoggedOut = false
     
     
-    init(dataProvider: MainDataProvider) {
-        self.dataProvider = dataProvider
-        _viewModel = StateObject(
-            wrappedValue: ViewModel(dataProvider: dataProvider)
-        )
-    }
+//    init(dataProvider: MainDataProvider) {
+//        self.dataProvider = dataProvider
+//        _viewModel = StateObject(
+//            wrappedValue: ViewModel(dataProvider: dataProvider)
+//        )
+//    }
     
     var body: some View {
         BaseView {
             VStack(alignment: .leading) {
-                Text("Hej, \(dataProvider.currentUser.name) 👋")
+                Text("Hej, \(loginVm.currentUser?.name) 👋")
                     .font(.largeTitle)
                     .fontWeight(.bold)
                     .padding(.top)
@@ -120,19 +121,20 @@ struct EmployeeMyOrders: View {
 
 
 #Preview {
-    EmployeeMyOrders(dataProvider: MainDataProvider.asPreview())
+    EmployeeMyOrders()
 }
 
 extension EmployeeMyOrders {
     
     @MainActor
     class ViewModel: ObservableObject {
-        
+        @Injected(\.employeeDataProvider) var dataProvider: MainDataProvider
+        @EnvironmentObject var loginViewModel: LoginViewViewmodel
         @Published var myOrders: [Order] = []
         
-        init(dataProvider: MainDataProvider) {
+        init() {
             dataProvider.$activeOrders.map { orders in
-                orders.filter { $0.assignedUserId == dataProvider.currentUser.id
+                orders.filter { $0.assignedUserId == self.loginViewModel.currentUser?.id
                     && $0.status != .completed
                     && $0.status != .done}
             }

@@ -8,16 +8,17 @@
 import FirebaseFirestore
 import SwiftUI
 import Combine
+import Factory
 
 ///Shows a list of orders that need review (manager only).
 struct ReviewOrdersView: View {
-    @ObservedObject var dataProvider: MainDataProvider
-    @StateObject var viewModel : ViewModel
+//    @ObservedObject var dataProvider: MainDataProvider
+    @StateObject var viewModel = ViewModel()
     
-    init(dataProvider: MainDataProvider) {
-        self.dataProvider = dataProvider
-        _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
-    }
+//    init(dataProvider: MainDataProvider) {
+//        self.dataProvider = dataProvider
+//        _viewModel = StateObject(wrappedValue: ViewModel(dataProvider: dataProvider))
+//    }
     
     
     var body: some View {
@@ -67,7 +68,7 @@ struct ReviewOrdersView: View {
 extension ReviewOrdersView {
     @MainActor
     class ViewModel: ObservableObject {
-
+        @Injected(\.managerDataProvider) var dataProvider: MainDataProvider
         @Published var state: OrderDataState = .loading
         private var cancellables = Set<AnyCancellable>()
 
@@ -78,7 +79,7 @@ extension ReviewOrdersView {
             case error(Error)
         }
 
-        init(dataProvider: MainDataProvider) {
+        init() {
             dataProvider.$activeOrders.sink{ [weak self] orders in
                 let doneOrders = orders.filter{$0.status == .done}
                 if doneOrders.isEmpty {
@@ -102,5 +103,5 @@ extension ReviewOrdersView {
 
 
 #Preview {
-    ReviewOrdersView(dataProvider: MainDataProvider.asPreview())
+    ReviewOrdersView()
 }

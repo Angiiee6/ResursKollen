@@ -1,4 +1,3 @@
-import Combine
 //
 //  EmployeeHomeView.swift
 //  ResursKollen
@@ -6,23 +5,25 @@ import Combine
 //  Created by Magnus Freidenfelt on 2025-05-16.
 //
 import SwiftUI
+import Combine
+import Factory
 
 struct EmployeeHomeView: View {
-    @ObservedObject var dataProvider: MainDataProvider
-    @StateObject var viewModel: ViewModel
+//    @ObservedObject var dataProvider: MainDataProvider
+    @StateObject var viewModel = ViewModel()
 
-    init(dataProvider: MainDataProvider) {
-        self.dataProvider = dataProvider
-        _viewModel = StateObject(
-            wrappedValue: ViewModel(dataProvider: dataProvider)
-        )
-    }
+//    init(dataProvider: MainDataProvider) {
+//        self.dataProvider = dataProvider
+//        _viewModel = StateObject(
+//            wrappedValue: ViewModel(dataProvider: dataProvider)
+//        )
+//    }
 
     var body: some View {
         
         TabView {
             NavigationStack {
-                EmployeeMyOrders(dataProvider: dataProvider)
+                EmployeeMyOrders()
             }
             .tabItem {
                 Label(
@@ -32,7 +33,7 @@ struct EmployeeHomeView: View {
             }.badge(viewModel.myOrdersCount)
             
             NavigationStack {
-                EmployeeAllOrders(dataProvider: dataProvider)
+                EmployeeAllOrders()
             }
             .tabItem {
                 Label(
@@ -42,7 +43,7 @@ struct EmployeeHomeView: View {
             }.badge(viewModel.unassignedOrdersCount)
             
             NavigationStack {
-                EmployeeStaffView(dataProvider: dataProvider)
+                EmployeeStaffView()
             }
             .tabItem {
                 Label("Kontakter", systemImage: "person.3")
@@ -56,18 +57,19 @@ extension EmployeeHomeView {
 
     @MainActor
     class ViewModel: ObservableObject {
-        let currentUser: UserData
+        @Injected(\.employeeDataProvider) var dataProvider: MainDataProvider
+        @EnvironmentObject var loginViewModel: LoginViewViewmodel
         @Published var myOrdersCount: Int = 0
         @Published var unassignedOrdersCount: Int = 0
 
         private var cancellables = Set<AnyCancellable>()
 
-        init(dataProvider: MainDataProvider) {
-            self.currentUser = dataProvider.currentUser
+        init() {
             dataProvider.$activeOrders.sink { [weak self] allOrders in
                 self?.myOrdersCount =
                     allOrders.filter {
-                        $0.assignedUserId == dataProvider.currentUser.id
+                        fatalError("Don't use env obj in view models!")
+                        $0.assignedUserId == self?.loginViewModel.currentUser?.id
                             && $0.status != .completed
                             && $0.status != .done
                     }.count
@@ -133,5 +135,5 @@ extension EmployeeHomeView {
 }
 
 #Preview {
-    EmployeeHomeView(dataProvider: MainDataProvider.asPreview())
+    EmployeeHomeView()
 }

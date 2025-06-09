@@ -19,18 +19,18 @@ class MainDataProvider: ObservableObject {
     //Not in use yet
     @Published var error: Error?
     //@Published var allUsers: [UserData] = []
-    let currentUser: UserData
+//    let currentUser: UserData
 
     private var listeners = [ListenerRegistration]()
 
     fileprivate init(
-        currentUser: UserData,
+//        currentUser: UserData,
         withActiveOrders: Bool,
         withCompletedOrders: Bool,
         withAllUsers: Bool,
         withCustomers: Bool
     ) {
-        self.currentUser = currentUser
+//        self.currentUser = currentUser
         if withActiveOrders {
             listenToActiveOrders()
         }
@@ -48,7 +48,7 @@ class MainDataProvider: ObservableObject {
 
     //For preview mock data
     private init() {
-        self.currentUser = UserData(name: "Test user")
+//        self.currentUser = UserData(name: "Test user")
         self.activeOrders = Order.mockOrders.filter { $0.status != .completed }
         self.completedOrders = Order.mockOrders.filter {
             $0.status == .completed
@@ -116,14 +116,14 @@ class MainDataProviderBuilder {
     private var completedOrdersAdded = false
     private var allUsersAdded = false
     private var customersAdded = false
-    let currentUser: UserData
+//    let currentUser: UserData
 
     /// Initializes the builder with the current user.
     ///
     /// - Parameter currentUser: The current user of the session.
-    init(currentUser: UserData) {
-        self.currentUser = currentUser
-    }
+//    init(currentUser: UserData) {
+//        self.currentUser = currentUser
+//    }
 
     /// Adds a listener for active orders Firestore collection.
     func withActiveOrders() -> MainDataProviderBuilder {
@@ -155,7 +155,7 @@ class MainDataProviderBuilder {
     /// - Returns: A fully configured `MainDataProvider` instance.
     @MainActor func build() -> MainDataProvider {
         MainDataProvider(
-            currentUser: currentUser,
+//            currentUser: currentUser,
             withActiveOrders: activeOrdersAdded,
             withCompletedOrders: completedOrdersAdded,
             withAllUsers: allUsersAdded,
@@ -166,23 +166,23 @@ class MainDataProviderBuilder {
 
 extension Container {
     
-    var employeeDataProvider: ParameterFactory<UserData, MainDataProvider> {
-        ParameterFactory<UserData, MainDataProvider>({ user in
-            MainDataProviderBuilder(currentUser: user)
+    var employeeDataProvider: Factory<MainDataProvider> {
+        Factory(self) { @MainActor in
+            MainDataProviderBuilder()
                 .withActiveOrders()
                 .withCompletedOrders()
                 .build()
-        })
+        }
     }
-
-    var managerDataProvider: ParameterFactory<UserData, MainDataProvider> {
-        ParameterFactory<UserData, MainDataProvider>(factory: { user in
-            MainDataProviderBuilder(currentUser: user)
+    
+    var managerDataProvider: Factory<MainDataProvider> {
+        Factory(self) {
+            @MainActor in
+            MainDataProviderBuilder()
                 .withActiveOrders()
                 .withCompletedOrders()
                 .withAllCustomers()
                 .build()
-        })
+        }
     }
-
 }
