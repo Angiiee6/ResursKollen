@@ -8,101 +8,105 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
-    @State private var isLoggedOut = false
+    
     @EnvironmentObject var loginViewModel: LoginViewViewmodel
- 
+   
+    @State private var isLoggedOut = false
     @State private var showMoreNav = false
     @State private var selected = 0
     @State private var navToMessage = false
     @State private var navToMaterial = false
     @State private var navToCusomer = false
-    
+
     var body: some View {
-        
-        TabView {
-            NavigationStack {
-                ManagerAllOrdersView()
-            }
-            .tabItem {
-                Label(
-                    "Aktiva ordrar",
-                    systemImage: "list.bullet.clipboard"
-                )
-            }.tag(0)
-            NavigationStack {
-                ReviewOrdersView()
-            }
-            .tabItem {
-                Label(
-                    "Utförda ordrar",
-                    systemImage: "text.page.badge.magnifyingglass"
-                )
-            }.tag(1)
-            NavigationStack {
-                SummaryView()
-            }
-            .tabItem {
-                Label(
-                    "Statistik",
-                    systemImage: "waveform.badge.magnifyingglass"
-                )
-            }.tag(2)
-            NavigationStack {
-                StaffView(currentUser: loginViewModel.currentUser ?? UserData())
-            }
-            .tabItem {
-                Label("Personal", systemImage: "person.3")
-            }.tag(3)
-            
-            NavigationStack {
-                Text("fler alternativ")
-            }
-            .tabItem {
-                Label("Mera", systemImage: "ellipsis.circle")
-            }
-            .tag(5)
-            
-        }
-        .onChange(of: selected ){ newValue in
-            if newValue == 5 {
-                showMoreNav = true
-                selected = 0  // Hoppar tillbaka till första fliken
-                print("Händer saker")
-            }
-        }
-        .tint(.orange)
+        NavigationStack {
+            TabView(selection: $selected) {
+                NavigationStack {
+                    ManagerAllOrdersView()
+                }
+                .tabItem {
+                    Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
+                }
+                .tag(0)
 
-        .confirmationDialog("Välj", isPresented: $showMoreNav) {
-            Button("Meddelande till anställda") {
-                navToMessage = true
-            }
-            Button("Material") {
-                navToMaterial = true
-            }
-            Button("Kunder")
-            {
-                navToCusomer = true
-            }
-        }
-        .navigationDestination(isPresented: $navToCusomer) {
-           CustomerView()
-        }
-        .navigationDestination(isPresented: $navToMessage) {
-            NewMessageEditView()
-        }
-        .navigationDestination(isPresented: $navToMaterial) {
-            MaterialHomeView().navigationBarBackButtonHidden(false)
-        }
-        .navigationDestination(isPresented: $isLoggedOut) {
-            ContentView().navigationBarBackButtonHidden(true)
-        }
+                NavigationStack {
+                    ReviewOrdersView()
+                }
+                .tabItem {
+                    Label(
+                        "Utförda ordrar",
+                        systemImage: "text.page.badge.magnifyingglass"
+                    )
+                }
+                .tag(1)
 
+                NavigationStack {
+                    SummaryView()
+                }
+                .tabItem {
+                    Label(
+                        "Statistik",
+                        systemImage: "waveform.badge.magnifyingglass"
+                    )
+                }
+                .tag(2)
+
+                NavigationStack {
+                    StaffView(currentUser: loginViewModel.currentUser ?? UserData())
+                }
+                .tabItem {
+                    Label("Personal", systemImage: "person.3")
+                }
+                .tag(3)
+
+                NavigationStack {
+                    Text("fler alternativ")
+                }
+                .tabItem {
+                    Label("Mera", systemImage: "ellipsis.circle")
+                }
+                .tag(5)
+            }
+            .onChange(of: selected ){ newValue in
+                if newValue == 5 {
+                    showMoreNav = true
+                    selected = 0  // Hoppar tillbaka till första fliken
+                    print("Händer saker")
+                }
+            }
+            .tint(.orange)
+
+            .confirmationDialog("Välj", isPresented: $showMoreNav) {
+                Button("Meddelande till anställda") {
+                    navToMessage = true
+                }
+                Button("Material") {
+                    navToMaterial = true
+                }
+                Button("Kunder")
+                {
+                    navToCusomer = true
+                }
+            }
+            .navigationDestination(isPresented: $navToCusomer) {
+               CustomerView()
+            }
+            .navigationDestination(isPresented: $navToMessage) {
+                NewMessageEditView()
+            }
+            .navigationDestination(isPresented: $navToMaterial) {
+                MaterialHomeView().navigationBarBackButtonHidden(false)
+            }
+            .navigationDestination(isPresented: $isLoggedOut) {
+                ContentView().navigationBarBackButtonHidden(true)
+            }
+
+        }
     }
+
 }
 
-
-
 #Preview {
-ManagerHomeView()
+    ManagerHomeView()
 }
 

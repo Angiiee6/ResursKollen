@@ -15,6 +15,7 @@ final class MaterialViewModel: ObservableObject {
    init(){
       Task{
          try? await readAllMaterial()
+          print("kommer vi hit? \(materials)")
      }
     }
     func readAllMaterial() async throws {
@@ -122,8 +123,8 @@ struct MaterialHomeView: View {
                 .padding(.horizontal)
                 .padding(.bottom,20)
             }.sheet(isPresented: $isShowAddItem) {
-                //AddMaterialView(viewModel: viewModel, materialToEdit: $materialToEdit )
-                //    .presentationDragIndicator(.visible)
+                AddMaterialView(viewModel: viewModel, materialToEdit: $materialToEdit )
+                    .presentationDragIndicator(.visible)
             }
            
         }

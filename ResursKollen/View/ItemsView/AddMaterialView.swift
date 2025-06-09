@@ -11,7 +11,7 @@ import SwiftUI
     struct AddMaterialView: View {
         
         
-        @StateObject var viewModel: MaterialViewModel
+        @ObservedObject var viewModel: MaterialViewModel
         @Environment(\.dismiss) var dismiss
         
         @Binding var materialToEdit: Material?
