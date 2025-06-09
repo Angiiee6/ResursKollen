@@ -6,6 +6,7 @@ import SwiftUI
 struct StaffView: View {
     @StateObject private var viewModel = StaffViewViewModel()
     @State private var isAddNewEmployeePresented = false
+    @State private var detailViewPresent = false
     let currentUser: UserData
     
     
@@ -27,11 +28,20 @@ struct StaffView: View {
                         if !managers.isEmpty {
                             Section(header: Text(EmploymentStatus.manager.nameSE.capitalized).foregroundColor(.orange)) {
                                 ForEach(managers, id: \.id) { user in
-                                    NavigationLink {
-                                        StaffDetailView(viewModel: viewModel,user: user, currentUser: currentUser)
-                                    } label: {
-                                        StaffRowView(user: user)
-                                    }
+//                                    NavigationLink {
+//                                        
+//                                        StaffDetailView(viewModel: viewModel, currentUser: currentUser)
+//                                    } label: {
+//                                        StaffRowView(userName: user.name)
+//                                    }
+//                                    .onAppear {
+//                                        viewModel.selectedUser = user
+//                                    }
+                                    StaffRowView(userName: user.name)
+                                        .onTapGesture {
+                                            viewModel.selectedUser = user
+                                            detailViewPresent = true
+                                        }
                                     .listRowBackground(Color.white.opacity(0.1))
                                     .listRowSeparatorTint(Color.orange.opacity(0.3))
                                 }
@@ -41,11 +51,19 @@ struct StaffView: View {
                         // Avdelning för anställda
                         Section(header: Text(EmploymentStatus.employee.nameSE.capitalized).foregroundColor(.orange)) {
                             ForEach(employees, id: \.id) { user in
-                                NavigationLink {
-                                    StaffDetailView(viewModel: viewModel,user: user, currentUser: currentUser)
-                                } label: {
-                                    StaffRowView(user: user)
-                                }
+//                                NavigationLink {
+//                                    StaffDetailView(viewModel: viewModel, currentUser: currentUser)
+//                                } label: {
+//                                    StaffRowView(userName: user.name)
+//                                }
+//                                .onAppear {
+//                                    viewModel.selectedUser = user
+//                                }
+                                StaffRowView(userName: user.name)
+                                    .onTapGesture {
+                                        viewModel.selectedUser = user
+                                        detailViewPresent = true
+                                    }
                                 .listRowBackground(Color.white.opacity(0.1))
                                 .listRowSeparatorTint(Color.orange.opacity(0.3))
                             }
@@ -88,16 +106,19 @@ struct StaffView: View {
 //                    try? await viewModel.loadCurrentUser()
                 }
             }
+            .navigationDestination(isPresented: $detailViewPresent) {
+                StaffDetailView(viewModel: viewModel, currentUser: currentUser)
+            }
         }
     }
 }
 
 struct StaffRowView: View {
-    let user: UserData
+    let userName: String
     
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(user.name)
+            Text(userName)
                 .font(.headline)
                 .foregroundColor(.white)
 
@@ -109,6 +130,7 @@ struct StaffRowView: View {
 @MainActor
 final class StaffViewViewModel: ObservableObject {
     @Published private(set) var users: [UserData] = []
+    @Published var selectedUser: UserData = UserData()
 
     func loadUsers() async throws {
         self.users = try await UsersManager.shared.getAllUser()
