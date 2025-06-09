@@ -40,6 +40,7 @@ final class MaterialManager {
     
     //Uppdatera befintlig post
     func updateMaterialPost(material: Material) throws{
+        
         try? materialDocuments(material: material).setData(from: material, merge: true)
     }
     
@@ -47,6 +48,7 @@ final class MaterialManager {
     //radera post med material
     func deleteMaterialPost(materialPost: Material)async throws{
         
+        print("run delete material \(materialPost.id)")
         try await materialColletion.document(materialPost.id).delete()
         
         

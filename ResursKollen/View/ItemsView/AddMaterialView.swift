@@ -79,12 +79,18 @@ import SwiftUI
                     Section {
                         HStack{
                             
-                                Button("Spara") {
-                                    if !title.isEmpty{
-                                        saveMaterialData()
-                                       
-                                    }
+                            Button{
+                                saveMaterialData()
+                            }label: {
+                                Text("Spara")
                             }
+                            
+                         /*       Button("Spara") {
+                                    if !title.isEmpty{
+                                       saveMaterialData()
+                                    
+                                    }
+                            } */
                             
                             Spacer()
                             
@@ -94,7 +100,7 @@ import SwiftUI
                                         Task{
                                            try? await viewModel.deleteMaterialPost(material: materialToDelete)
                                             print("kommer vi hit?")
-                                            print(materialToDelete)
+                                           
                                         }
                                         }
                                 }
