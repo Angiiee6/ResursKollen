@@ -84,8 +84,7 @@ struct StaffDetailView: View {
 
                     }     .listRowBackground(Color.white.opacity(0.1))
                         .listRowSeparatorTint(Color.orange.opacity(0.3))
-
-                    //NOTE: här har jag lagt till logik för en listan med mer information, @Angie, @Vivanne plocka bort om ni tycker jag kladdat för mycket /Da
+                    // If user is manager position, enable to view more info. on employee
                     if currentUser.status == .manager {
                         Section {
                             Button {

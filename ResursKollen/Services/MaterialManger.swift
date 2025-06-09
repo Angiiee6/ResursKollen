@@ -8,6 +8,9 @@
 import Foundation
 import FirebaseFirestore
 
+/*
+ Handles all items data to and from Firebase
+*/
 final class MaterialManager {
     
     static let shared = MaterialManager()
@@ -21,12 +24,12 @@ final class MaterialManager {
         return materialColletion.document(material.id)
     }
     
-    //Ny post med förbruknings material
+    //create new material post
     func writeNewMaterialPost(material: Material)async throws{
         try materialDocuments(material: material).setData(from: material, merge: false)
     }
     
-    //hämta allt material
+    //fetch all stored items
     func readMaterialList() async throws -> [Material] {
         
         let snapshot = try await Firestore.firestore().collection("material").getDocuments()
@@ -38,14 +41,14 @@ final class MaterialManager {
     }
     
     
-    //Uppdatera befintlig post
+    //Uppdatera post
     func updateMaterialPost(material: Material) throws{
         
         try? materialDocuments(material: material).setData(from: material, merge: true)
     }
     
     
-    //radera post med material
+    //Delete post
     func deleteMaterialPost(materialPost: Material)async throws{
         
         print("run delete material \(materialPost.id)")

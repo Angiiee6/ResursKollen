@@ -7,7 +7,10 @@
 
 import Foundation
 import SwiftUI
-
+/*
+ Model representing a message to staff in the app
+ 
+ */
 struct Message: Codable, Identifiable{
     var id: String = ""
     var title: String

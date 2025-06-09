@@ -13,8 +13,6 @@ struct Material: Codable, Identifiable, Equatable {
     var quantity: Int = 1
     var priceOut: Double = 0.0
     var id: String = UUID().uuidString
-    
-    //Da
     var priceIn: Double = 0.0
     var description: String = ""
     var unit: MaterialUnits = .st
