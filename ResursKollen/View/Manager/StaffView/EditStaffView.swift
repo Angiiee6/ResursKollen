@@ -8,7 +8,6 @@
 import SwiftUI
 struct EditStaffView: View {
     @Environment(\.dismiss) var dismiss
-    //TODO: This initializes a new view model, not observing an existing one?
     @ObservedObject var viewModel : StaffViewViewModel
 ////    let user: UserData
 //    @State var name: String

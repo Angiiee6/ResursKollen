@@ -8,6 +8,9 @@
 import Foundation
 import SwiftUI
 
+/*
+ View for editing staff messages
+ */
 struct EditMessagesView: View {
     
     @StateObject var viewmodel: MessagesManagerViewModel
@@ -38,14 +41,15 @@ struct EditMessagesView: View {
                        }
                    }
                }
-
+               
                Section {
                    Button(action: submitMessage) {
                        Text(messageToEdit == nil ? "Publicera" : "Uppdatera")
                    }
                    .disabled(title.isEmpty || text.isEmpty)
                }
-
+               
+               //shows an message, enable delete button
                if messageToEdit != nil {
                    Section {
                        Button("Radera", role: .destructive) {
@@ -67,7 +71,7 @@ struct EditMessagesView: View {
            }
        }
    }
-
+//Submits new message, merge to old message if updated
    private func submitMessage() {
        var message = messageToEdit ?? Message(title: "", text: "", category: .general)
        message.title = title

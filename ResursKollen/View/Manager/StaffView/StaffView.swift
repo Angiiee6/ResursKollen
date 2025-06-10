@@ -3,6 +3,9 @@
 import FirebaseAuth
 import SwiftUI
 
+/*
+    View that dispalys all staff / employess in a list
+*/
 struct StaffView: View {
     @StateObject private var viewModel = StaffViewViewModel()
     @State private var isAddNewEmployeePresented = false
@@ -10,11 +13,11 @@ struct StaffView: View {
     let currentUser: UserData
     
     
-   // Sorterar namnen på chefer
+   // Sort list for managers
     private var managers: [UserData] {
         viewModel.users.filter { $0.status == .manager }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
-    // Sorterar namnen på anställda
+    // Sort employess
     private var employees: [UserData] {
         viewModel.users.filter { $0.status == .employee }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
@@ -24,7 +27,7 @@ struct StaffView: View {
             BaseView {
                 VStack(alignment: .leading, spacing: 16) {
                     List {
-                        // Avdelning för chefer
+                        // Top view managers
                         if !managers.isEmpty {
                             Section(header: Text(EmploymentStatus.manager.nameSE.capitalized).foregroundColor(.orange)) {
                                 ForEach(managers, id: \.id) { user in
@@ -48,7 +51,7 @@ struct StaffView: View {
                             }
                         }
                         
-                        // Avdelning för anställda
+                        // Section for employee
                         Section(header: Text(EmploymentStatus.employee.nameSE.capitalized).foregroundColor(.orange)) {
                             ForEach(employees, id: \.id) { user in
 //                                NavigationLink {
@@ -75,6 +78,8 @@ struct StaffView: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbarColorScheme(.dark, for: .navigationBar)
                     
+                    
+                    // If user is in manger position, enable button to add employees
                     if currentUser.status == .manager {
                         Button(action: {
                             isAddNewEmployeePresented = true
