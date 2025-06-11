@@ -133,15 +133,15 @@ final class StaffViewViewModel: ObservableObject {
     func loadUsers() async throws {
         self.users = try await UsersManager.shared.getAllUser()
     }
-    init() {
+/*    init() {
         listenToUsers()
-    }
+    } */
 
     func updateStaff(user: UserData) async throws {
         try await UsersManager.shared.updateUser(user: user)
     }
 
-    func listenToUsers() {
+   /* func listenToUsers() {
         UsersManager.shared.listenToUserChanges { [weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -152,7 +152,7 @@ final class StaffViewViewModel: ObservableObject {
                 }
             }
         }
-    }
+    } */
 
 }
 

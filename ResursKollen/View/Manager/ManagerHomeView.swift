@@ -14,6 +14,7 @@ struct ManagerHomeView: View {
     @State private var isLoggedOut = false
     @State private var showMoreNav = false
     @State private var selected = 0
+    @State private var navToOrdersDone = false
     @State private var navToMessage = false
     @State private var navToMaterial = false
     @State private var navToCusomer = false
@@ -67,16 +68,21 @@ struct ManagerHomeView: View {
                 }
                 .tag(5)
             }
-            .onChange(of: selected ){ newValue in
+            .onChange(of: selected, initial: false){ oldvalue, newValue  in
                 if newValue == 5 {
                     showMoreNav = true
                     selected = 0  // Hoppar tillbaka till första fliken
-                    print("Händer saker")
+                  
                 }
             }
             .tint(.orange)
 
             .confirmationDialog("Välj", isPresented: $showMoreNav) {
+                
+                
+                Button("Avslutade arbetsordrar"){
+                    navToOrdersDone = true
+                }
                 Button("Meddelande till anställda") {
                     navToMessage = true
                 }
@@ -87,6 +93,9 @@ struct ManagerHomeView: View {
                 {
                     navToCusomer = true
                 }
+            }
+            .navigationDestination(isPresented: $navToOrdersDone) {
+               CompletedOrders()
             }
             .navigationDestination(isPresented: $navToCusomer) {
                CustomerView()
