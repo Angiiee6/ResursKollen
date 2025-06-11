@@ -60,6 +60,8 @@ struct NewMessageEditView: View {
                                 .font(.body)
                             Text("Kategori: \(message.category.MessagesCategorySE)")
                                 .font(.caption)
+                            Text("Datum: \(message.date)")
+                                .font(.caption)
                             
                             HStack{
                                 Button("Ändra"){
