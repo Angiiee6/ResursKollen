@@ -6,7 +6,7 @@ struct StaffDetailView: View {
     //    let user: UserData
     @State private var isShowMoreInfo = false
     let currentUser: UserData
-
+    //MARK: Body
     var body: some View {
 
         NavigationStack {
@@ -87,6 +87,7 @@ struct StaffDetailView: View {
 
                     }.listRowBackground(Color.white.opacity(0.1))
                         .listRowSeparatorTint(Color.orange.opacity(0.3))
+                    //MARK: Chef - se mer info
                     // If user is manager position, enable to view more info. on employee
                     if currentUser.status == .manager {
                         Section {
@@ -156,6 +157,7 @@ struct StaffDetailView: View {
     }
 }
 
+//MARK: DetailRow
 struct DetailRow: View {
     let icon: String
     let label: String
@@ -204,6 +206,7 @@ struct DetailRow: View {
         }
     }
 }
+//MARK: Funktion för att ringa
 // funktion för att ringa
 private func callNumber(_ number: String) {
     let cleaned = number.filter { $0.isNumber }
@@ -216,6 +219,7 @@ private func callNumber(_ number: String) {
     }
 }
 
+//MARK: Funktion för sms
 //  Funktion för att skicka sms
 private func sendSMS(_ number: String) {
     let cleaned = number.filter { $0.isNumber }
@@ -228,6 +232,7 @@ private func sendSMS(_ number: String) {
     }
 }
 
+//MARK: Funktion för mail
 private func sendMail(to address: String) {
     let trimmedAddress = address.trimmingCharacters(
         in: .whitespacesAndNewlines

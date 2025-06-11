@@ -12,6 +12,7 @@ struct EditStaffView: View {
     @ObservedObject var viewModel: StaffViewViewModel
     @State private var isDeletingStaff: Bool = false
 
+    //MARK: Body
     var body: some View {
         NavigationStack {
             Form {

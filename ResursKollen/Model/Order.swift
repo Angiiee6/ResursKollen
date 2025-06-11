@@ -75,6 +75,7 @@ enum OrderStatus: String, Codable, CaseIterable {
     ///Fully completed, reviewed by managers and closed.
     case completed
 
+    //MARK: Status
     var nameSE: String {
         switch self {
         case .registered:
@@ -108,7 +109,8 @@ extension OrderStatus {
             return .green
         }
     }
-//MARK: what is this
+
+    //MARK: Icon
     var icon: String {
         switch self {
         case .registered:

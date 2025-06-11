@@ -13,7 +13,7 @@ import Factory
 ///Shows a list of orders that need review (manager only).
 struct ReviewOrdersView: View {
     @StateObject var viewModel = ViewModel()
-    
+    //MARK: Body
     var body: some View {
         BaseView {
             ZStack {
@@ -43,21 +43,10 @@ struct ReviewOrdersView: View {
                     }
                 }
             }
-//            .padding()
-          /* Pluset för att skapa en ny order
-           .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    NavigationLink {
-                        CreateOrderView()
-                    } label: {
-                        Image(systemName: "plus")
-                    }
-                }
-            } */
         }
     }
 }
-
+//MARK: ViewModel
 extension ReviewOrdersView {
     @MainActor
     class ViewModel: ObservableObject {

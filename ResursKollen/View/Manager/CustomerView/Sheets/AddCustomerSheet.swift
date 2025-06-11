@@ -29,6 +29,7 @@ struct AddCustomerSheet: View {
         !viewModel.city.isEmpty
     }
 
+    //MARK: Body
     var body: some View {
         NavigationView {
             BaseView {
@@ -47,6 +48,7 @@ struct AddCustomerSheet: View {
                     
                     ScrollView {
                         VStack(spacing: 20) {
+                            //MARK: Kunduppgifter
                             // Contact Information Section - Visas bara när inte i adressläge
                             if !streetNameTextFieldIsFocused && !showSuggestions {
                                 VStack(alignment: .leading, spacing: 8) {
@@ -66,6 +68,7 @@ struct AddCustomerSheet: View {
                                 }
                             }
                             
+                            //MARK: Address
                             // Address Section - Alltid synlig
                             VStack(alignment: .leading) {
                                 Text("Adressuppgifter: *")
@@ -180,6 +183,7 @@ struct AddCustomerSheet: View {
                         showSuggestions = isFocused && !viewModel.searchText.isEmpty
                     }
                 }
+                //MARK: Alert
                 .alert("Meddelande", isPresented: $alertIsPresent) {
                     Button("Ok") {
                         dismiss()
@@ -192,6 +196,7 @@ struct AddCustomerSheet: View {
         }
     }
 
+    //MARK: Animation förslag
     private func animateSuggestions(shown: Bool) {
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             showSuggestions = shown
@@ -214,6 +219,7 @@ struct AddCustomerSheet: View {
         )
     }
     
+    //MARK: Knapp-stil
     private struct PrimaryButtonStyle: ButtonStyle {
         var backgroundColor: Color
         

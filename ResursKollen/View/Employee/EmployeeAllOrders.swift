@@ -13,10 +13,12 @@ struct EmployeeAllOrders: View {
     @State var searchText: String = ""
     @StateObject var viewModel = ViewModel()
 
+    //MARK: Body
     var body: some View {
         BaseView {
             VStack(alignment: .leading, spacing: 16) {
                 List {
+                    //MARK: Lediga
                     Section(
                         header: Text("Lediga").foregroundColor(.blue)
                     ) {
@@ -31,6 +33,7 @@ struct EmployeeAllOrders: View {
                             ) {
                                 OrderRowAllOrders(order: order)
                                     .listRowBackground(Color.white.opacity(0.1))
+                                //MARK: Swipe "Ta order"
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
                                             self.viewModel.takeOrder(
@@ -48,6 +51,7 @@ struct EmployeeAllOrders: View {
                                 .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
+                    //MARK: Tilldelade
                     Section(
                         header: Text("Tilldelade").foregroundColor(
                             .orange
@@ -82,6 +86,7 @@ struct EmployeeAllOrders: View {
                                 .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
+                    //MARK: Försenade
                     Section(
                         header: Text("Försenade").foregroundColor(.red)
                     ) {
@@ -114,28 +119,10 @@ struct EmployeeAllOrders: View {
                                 .listRowSeparatorTint(Color.orange.opacity(0.3))
                         }
                     }
-
-                  /*  Section(
-                        header: Text("Avslutade ordrar").foregroundColor(.green)
-                    ) {
-                        ForEach(
-                            filteredOrders(for: viewModel.completedOrders)
-                        ) {
-                            order in
-                            NavigationLink(
-                                destination: OrderDetailView(
-                                    order: order,
-                                    status: .employee
-                                )
-                            ) {
-                                OrderRowAllOrders(order: order)
-                                    .listRowBackground(Color.white)
-                            }.listRowBackground(Color.white.opacity(0.2))
-                        }
-                    } */
                 }
                 .listStyle(.insetGrouped)
                 .background(Color.clear)
+                //MARK: Ta bort svart bakgrund
                 .scrollContentBackground(.hidden)
             }
         }
@@ -144,7 +131,7 @@ struct EmployeeAllOrders: View {
         .toolbarColorScheme(.dark, for: .navigationBar)
     }
 
-    //
+    //MARK: Filtrera sök
     // tar in en status och filtrerar sökordet för att filtrera i listan
     func filteredOrders(for orders: [Order]) -> [Order] {
         orders.filter {
@@ -159,6 +146,7 @@ struct EmployeeAllOrders: View {
     }
 }
 
+//MARK: ViewModel
 extension EmployeeAllOrders {
 
     @MainActor
@@ -193,6 +181,7 @@ extension EmployeeAllOrders {
                 .store(in: &cancellables)
         }
 
+        //MARK: Funktion ta order
         ///Sets the order's `assignedUserId` to the current user's id.
         func takeOrder(order: Order) {
             var updatedOrder = order

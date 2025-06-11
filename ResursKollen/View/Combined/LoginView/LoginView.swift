@@ -139,7 +139,7 @@ struct LoginView: View {
                         }
                     })
                 }
-                //Hela containerns utseende
+                //MARK: Hela containern
                 .padding(30)
                 .background(Color.white.opacity(0.2))
                 .cornerRadius(20)

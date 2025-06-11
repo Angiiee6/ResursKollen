@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CustomerInfoDisplay: View {
     let customer: Customer
+    //MARK: Body
     var body: some View {
         HStack {
             VStack (alignment: .leading, spacing: 12) {

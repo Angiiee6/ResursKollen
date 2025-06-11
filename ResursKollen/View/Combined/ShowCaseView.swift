@@ -12,6 +12,7 @@ struct ShowCaseView: View {
     let value: String
     let iconName: String?
     
+    //MARK: Body
     var body: some View {
         VStack(spacing: 8) {
             if let iconName = iconName {
