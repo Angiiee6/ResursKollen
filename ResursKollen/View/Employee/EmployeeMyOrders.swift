@@ -70,7 +70,7 @@ struct EmployeeMyOrders: View {
                         }
                         .onAppear {
                             DispatchQueue.main.asyncAfter(
-                                deadline: .now() + 2.0
+                                deadline: .now() + 1.4
                             ) {  // <--- ändra antalet sekunder här
                                 isLoading = false
                             }
@@ -81,15 +81,19 @@ struct EmployeeMyOrders: View {
                 }
                 .animation(.easeInOut, value: isLoading)
                 .transition(.opacity)
-
-                NavigationLink(
+                .navigationDestination(isPresented: $isLoggedOut) {
+                    ContentView().navigationBarBackButtonHidden(true)
+                }
+                
+                //deprecated in iOS 16.0
+                /*  NavigationLink(
                     destination: ContentView().navigationBarBackButtonHidden(
                         true
                     ),
                     isActive: $isLoggedOut
                 ) {
                     EmptyView()
-                }
+                } */
             }
         }
         .toolbar {

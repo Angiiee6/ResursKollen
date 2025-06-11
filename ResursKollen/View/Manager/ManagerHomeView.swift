@@ -8,58 +8,114 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
-    @State private var isLoggedOut = false
-    @EnvironmentObject var loginViewModel: LoginViewViewmodel
     
+    @EnvironmentObject var loginViewModel: LoginViewViewmodel
+   
+    @State private var isLoggedOut = false
+    @State private var showMoreNav = false
+    @State private var selected = 0
+    @State private var navToOrdersDone = false
+    @State private var navToMessage = false
+    @State private var navToMaterial = false
+    @State private var navToCusomer = false
+
     var body: some View {
-        
-        TabView {
-            NavigationStack {
-                ManagerAllOrdersView()
+        NavigationStack {
+            TabView(selection: $selected) {
+                NavigationStack {
+                    ManagerAllOrdersView()
+                }
+                .tabItem {
+                    Label("Aktiva ordrar", systemImage: "list.bullet.clipboard")
+                }
+                .tag(0)
+
+                NavigationStack {
+                    ReviewOrdersView()
+                }
+                .tabItem {
+                    Label(
+                        "Utförda ordrar",
+                        systemImage: "text.page.badge.magnifyingglass"
+                    )
+                }
+                .tag(1)
+
+                NavigationStack {
+                    SummaryView()
+                }
+                .tabItem {
+                    Label(
+                        "Statistik",
+                        systemImage: "waveform.badge.magnifyingglass"
+                    )
+                }
+                .tag(2)
+
+                NavigationStack {
+                    StaffView(currentUser: loginViewModel.currentUser ?? UserData())
+                }
+                .tabItem {
+                    Label("Personal", systemImage: "person.3")
+                }
+                .tag(3)
+
+                NavigationStack {
+                    Text("fler alternativ")
+                }
+                .tabItem {
+                    Label("Mera", systemImage: "ellipsis.circle")
+                }
+                .tag(5)
             }
-            .tabItem {
-                Label(
-                    "Aktiva ordrar",
-                    systemImage: "list.bullet.clipboard"
-                )
+            .onChange(of: selected, initial: false){ oldvalue, newValue  in
+                if newValue == 5 {
+                    showMoreNav = true
+                    selected = 0  // Hoppar tillbaka till första fliken
+                  
+                }
             }
-            NavigationStack {
-                ReviewOrdersView()
+            .tint(.orange)
+
+            .confirmationDialog("Välj", isPresented: $showMoreNav) {
+                
+                
+                Button("Avslutade arbetsordrar"){
+                    navToOrdersDone = true
+                }
+                Button("Meddelande till anställda") {
+                    navToMessage = true
+                }
+                Button("Material") {
+                    navToMaterial = true
+                }
+                Button("Kunder")
+                {
+                    navToCusomer = true
+                }
             }
-            .tabItem {
-                Label(
-                    "Utförda ordrar",
-                    systemImage: "text.page.badge.magnifyingglass"
-                )
+            .navigationDestination(isPresented: $navToOrdersDone) {
+               CompletedOrders()
             }
-            NavigationStack {
-                SummaryView()
+            .navigationDestination(isPresented: $navToCusomer) {
+               CustomerView()
             }
-            .tabItem {
-                Label(
-                    "Statistik",
-                    systemImage: "waveform.badge.magnifyingglass"
-                )
-            }
-            NavigationStack {
-                StaffView(currentUser: loginViewModel.currentUser ?? UserData())
-            }
-            .tabItem {
-                Label("Personal", systemImage: "person.3")
-            }
-            
-            NavigationStack {
+            .navigationDestination(isPresented: $navToMessage) {
                 NewMessageEditView()
             }
-                    .tabItem {
-                        Label("Meddlanden", systemImage: "message")
-                    }
-            
-            .tint(Color.orange)
+            .navigationDestination(isPresented: $navToMaterial) {
+                MaterialHomeView().navigationBarBackButtonHidden(false)
+            }
+            .navigationDestination(isPresented: $isLoggedOut) {
+                ContentView().navigationBarBackButtonHidden(true)
+            }
+
         }
     }
+
 }
 
 #Preview {
     ManagerHomeView()
 }
+

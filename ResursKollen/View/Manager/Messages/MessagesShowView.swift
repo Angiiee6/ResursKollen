@@ -22,7 +22,11 @@ struct MessagesShowView: View {
     @ObservedObject var viewModel = MessageShowViewModel()
     @State private var expandedMessageID: String? = nil
     @State private var isCollapsed = false
-
+   
+    
+    private var sortedMessages: [Message] {
+        viewModel.messages.sorted { $0.date > $1.date }
+    }
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -49,7 +53,7 @@ struct MessagesShowView: View {
             if !isCollapsed {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {
-                        ForEach(viewModel.messages, id: \.id) { message in
+                        ForEach(sortedMessages, id: \.id) { message in
                             let isExpanded = expandedMessageID == message.id
 
                             VStack(alignment: .leading, spacing: 8) {
