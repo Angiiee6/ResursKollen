@@ -48,12 +48,14 @@ struct NewMessageEditView: View {
     @State private var showingEditor = false
     @State private var editingMessage: Message?
     
-   // private var sortedMessage: []
+    private var sortedMessage: [Message] {
+        viewmodel.messages.sorted{$0.date < $1.date}
+    }
     var body: some View {
         BaseView {
             VStack{
                 List{
-                    ForEach(viewmodel.messages){ message in
+                    ForEach(sortedMessage){ message in
                         VStack(alignment: .leading,spacing: 4){
                             Text(message.title)
                                 .font(.headline)
