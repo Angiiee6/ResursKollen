@@ -45,42 +45,20 @@ struct ResursKollenApp: App {
             //MARK: Badge-utseende
             
             ///Bakgrund
-            
-            ///GRÖN
-//            UITabBarItem.appearance().badgeColor = UIColor(red: 0.232, green: 0.74, blue: 0.54, alpha: 1.0)
-            
-            ///LJUSARE RÖD
-//            UITabBarItem.appearance().badgeColor = UIColor(red: 255/255, green: 107/255, blue: 107/255, alpha: 1.0)
-            
-            ///TURKOS
-//            UITabBarItem.appearance().badgeColor = UIColor(
-//                red: 0/255,
-//                green: 147/255,
-//                blue: 147/255,
-//                alpha: 1.0
-//            )
-            
+
             ///GULD
-//            UITabBarItem.appearance().badgeColor = UIColor(
-//                red: 212/255,
-//                green: 175/255,
-//                blue: 55/255,
-//                alpha: 1.0
-//            )
+            UITabBarItem.appearance().badgeColor = UIColor(
+                red: 212/255,
+                green: 175/255,
+                blue: 55/255,
+                alpha: 1.0
+            )
 
             ///GUL
 //            UITabBarItem.appearance().badgeColor = UIColor(
 //                red: 255/255,
 //                green: 191/255,
 //                blue: 0/255,
-//                alpha: 1.0
-//            )
-           
-            ///LJUSGRÖN
-//            UITabBarItem.appearance().badgeColor = UIColor(
-//                red: 200/255,
-//                green: 214/255,
-//                blue: 29/255,
 //                alpha: 1.0
 //            )
             
