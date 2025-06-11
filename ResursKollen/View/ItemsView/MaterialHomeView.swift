@@ -40,14 +40,9 @@ final class MaterialViewModel: ObservableObject {
 struct MaterialHomeView: View {
     
     @StateObject var viewModel = MaterialViewModel()
-    
-   
     @State private var searchText = ""
     @State private var isShowAddItem = false
-   @State private var  materialToEdit: Material? = nil
-    
-    
-    
+    @State private var materialToEdit: Material? = nil
     
     var filteredMaterials: [Material] {
         if searchText.isEmpty {
@@ -61,9 +56,8 @@ struct MaterialHomeView: View {
     }
     
     var body: some View {
-        
-        VStack{
-         //   NavigationStack {
+        BaseView {
+            VStack {
                 List {
                     ForEach(filteredMaterials, id: \.id) { material in
                         VStack(alignment: .leading, spacing: 4) {
@@ -87,51 +81,50 @@ struct MaterialHomeView: View {
                             Text("Kategori: \(material.category.rawValue)")
                                 .font(.system(.caption, design: .monospaced))
                                 .foregroundColor(.secondary)
-                            Button("Ändra"){
+                            Button("Ändra") {
                                 materialToEdit = material
                                 isShowAddItem = true
-                              //  print(materialToEdit)
                             }
                             .font(.caption)
                             .foregroundStyle(Color.red)
                         }
                         .padding(.vertical, 4)
-                       
+                        .listRowBackground(Color.white.opacity(0.1))
+                        .listRowSeparatorTint(.orange.opacity(0.3))
                     }
-                    
-                }
+                }.scrollContentBackground(.hidden)
                 .navigationTitle("Material")
                 .searchable(text: $searchText, prompt: "Sök material, kategori, pris, enhet")
-               
-            }
-            
-            Button(action: {
-                isShowAddItem = true
-                materialToEdit = nil
-            
-            }) {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                    Text("Lägg till material")
+                
+                Button(action: {
+                    isShowAddItem = true
+                    materialToEdit = nil
+                }) {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                        Text("Lägg till material")
+                    }
+                    .font(.headline)
+                    .foregroundColor(.white)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.orange)
+                    .cornerRadius(12)
+                    .padding(.horizontal)
+                    .padding(.bottom, 20)
                 }
-                .font(.headline)
-                .foregroundColor(.white)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.orange)
-                .cornerRadius(12)
-                .padding(.horizontal)
-                .padding(.bottom,20)
-            }.sheet(isPresented: $isShowAddItem) {
-                AddMaterialView(viewModel: viewModel, materialToEdit: $materialToEdit )
-                    .presentationDragIndicator(.visible)
+                .sheet(isPresented: $isShowAddItem) {
+                    AddMaterialView(viewModel: viewModel, materialToEdit: $materialToEdit)
+                        .presentationDragIndicator(.visible)
+                }
             }
-           
         }
-      
     }
-    
-//}
+}
+
+#Preview {
+    MaterialHomeView()
+}
 #Preview {
   //  MaterialHomeView()
 }

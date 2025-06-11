@@ -33,6 +33,7 @@ struct ResursKollenApp: App {
             }
         }
         
+    //MARK: TabBar-utseende
         private func customizeTabBarAppearance() {
              UITabBar.appearance().unselectedItemTintColor = UIColor(Color.white.opacity(0.6))
                UITabBar.appearance().tintColor = UIColor.orange
@@ -40,15 +41,33 @@ struct ResursKollenApp: App {
 
                UINavigationBar.appearance().tintColor = UIColor.orange
                UIBarButtonItem.appearance().tintColor = UIColor.orange
-//            // Färg för ovalda ikoner
-//            UITabBar.appearance().unselectedItemTintColor = UIColor(Color.white.opacity(0.6))
-//            UINavigationBar.appearance().tintColor = UIColor.orange
-//            UIBarButtonItem.appearance().tintColor = UIColor.orange
-//            UITabBar.appearance().tintColor = UIColor.orange
-//
-//
-//            //bakgrundsfärg för meny
-//            UITabBar.appearance().backgroundColor = UIColor(red: 49/255, green: 50/255, blue: 60/255, alpha: 1.0)
+            
+            //MARK: Badge-utseende
+            
+            ///Bakgrund
+
+            ///GULD
+            UITabBarItem.appearance().badgeColor = UIColor(
+                red: 212/255,
+                green: 175/255,
+                blue: 55/255,
+                alpha: 1.0
+            )
+
+            ///GUL
+//            UITabBarItem.appearance().badgeColor = UIColor(
+//                red: 255/255,
+//                green: 191/255,
+//                blue: 0/255,
+//                alpha: 1.0
+//            )
+            
+            //MARK: Badge-textfärg
+            UITabBarItem.appearance().setBadgeTextAttributes(
+                   [.foregroundColor: UIColor.white,
+                    .font: UIFont.systemFont(ofSize: 11, weight: .bold)],
+                   for: .normal
+               )
         }
     }
 

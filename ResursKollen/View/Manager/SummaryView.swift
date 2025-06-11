@@ -59,7 +59,6 @@ struct SummaryView: View {
                                     }
                                 }
                             }
-                            .presentationDetents([.medium, .large])
                         }
                     }
                     .padding(.horizontal)
