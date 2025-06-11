@@ -81,15 +81,19 @@ struct EmployeeMyOrders: View {
                 }
                 .animation(.easeInOut, value: isLoading)
                 .transition(.opacity)
-
-                NavigationLink(
+                .navigationDestination(isPresented: $isLoggedOut) {
+                    ContentView().navigationBarBackButtonHidden(true)
+                }
+                
+                //deprecated in iOS 16.0
+                /*  NavigationLink(
                     destination: ContentView().navigationBarBackButtonHidden(
                         true
                     ),
                     isActive: $isLoggedOut
                 ) {
                     EmptyView()
-                }
+                } */
             }
         }
         .toolbar {

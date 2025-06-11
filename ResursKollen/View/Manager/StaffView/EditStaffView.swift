@@ -123,7 +123,7 @@ struct EditStaffView: View {
     }
 }
 #Preview {
-    let testuser = UserData(
+  /*  let testuser = UserData(
         status: .employee,
         name: "Anna Svensson",
         email: "anna@test.se",
@@ -139,7 +139,7 @@ struct EditStaffView: View {
             extraInfo: "Duktig på att laga bilar"
         )
     )
-
+*/
     NavigationStack {
         EditStaffView(viewModel: StaffViewViewModel())
     }

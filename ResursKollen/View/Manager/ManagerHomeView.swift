@@ -68,7 +68,7 @@ struct ManagerHomeView: View {
                 }
                 .tag(5)
             }
-            .onChange(of: selected ){ newValue in
+            .onChange(of: selected, initial: false){ oldvalue, newValue  in
                 if newValue == 5 {
                     showMoreNav = true
                     selected = 0  // Hoppar tillbaka till första fliken

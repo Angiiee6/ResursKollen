@@ -50,7 +50,10 @@ extension Customer {
                 print("Geokodningsfel: \(error.localizedDescription)")
                 return
             }
-            guard let placemark = placemarks?.first else { return }
+            
+            guard let placemark = placemarks?.first else {
+                return
+            }
             
             let mapItem = MKMapItem(placemark: MKPlacemark(placemark: placemark))
             mapItem.name = self.name
