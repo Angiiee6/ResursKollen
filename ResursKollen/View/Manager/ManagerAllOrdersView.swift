@@ -16,7 +16,7 @@ struct ManagerAllOrdersView: View {
     @State var isCreateOrder = false
 
     @State private var showCompletedOrders = false // Ny state för navigation
-
+    //MARK: Body
         var body: some View {
             BaseView {
                 VStack(spacing: 16) {
@@ -76,35 +76,6 @@ struct ManagerAllOrdersView: View {
                 .searchable(text: $searchText, prompt: "Sök bland ordrar")
                 
                 HStack{
-                    
-                   /* ligger under flervalsknap
-                    NavigationLink(destination: CustomerView()) {
-                        Text("Kundvy (flytta sen)")
-                            .foregroundStyle(.pink)
-                        
-                    } */
-                    
-//                    Button(action: {
-//                        isCreateOrder = true
-//                    }) {
-//                        HStack {
-//                            Image(systemName: "plus.circle.fill")
-//                            Text("Skapa ny arbetsorder")
-//                        }
-//                        .font(.headline)
-//                        .foregroundColor(.white)
-//                        .padding()
-//                        .frame(maxWidth: .infinity)
-//                        .background(Color.orange)
-//                        .cornerRadius(12)
-//                        .padding(.horizontal)
-//                        .padding(.bottom,20)
-//                    }.sheet(isPresented: $isCreateOrder) {
-//                        CreateOrderView()
-//                            .presentationDragIndicator(.visible)
-//                    }
-                    
-                    
                 }
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -120,18 +91,8 @@ struct ManagerAllOrdersView: View {
                                 .tint(.orange)
                         }
                     }
-                   /* ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            showCompletedOrders = true
-                        } label: {
-                            HStack {
-                                Text("Avslutade")
-                                Image(systemName: "archivebox")
-                            }
-                            .foregroundColor(.orange)
-                        }
-                    } */
                 }
+                    //MARK: BEHÖVS DENNA?
                 .navigationDestination(isPresented: $showCompletedOrders) {
                      CompletedOrders()
                         .toolbar(.hidden, for: .tabBar)
@@ -142,7 +103,7 @@ struct ManagerAllOrdersView: View {
             }.padding(.top, 1)
         }
     }
-
+    //MARK: Filtrera ordrar
     func filteredOrders(for orders: [Order]) -> [Order] {
         orders.filter {
             searchText.isEmpty
@@ -155,7 +116,7 @@ struct ManagerAllOrdersView: View {
         }
     }
 }
-
+//MARK: ViewModel
 extension ManagerAllOrdersView {
     
     @MainActor

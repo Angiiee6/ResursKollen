@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-
+//MARK: ViewModel
 @MainActor
 final class MessagesManagerViewModel: ObservableObject {
    
@@ -51,6 +51,7 @@ struct NewMessageEditView: View {
     private var sortedMessage: [Message] {
         viewmodel.messages.sorted{$0.date < $1.date}
     }
+    //MARK: Body
     var body: some View {
         BaseView {
             VStack{
@@ -88,7 +89,7 @@ struct NewMessageEditView: View {
                     
                 }
                 .scrollContentBackground(.hidden)
-                
+                //MARK: Redigera meddelande
                 Button(action: {
                     editingMessage = nil
                     showingEditor = true
@@ -128,6 +129,7 @@ struct NewMessageEditView: View {
         
     }
     
+
     private func formattedDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium

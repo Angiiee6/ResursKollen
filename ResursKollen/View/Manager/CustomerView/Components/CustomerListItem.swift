@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CustomerListItem: View {
     let customer: Customer
-    
+    //MARK: Body
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 16) {

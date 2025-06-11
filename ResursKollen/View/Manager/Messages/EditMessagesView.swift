@@ -22,7 +22,7 @@ struct EditMessagesView: View {
     
 
    @Environment(\.dismiss) var dismiss
-
+    //MARK: Body
    var body: some View {
        NavigationView {
            Form {
@@ -71,6 +71,7 @@ struct EditMessagesView: View {
            }
        }
    }
+    //MARK: SubmitMessage
 //Submits new message, merge to old message if updated
    private func submitMessage() {
        var message = messageToEdit ?? Message(title: "", text: "", category: .general)

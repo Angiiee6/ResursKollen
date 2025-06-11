@@ -13,6 +13,7 @@ struct EmployeeStaffView: View {
     @StateObject var viewModel = ViewModel()
     @EnvironmentObject var loginViewModel: LoginViewViewmodel
 
+    //MARK: Body
     var body: some View {
         BaseView {
             VStack {
@@ -25,6 +26,7 @@ struct EmployeeStaffView: View {
     }
 }
 
+//MARK: ViewModel
 extension EmployeeStaffView {
 
     @MainActor

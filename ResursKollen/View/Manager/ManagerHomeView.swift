@@ -19,6 +19,7 @@ struct ManagerHomeView: View {
     @State private var navToMaterial = false
     @State private var navToCusomer = false
 
+    //MARK: Body
     var body: some View {
         NavigationStack {
             TabView(selection: $selected) {
@@ -76,7 +77,7 @@ struct ManagerHomeView: View {
                 }
             }
             .tint(.orange)
-
+            //MARK: Show more navbar
             .confirmationDialog("Välj", isPresented: $showMoreNav) {
                 
                 

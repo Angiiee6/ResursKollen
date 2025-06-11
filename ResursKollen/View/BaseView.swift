@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-///BAKGRUND
+//MARK: Bakgrund
 struct BaseView<Content: View>: View {
     private let content: Content
     
@@ -28,20 +28,5 @@ struct BaseView<Content: View>: View {
                 )
                 .edgesIgnoringSafeArea(.all)
             )
-    }
-}
-
-///BAKGRUND FÖR SHEETS
-extension View {
-    func sheetWithBaseView<Item: Identifiable, Content: View>(
-        item: Binding<Item?>,
-        onDismiss: (() -> Void)? = nil,
-        @ViewBuilder content: @escaping (Item) -> Content
-    ) -> some View {
-        self.sheet(item: item, onDismiss: onDismiss) { item in
-            BaseView {
-                content(item)
-            }
-        }
     }
 }

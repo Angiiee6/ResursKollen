@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CustomerOrderListItem: View {
     let order: Order
+    //MARK: Body
     var body: some View {
         HStack (alignment: .top) {
             VStack(alignment: .leading) {

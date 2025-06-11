@@ -25,6 +25,7 @@ struct StaffView: View {
         }
     }
 
+    //MARK: Body
     var body: some View {
         NavigationView {
             BaseView {
@@ -78,6 +79,7 @@ struct StaffView: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbarColorScheme(.dark, for: .navigationBar)
 
+                    //MARK: Chef - lägg till anställd
                     // If user is in manger position, enable button to add employees
                     if currentUser.status == .manager {
                         Button(action: {
@@ -111,6 +113,7 @@ struct StaffView: View {
     }
 }
 
+//MARK: StaffRowView
 struct StaffRowView: View {
     let userName: String
 
@@ -125,6 +128,7 @@ struct StaffRowView: View {
     }
 }
 
+//MARK: ViewModel
 @MainActor
 final class StaffViewViewModel: ObservableObject {
     @Published private(set) var users: [UserData] = []

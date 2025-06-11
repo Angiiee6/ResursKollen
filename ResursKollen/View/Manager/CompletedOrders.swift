@@ -13,6 +13,7 @@ struct CompletedOrders: View {
     @StateObject var completedOrdersVm = ViewModel()
     @State var searchText: String = ""
 
+    //MARK: Body
     var body: some View {
         NavigationStack {
             BaseView {
@@ -51,7 +52,7 @@ struct CompletedOrders: View {
             }
         }
     }
-
+    //MARK: Filtrera ordrar
     func filteredOrders(for orders: [Order]) -> [Order] {
         orders.filter {
             searchText.isEmpty
@@ -62,7 +63,7 @@ struct CompletedOrders: View {
         }
     }
 }
-
+//MARK: ViewModel
 extension CompletedOrders {
     @MainActor
     class ViewModel: ObservableObject {

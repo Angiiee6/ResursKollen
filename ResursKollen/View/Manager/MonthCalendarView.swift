@@ -35,6 +35,7 @@ struct MonthCalendarView: View {
     
     var body: some View {
         VStack {
+            //MARK: Byta månader
             // Calendar Header
             HStack {
                 Button {
@@ -59,7 +60,7 @@ struct MonthCalendarView: View {
                 }
             }
             .padding(.bottom, 8)
-            
+            //MARK: Veckodagar
             // Weekday headers
             HStack {
                 ForEach(daysOfWeek, id: \.self) { day in
@@ -89,7 +90,7 @@ struct MonthCalendarView: View {
                 }
             }
             .padding(.bottom)
-            
+            //MARK: Vald dag
             // Selected date orders list
             VStack(alignment: .leading) {
                 Text(selectedDateFormatted)
@@ -155,7 +156,8 @@ struct MonthCalendarView: View {
         let firstWeekday = calendar.component(.weekday, from: firstDayOfMonth)
         let daysToSubtract = (firstWeekday + 5) % 7
         
-        // 1. Fill in previous month
+        //MARK: Förra månadens dagar
+        // Fill in previous month
         if daysToSubtract > 0 {
             if let previousMonthDay = calendar.date(byAdding: .day, value: -daysToSubtract, to: firstDayOfMonth) {
                 for i in 0..<daysToSubtract {
@@ -166,20 +168,21 @@ struct MonthCalendarView: View {
             }
         }
         
-        // 2. Add current month
+        // Add current month
         var currentDate = firstDayOfMonth
         while currentDate < monthInterval.end {
             dates.append(currentDate)
             currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
         }
         
-        // 3. Calculate dynamic number of weeks (5 or 6)
-        //utan denna visas alltid 6 veckor
+        // Calculate dynamic number of weeks (5 or 6)
+        //without this it will always show 6 weeks
         let totalDays = dates.count
         let weeksNeeded = (totalDays <= 35) ? 5 : 6
         let totalCells = weeksNeeded * 7
         
-        // 4. Fill in next month (only if needed)
+        //MARK: Nästa månadsdagar
+        // Fill in next month (if needed)
         if totalDays < totalCells {
             if let firstOfNextMonth = calendar.date(byAdding: .month, value: 1, to: firstDayOfMonth) {
                 for i in 0..<(totalCells - totalDays) {
@@ -194,6 +197,7 @@ struct MonthCalendarView: View {
     }
 }
 
+//MARK: CalendarDayView
 struct CalendarDayView: View {
     let date: Date
     let isSelected: Bool
@@ -208,7 +212,7 @@ struct CalendarDayView: View {
         formatter.dateFormat = "d"
         return formatter.string(from: date)
     }
-    
+    //MARK: Body
     var body: some View {
         VStack(spacing: 2) {
             Text(dayNumber)

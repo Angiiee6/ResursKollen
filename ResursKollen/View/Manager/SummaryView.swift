@@ -13,21 +13,19 @@ struct SummaryView: View {
     @StateObject var vm = SummaryViewModel()
     @State private var selectedDate = Date()
     @State private var showingCalendar = false
-
+    //MARK: Body
     var body: some View {
         BaseView {
             // Titel
             ScrollView {
                 VStack {
-                    // Calendar Navigation Button
                     HStack {
                         Text("Orderöversikt")
                             .font(.title)
                             .foregroundColor(.white)
                             .bold()
-
                         Spacer()
-
+                        //MARK: Kalender knapp
                         Button(action: {
                             showingCalendar.toggle()
                         }) {
@@ -64,7 +62,7 @@ struct SummaryView: View {
                     .padding(.horizontal)
                     .padding(.bottom, 8)
 
-                    // Chart
+                    //MARK: Chart
                     Chart {
                         ForEach(vm.chartData) { data in
                             BarMark(
@@ -145,6 +143,7 @@ struct SummaryView: View {
     SummaryView()
 }
 
+//MARK: ViewModel
 extension SummaryView {
     @MainActor
     class SummaryViewModel: ObservableObject {
@@ -225,7 +224,7 @@ extension SummaryView {
 
             return "\(total) kr"
         }
-
+        //MARK: Vinst denna månaden
         // Tar fram vinsten denna månaden.
         var ProfitThisMonth: String {
             let calendar = Calendar.current
@@ -256,7 +255,7 @@ extension SummaryView {
 
             return "\(Int(profit)) kr"
         }
-
+        //MARK: Gruppera ordrar
         // grupperar orders beroende på status och visar i charten
         // Gjort en klass för att göra det mer läsbart och snyggare
         var chartData: [OrderChartData] {

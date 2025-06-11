@@ -14,6 +14,7 @@ struct EmployeeMyOrders: View {
     @State var isLoading = true
     @State var isLoggedOut = false
 
+    //MARK: Body
     var body: some View {
         BaseView {
             VStack(alignment: .leading) {
@@ -37,7 +38,7 @@ struct EmployeeMyOrders: View {
                                 )
                             ) {
                                 OrderRowMyOrders(order: order)
-
+                                //MARK: "Swipe lämna order"
                                     .swipeActions(allowsFullSwipe: false) {
                                         Button {
                                             self.viewModel.leaveOrder(order)
@@ -56,11 +57,11 @@ struct EmployeeMyOrders: View {
 
                 }
                 .listStyle(.insetGrouped)
-                .scrollContentBackground(.hidden)  // Make list background transparent
-                .background(Color.clear)  // Clear background for the list
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
 
                 //fejka lite fördröjning för att fåt meddelande listan i sync
-
+                //MARK: Laddar..
                 Group {
                     if isLoading {
                         HStack(alignment: .center) {
@@ -84,16 +85,6 @@ struct EmployeeMyOrders: View {
                 .navigationDestination(isPresented: $isLoggedOut) {
                     ContentView().navigationBarBackButtonHidden(true)
                 }
-                
-                //deprecated in iOS 16.0
-                /*  NavigationLink(
-                    destination: ContentView().navigationBarBackButtonHidden(
-                        true
-                    ),
-                    isActive: $isLoggedOut
-                ) {
-                    EmptyView()
-                } */
             }
         }
         .toolbar {
@@ -114,13 +105,14 @@ struct EmployeeMyOrders: View {
             }
         }
     }
-    // MessagesShowView()
+
 }
 
 #Preview {
     EmployeeMyOrders()
 }
 
+//MARK: ViewModel
 extension EmployeeMyOrders {
 
     @MainActor

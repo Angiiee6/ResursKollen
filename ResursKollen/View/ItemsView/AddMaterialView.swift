@@ -32,6 +32,7 @@ import SwiftUI
             return formatter
         }()
         
+        //MARK: Body
         var body: some View {
                    NavigationStack {
                        Form {
@@ -135,6 +136,7 @@ import SwiftUI
 
         }
         
+        //MARK: SaveMaterialData
         func saveMaterialData(){
             print("saveMaterialData")
             let newMaterial = Material(title: title, priceOut: priceOut, priceIn: priceIn, description: description, unit: unit, category: category)
@@ -152,6 +154,7 @@ import SwiftUI
            
         }
         
+        //MARK: ClearForm
         func clearForm(){
             
             title = ""

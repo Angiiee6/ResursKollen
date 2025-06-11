@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//MARK: ViewModel
 @MainActor
 final class MaterialViewModel: ObservableObject {
     
@@ -55,6 +56,7 @@ struct MaterialHomeView: View {
         }
     }
     
+    //MARK: Body
     var body: some View {
         BaseView {
             VStack {
@@ -124,7 +126,4 @@ struct MaterialHomeView: View {
 
 #Preview {
     MaterialHomeView()
-}
-#Preview {
-  //  MaterialHomeView()
 }

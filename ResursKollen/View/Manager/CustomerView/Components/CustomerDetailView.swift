@@ -25,7 +25,8 @@ struct CustomerDetailView: View {
             )
         )
     }
-
+    
+    //MARK: Body
     var body: some View {
         BaseView {
             VStack {
@@ -93,6 +94,7 @@ struct CustomerDetailView: View {
         }
     }
 
+    //MARK: Filtrera/sortera ordrar
     private func filteredAndSortedOrders(for orders: [Order]) -> [Order] {
         orders.filter {
             searchText.isEmpty
@@ -109,6 +111,7 @@ struct CustomerDetailView: View {
     }
 }
 
+//MARK: Extension
 extension CustomerDetailView {
 
     @MainActor

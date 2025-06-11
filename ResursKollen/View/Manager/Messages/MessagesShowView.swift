@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+//MARK: ViewModel
 @MainActor
 final class MessageShowViewModel: ObservableObject {
     @Published var messages: [Message] = []
@@ -27,6 +28,8 @@ struct MessagesShowView: View {
     private var sortedMessages: [Message] {
         viewModel.messages.sorted { $0.date > $1.date }
     }
+    
+    //MARK: Body
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -49,7 +52,7 @@ struct MessagesShowView: View {
             }
             .padding(.horizontal)
             .padding(.bottom, 15)
-
+            //MARK: Expand
             if !isCollapsed {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 16) {

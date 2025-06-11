@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+//MARK: ViewModel
 class AddEmployeeViewModel: ObservableObject {
     @Published var user = UserData()
     @Published var password = ""
@@ -41,6 +42,7 @@ struct AddEmployeeView: View {
     @State private var isManager = false
     @Environment(\.dismiss) var dismiss
     
+    //MARK: Body
     var body: some View {
         NavigationView {
             BaseView {
@@ -114,7 +116,7 @@ struct AddEmployeeView: View {
                                     RoundedRectangle(cornerRadius: 10)
                                         .stroke(Color.white.opacity(0.5), lineWidth: 1)
                                 )
-                                
+                                //MARK: Toggle
                                 Toggle(isOn: $isManager) {
                                     HStack {
                                         Image(systemName: "star.fill")
@@ -137,7 +139,7 @@ struct AddEmployeeView: View {
                                         .stroke(Color.white.opacity(0.5), lineWidth: 1)
                                 )
                             }
-                            
+                            //MARK: Knappar
                             // Buttons
                             HStack(spacing: 20) {
                                 Button {
@@ -180,6 +182,7 @@ struct AddEmployeeView: View {
         }
     }
     
+    //MARK: Inputfield
     private func inputField(icon: String, placeholder: String, text: Binding<String>) -> some View {
         HStack {
             Image(systemName: icon)

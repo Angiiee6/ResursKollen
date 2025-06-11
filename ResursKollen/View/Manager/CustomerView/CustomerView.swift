@@ -17,7 +17,7 @@ struct CustomerView: View {
     private var sortedCustomers: [Customer] {
         viewModel.allCustomers.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
-
+    //MARK: Body
     var body: some View {
         BaseView {
             VStack(alignment: .leading, spacing: 16) {
@@ -42,6 +42,7 @@ struct CustomerView: View {
                 .background(Color.clear)
                 .scrollContentBackground(.hidden)
                 
+                //MARK: "Ny kund"-knapp
                 // Knapp för att lägga till ny kund
                 Button(action: {
                     addCustomerSheetPresent = true
@@ -67,6 +68,8 @@ struct CustomerView: View {
         }
     }
 }
+
+//MARK: ViewModel
 extension CustomerView {
 
     @MainActor
