@@ -8,15 +8,16 @@
 import SwiftUI
 
 struct ManagerHomeView: View {
-    
+
     @EnvironmentObject var loginViewModel: LoginViewViewmodel
-   
+
     @State private var isLoggedOut = false
     @State private var showMoreNav = false
     @State private var selected = 0
+    @State private var navToOrdersDone = false
     @State private var navToMessage = false
     @State private var navToMaterial = false
-    @State private var navToCusomer = false
+    @State private var navToCustomerView = false
 
     var body: some View {
         NavigationStack {
@@ -52,7 +53,9 @@ struct ManagerHomeView: View {
                 .tag(2)
 
                 NavigationStack {
-                    StaffView(currentUser: loginViewModel.currentUser ?? UserData())
+                    StaffView(
+                        currentUser: loginViewModel.currentUser ?? UserData()
+                    )
                 }
                 .tabItem {
                     Label("Personal", systemImage: "person.3")
@@ -67,29 +70,38 @@ struct ManagerHomeView: View {
                 }
                 .tag(5)
             }
-            .onChange(of: selected ){ newValue in
+            .onChange(of: selected) { newValue in
                 if newValue == 5 {
                     showMoreNav = true
                     selected = 0  // Hoppar tillbaka till första fliken
-                    print("Händer saker")
+
                 }
             }
             .tint(.orange)
 
             .confirmationDialog("Välj", isPresented: $showMoreNav) {
-                Button("Meddelande till anställda") {
-                    navToMessage = true
+                Button("Kunder") {
+                    navToCustomerView = true
                 }
-                Button("Material") {
-                    navToMaterial = true
+
+                Button("Avslutade arbetsordrar") {
+                    navToOrdersDone = true
                 }
-                Button("Kunder")
-                {
-                    navToCusomer = true
-                }
+
             }
-            .navigationDestination(isPresented: $navToCusomer) {
-               CustomerView()
+            Button("Material") {
+                navToMaterial = true
+            }
+
+            Button("Meddelande till anställda") {
+                navToMessage = true
+
+            }
+            .navigationDestination(isPresented: $navToOrdersDone) {
+                CompletedOrders()
+            }
+            .navigationDestination(isPresented: $navToCustomerView) {
+                CustomerView()
             }
             .navigationDestination(isPresented: $navToMessage) {
                 NewMessageEditView()
@@ -109,4 +121,3 @@ struct ManagerHomeView: View {
 #Preview {
     ManagerHomeView()
 }
-

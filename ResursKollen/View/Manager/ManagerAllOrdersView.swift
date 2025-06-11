@@ -120,7 +120,7 @@ struct ManagerAllOrdersView: View {
                                 .tint(.orange)
                         }
                     }
-                    ToolbarItem(placement: .topBarLeading) {
+                   /* ToolbarItem(placement: .topBarLeading) {
                         Button {
                             showCompletedOrders = true
                         } label: {
@@ -130,7 +130,7 @@ struct ManagerAllOrdersView: View {
                             }
                             .foregroundColor(.orange)
                         }
-                    }
+                    } */
                 }
                 .navigationDestination(isPresented: $showCompletedOrders) {
                      CompletedOrders()
