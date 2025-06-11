@@ -18,7 +18,7 @@ struct CustomerDetailCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        HStack(spacing: 8) {
             switch viewModel.state {
             case .loading:
                 ProgressView()
@@ -31,68 +31,67 @@ struct CustomerDetailCard: View {
                     }
                     .font(.caption2)
                     Button("Försök igen") {
-
+                        
                     }
                 }
-
+                .frame(maxWidth: .infinity)
+                
             case .hasData(let customer):
-
-                //MARK: Name
-                Text(customer.name)
-                    .font(.headline)
-
-                //MARK: Address
-                //Klickbar address
-                Button(action: {
-                    customer.openInMaps()
-                }) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text(customer.streetName)
-                        Text("\(customer.postalCode) \(customer.city)")
-                    }
-                    .foregroundColor(.blue)
-                    .underline()  // Understruket för tydlighet
-                }
-                //MARK: Phone number
-                Button(action: {
-                    showOptions = true
-                }) {
-                    Text(customer.phoneNumber)
+                VStack (alignment: .leading, spacing: 8) {
+                    //MARK: Name
+                    Text(customer.name)
+                        .font(.headline)
+                    
+                    //MARK: Address
+                    //Klickbar address
+                    Button(action: {
+                        customer.openInMaps()
+                    }) {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(customer.streetName)
+                            Text("\(customer.postalCode) \(customer.city)")
+                        }
                         .foregroundColor(.blue)
-                }
-                // När du trycker på nummret så kommer 3 alternativ upp
-                .confirmationDialog(
-                    "Vad vill du göra?",
-                    isPresented: $showOptions
-                ) {
-                    Button("Ringa") {
-                        viewModel.callNumber(customer.phoneNumber)
+                        .underline()  // Understruket för tydlighet
                     }
-                    Button("Skicka SMS") {
-                        viewModel.sendSMS(customer.phoneNumber)
+                    //MARK: Phone number
+                    Button(action: {
+                        showOptions = true
+                    }) {
+                        Text(customer.phoneNumber)
+                            .foregroundColor(.blue)
                     }
-                    Button("Avbryt", role: .cancel) {}
-                }
-                //MARK: Email
-                if !customer.emailAddress.isEmpty {
-                    Button {
-                        viewModel.sendMail(to: customer.emailAddress)
-                    } label: {
-                        Image(systemName: "envelope.circle.fill")
-                            .symbolRenderingMode(.multicolor)
+                    // När du trycker på nummret så kommer 3 alternativ upp
+                    .confirmationDialog(
+                        "Vad vill du göra?",
+                        isPresented: $showOptions
+                    ) {
+                        Button("Ringa") {
+                            viewModel.callNumber(customer.phoneNumber)
+                        }
+                        Button("Skicka SMS") {
+                            viewModel.sendSMS(customer.phoneNumber)
+                        }
+                        Button("Avbryt", role: .cancel) {}
+                    }
+                    //MARK: Email
+                    if !customer.emailAddress.isEmpty {
+                        Button {
+                            viewModel.sendMail(to: customer.emailAddress)
+                        } label: {
+                            Image(systemName: "envelope.circle.fill")
+                                .symbolRenderingMode(.multicolor)
+                        }
                     }
                 }
+                Spacer()
             }
-        }
+            }
         //MARK: Task
         .task {
-            Task {
                 await viewModel.fetchCustomerData()
-            }
         }
         .padding(12)
-        .frame(maxWidth: .infinity)
-        .frame(height: 300)
         .background(.ultraThinMaterial)
         .cornerRadius(8)
         .overlay(
@@ -191,6 +190,6 @@ extension CustomerDetailCard {
 
 #Preview {
     CustomerDetailCard(
-        customerId: "123456"
+        customerId: "1r8hcESKQHywT457XG45"
     )
 }

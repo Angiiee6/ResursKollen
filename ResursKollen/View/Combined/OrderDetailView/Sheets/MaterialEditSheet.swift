@@ -153,6 +153,7 @@ struct MaterialEditSheet: View {
 
 //MARK: View Model
 extension MaterialEditSheet {
+    @MainActor
     class ViewModel: ObservableObject {
 
         @Published var premadeMaterials = MaterialEditSheet
