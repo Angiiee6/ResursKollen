@@ -1,9 +1,9 @@
 import SwiftUI
 
 struct StaffDetailView: View {
-    @ObservedObject var viewModel : StaffViewViewModel
+    @ObservedObject var viewModel: StaffViewViewModel
     @State private var isEditUser = false
-//    let user: UserData
+    //    let user: UserData
     @State private var isShowMoreInfo = false
     let currentUser: UserData
 
@@ -11,106 +11,121 @@ struct StaffDetailView: View {
 
         NavigationStack {
             BaseView {
-                    List {
-                        Section {
-                            HStack {
-                                Spacer()
-                                VStack(alignment: .center, spacing: 8) {
-                                    Image(systemName: "person.crop.circle.fill")
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 80, height: 80)
-                                        .foregroundColor(.orange)
-                                    Text(viewModel.selectedUser.name)
-                                        .font(.title)
-                                        .fontWeight(.semibold)
-                                        .foregroundColor(.white)
-                                    Text(viewModel.selectedUser.employmentNumber)
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                }
-                                Spacer()
+                List {
+                    Section {
+                        HStack {
+                            Spacer()
+                            VStack(alignment: .center, spacing: 8) {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 80, height: 80)
+                                    .foregroundColor(.orange)
+                                Text(viewModel.selectedUser.name)
+                                    .font(.title)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.white)
+                                Text(viewModel.selectedUser.employmentNumber)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
                             }
-                            .padding(.vertical)
-                            .listRowBackground(Color.clear)
+                            Spacer()
                         }
-                        Section(
-                            header: Text("Kontaktinformation").foregroundColor(
-                                .white
-                            )
-                        ) {
-                            DetailRow(
-                                icon: "envelope",
-                                label: "E-post",
-                                value: viewModel.selectedUser.email,
-                                isPhoneNumber: false,
-                                isEmail: true
-                            )
-                            DetailRow(
-                                icon: "phone",
-                                label: "Telefonnummer",
-                                value: viewModel.selectedUser.phoneNumber,
-                                isPhoneNumber: true
-                            )
-                            
-                        }
-                        .listRowBackground(Color.white.opacity(0.1))
-                        .listRowSeparatorTint(Color.orange.opacity(0.3))
-                        
-                        Section(
-                            header: Text("Anställningsinformation").foregroundColor(
-                                .white
-                            )
-                        ) {
-                            DetailRow(
-                                icon: "person.fill.checkmark",
-                                label: "Anställningsform",
-                                value: viewModel.selectedUser.detailedInfo.employmentType
-                                    .employmentTypeSE,
-                                isPhoneNumber: false
-                            )
-                            DetailRow(
-                                icon: "number",
-                                label: "Anställningsnummer",
-                                value: viewModel.selectedUser.employmentNumber,
-                                isPhoneNumber: false
-                            )
-                            DetailRow(
-                                icon: "calendar",
-                                label: "Anställningsdatum",
-                                value: formatDate(viewModel.selectedUser.employmentDate),
-                                isPhoneNumber: false
-                            )
-                            
-                        }     .listRowBackground(Color.white.opacity(0.1))
-                            .listRowSeparatorTint(Color.orange.opacity(0.3))
-                        // If user is manager position, enable to view more info. on employee
-                        if currentUser.status == .manager {
-                            Section {
-                                Button {
-                                    withAnimation {
-                                        isShowMoreInfo.toggle()
-                                    }
-                                } label: {
-                                    DetailRow(
-                                        icon: "list.bullet.rectangle",
-                                        label: "Mera information",
-                                        value: "",
-                                        isPhoneNumber: false
-                                    )
-                                }
-                            }                                                        .listRowBackground(Color.white.opacity(0.1))
-                                .listRowSeparatorTint(Color.orange.opacity(0.3))
-                            
-                            if isShowMoreInfo {
-                                ShowDetailsView(user: viewModel.selectedUser)
-                            }
-                        }
-                        
+                        .padding(.vertical)
+                        .listRowBackground(Color.clear)
                     }
-                    .scrollContentBackground(.hidden)
-                    .background(Color.clear)
+                    Section(
+                        header: Text("Kontaktinformation").foregroundColor(
+                            .white
+                        )
+                    ) {
+                        DetailRow(
+                            icon: "envelope",
+                            label: "E-post",
+                            value: viewModel.selectedUser.email,
+                            isPhoneNumber: false,
+                            isEmail: true
+                        )
+                        DetailRow(
+                            icon: "phone",
+                            label: "Telefonnummer",
+                            value: viewModel.selectedUser.phoneNumber,
+                            isPhoneNumber: true
+                        )
+
+                    }
+                    .listRowBackground(Color.white.opacity(0.1))
+                    .listRowSeparatorTint(Color.orange.opacity(0.3))
+
+                    Section(
+                        header: Text("Anställningsinformation").foregroundColor(
+                            .white
+                        )
+                    ) {
+                        DetailRow(
+                            icon: "person.fill.checkmark",
+                            label: "Anställningsform",
+                            value: viewModel.selectedUser.detailedInfo
+                                .employmentType
+                                .employmentTypeSE,
+                            isPhoneNumber: false
+                        )
+                        DetailRow(
+                            icon: "number",
+                            label: "Anställningsnummer",
+                            value: viewModel.selectedUser.employmentNumber,
+                            isPhoneNumber: false
+                        )
+                        DetailRow(
+                            icon: "calendar",
+                            label: "Anställningsdatum",
+                            value: formatDate(
+                                viewModel.selectedUser.employmentDate
+                            ),
+                            isPhoneNumber: false
+                        )
+
+                    }.listRowBackground(Color.white.opacity(0.1))
+                        .listRowSeparatorTint(Color.orange.opacity(0.3))
+                    // If user is manager position, enable to view more info. on employee
+                    if currentUser.status == .manager {
+                        Section {
+                            Button {
+                                withAnimation {
+                                    isShowMoreInfo.toggle()
+                                }
+                            } label: {
+                                DetailRow(
+                                    icon: "list.bullet.rectangle",
+                                    label: "Mera information",
+                                    value: "",
+                                    isPhoneNumber: false
+                                )
+                            }
+                        }.listRowBackground(Color.white.opacity(0.1))
+                            .listRowSeparatorTint(Color.orange.opacity(0.3))
+
+                        if isShowMoreInfo {
+                            ShowDetailsView(
+                                personalNumber: viewModel.selectedUser
+                                    .detailedInfo.personNummer,
+                                salary: viewModel.selectedUser.detailedInfo
+                                    .salary,
+                                phoneNumber: viewModel.selectedUser.phoneNumber,
+                                bankAccount: viewModel.selectedUser.detailedInfo
+                                    .bankkonto,
+                                emergencyContact: viewModel.selectedUser
+                                    .detailedInfo.emergencyContact,
+                                extraInfo: viewModel.selectedUser.detailedInfo
+                                    .extraInfo
+                            )
+                        }
+                    }
+
                 }
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
+            }
         }
 
         .toolbar {
@@ -148,8 +163,7 @@ struct DetailRow: View {
     let isPhoneNumber: Bool
     var isEmail: Bool = false
     @State private var showOptions = false
-    
-    
+
     var body: some View {
         HStack {
             Image(systemName: icon)
@@ -165,23 +179,25 @@ struct DetailRow: View {
                     Text(value)
                         .foregroundColor(.blue)
                 }
-                .confirmationDialog("Vad vill du göra?", isPresented: $showOptions, titleVisibility: .visible) {
+                .confirmationDialog(
+                    "Vad vill du göra?",
+                    isPresented: $showOptions,
+                    titleVisibility: .visible
+                ) {
                     Button("Ringa") {
                         callNumber(value)
                     }
-                    
+
                     Button("Skicka SMS") {
                         sendSMS(value)
                     }
                     Button("Avbryt", role: .cancel) {}
                 }
-            }
-            else if isEmail {
+            } else if isEmail {
                 Button(value) {
                     sendMail(to: value)
                 }
-            }
-            else {
+            } else {
                 Text(value)
                     .foregroundColor(.white)
             }
@@ -192,18 +208,20 @@ struct DetailRow: View {
 private func callNumber(_ number: String) {
     let cleaned = number.filter { $0.isNumber }
     if let url = URL(string: "tel://\(cleaned)"),
-       UIApplication.shared.canOpenURL(url) {
+        UIApplication.shared.canOpenURL(url)
+    {
         UIApplication.shared.open(url)
     } else {
         print(" Kunde inte ringa numret: \(number)")
     }
 }
 
-    //  Funktion för att skicka sms
+//  Funktion för att skicka sms
 private func sendSMS(_ number: String) {
     let cleaned = number.filter { $0.isNumber }
     if let url = URL(string: "sms:\(cleaned)"),
-       UIApplication.shared.canOpenURL(url) {
+        UIApplication.shared.canOpenURL(url)
+    {
         UIApplication.shared.open(url)
     } else {
         print(" Kunde inte öppna SMS till: \(number)")
@@ -211,35 +229,37 @@ private func sendSMS(_ number: String) {
 }
 
 private func sendMail(to address: String) {
-   let trimmedAddress = address.trimmingCharacters(
-       in: .whitespacesAndNewlines
-   )
-   // Email format validation
-   let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
-   let predicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
+    let trimmedAddress = address.trimmingCharacters(
+        in: .whitespacesAndNewlines
+    )
+    // Email format validation
+    let emailRegex = "[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"
+    let predicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
 
-   guard !trimmedAddress.isEmpty, predicate.evaluate(with: trimmedAddress)
-   else {
-       print("Invalid email address")
-       return
-   }
-   //Ensure format of special characters like '@' is properly formatted for URL
-   let mailto = "mailto:\(trimmedAddress)".addingPercentEncoding(
-       withAllowedCharacters: .urlQueryAllowed
-   )!
-   if let url = URL(string: mailto), UIApplication.shared.canOpenURL(url) {
-       UIApplication.shared.open(url)
-   } else {
-       print("Cannot open mail app")
-   }
+    guard !trimmedAddress.isEmpty, predicate.evaluate(with: trimmedAddress)
+    else {
+        print("Invalid email address")
+        return
+    }
+    //Ensure format of special characters like '@' is properly formatted for URL
+    let mailto = "mailto:\(trimmedAddress)".addingPercentEncoding(
+        withAllowedCharacters: .urlQueryAllowed
+    )!
+    if let url = URL(string: mailto), UIApplication.shared.canOpenURL(url) {
+        UIApplication.shared.open(url)
+    } else {
+        print("Cannot open mail app")
+    }
 }
 
 #Preview {
     NavigationStack {
-        
-        StaffDetailView(viewModel: StaffViewViewModel(),
-//                        user: UserData.UserDataMockData as UserData,
-                        currentUser: UserData.UserDataMockData as UserData)
-        
+
+        StaffDetailView(
+            viewModel: StaffViewViewModel(),
+            //                        user: UserData.UserDataMockData as UserData,
+            currentUser: UserData.UserDataMockData as UserData
+        )
+
     }
 }

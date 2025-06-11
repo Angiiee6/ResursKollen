@@ -105,9 +105,9 @@ struct MaterialEditSheet: View {
                         //MARK: Premade items list
                         Menu("Lägg till från lista") {
                             ForEach(viewModel.premadeMaterials) { material in
-                                Button(action: {
+                                Button {
                                     materials.append(material)
-                                }) {
+                                } label: {
                                     Text(material.title)
                                 }
                             }
@@ -144,6 +144,9 @@ struct MaterialEditSheet: View {
                 .padding(.bottom, 16)
             }
             .padding()
+            .task {
+                await viewModel.fetchMaterialList()
+            }
         }
     }
 }
@@ -154,6 +157,15 @@ extension MaterialEditSheet {
 
         @Published var premadeMaterials = MaterialEditSheet
             .premadeMaterialsMockData
+        
+        func fetchMaterialList() async {
+            do {
+                try  self.premadeMaterials = await MaterialManager.shared.readMaterialList()
+            } catch {
+                print("Error fetching materials: \(error)")
+            }
+            
+        }
 
     }
 }

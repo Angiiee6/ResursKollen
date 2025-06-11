@@ -1,5 +1,3 @@
-
-
 import FirebaseAuth
 import SwiftUI
 
@@ -11,15 +9,20 @@ struct StaffView: View {
     @State private var isAddNewEmployeePresented = false
     @State private var detailViewPresent = false
     let currentUser: UserData
-    
-    
-   // Sort list for managers
+
+    // Sort list for managers
     private var managers: [UserData] {
-        viewModel.users.filter { $0.status == .manager }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        viewModel.users.filter { $0.status == .manager }.sorted {
+            $0.name.localizedCaseInsensitiveCompare($1.name)
+                == .orderedAscending
+        }
     }
     // Sort employess
     private var employees: [UserData] {
-        viewModel.users.filter { $0.status == .employee }.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        viewModel.users.filter { $0.status == .employee }.sorted {
+            $0.name.localizedCaseInsensitiveCompare($1.name)
+                == .orderedAscending
+        }
     }
 
     var body: some View {
@@ -29,46 +32,43 @@ struct StaffView: View {
                     List {
                         // Top view managers
                         if !managers.isEmpty {
-                            Section(header: Text(EmploymentStatus.manager.nameSE.capitalized).foregroundColor(.orange)) {
+                            Section(
+                                header: Text(
+                                    EmploymentStatus.manager.nameSE.capitalized
+                                ).foregroundColor(.orange)
+                            ) {
                                 ForEach(managers, id: \.id) { user in
-//                                    NavigationLink {
-//                                        
-//                                        StaffDetailView(viewModel: viewModel, currentUser: currentUser)
-//                                    } label: {
-//                                        StaffRowView(userName: user.name)
-//                                    }
-//                                    .onAppear {
-//                                        viewModel.selectedUser = user
-//                                    }
                                     StaffRowView(userName: user.name)
                                         .onTapGesture {
                                             viewModel.selectedUser = user
                                             detailViewPresent = true
                                         }
-                                    .listRowBackground(Color.white.opacity(0.1))
-                                    .listRowSeparatorTint(Color.orange.opacity(0.3))
+                                        .listRowBackground(
+                                            Color.white.opacity(0.1)
+                                        )
+                                        .listRowSeparatorTint(
+                                            Color.orange.opacity(0.3)
+                                        )
                                 }
                             }
                         }
-                        
+
                         // Section for employee
-                        Section(header: Text(EmploymentStatus.employee.nameSE.capitalized).foregroundColor(.orange)) {
+                        Section(
+                            header: Text(
+                                EmploymentStatus.employee.nameSE.capitalized
+                            ).foregroundColor(.orange)
+                        ) {
                             ForEach(employees, id: \.id) { user in
-//                                NavigationLink {
-//                                    StaffDetailView(viewModel: viewModel, currentUser: currentUser)
-//                                } label: {
-//                                    StaffRowView(userName: user.name)
-//                                }
-//                                .onAppear {
-//                                    viewModel.selectedUser = user
-//                                }
                                 StaffRowView(userName: user.name)
                                     .onTapGesture {
                                         viewModel.selectedUser = user
                                         detailViewPresent = true
                                     }
-                                .listRowBackground(Color.white.opacity(0.1))
-                                .listRowSeparatorTint(Color.orange.opacity(0.3))
+                                    .listRowBackground(Color.white.opacity(0.1))
+                                    .listRowSeparatorTint(
+                                        Color.orange.opacity(0.3)
+                                    )
                             }
                         }
                     }
@@ -77,8 +77,7 @@ struct StaffView: View {
                     .scrollContentBackground(.hidden)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbarColorScheme(.dark, for: .navigationBar)
-                    
-                    
+
                     // If user is in manger position, enable button to add employees
                     if currentUser.status == .manager {
                         Button(action: {
@@ -95,20 +94,14 @@ struct StaffView: View {
                             .background(Color.orange)
                             .cornerRadius(12)
                             .padding(.horizontal)
-                            .padding(.bottom,20)
+                            .padding(.bottom, 20)
                         }
-                    
+
                         .sheet(isPresented: $isAddNewEmployeePresented) {
                             AddEmployeeView()
                                 .presentationDragIndicator(.visible)
                         }
                     }
-                }
-            }
-            .onAppear {
-                Task {
-                    //try? await viewModel.loadUsers()
-//                    try? await viewModel.loadCurrentUser()
                 }
             }
             .navigationDestination(isPresented: $detailViewPresent) {
@@ -120,7 +113,7 @@ struct StaffView: View {
 
 struct StaffRowView: View {
     let userName: String
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(userName)
@@ -143,11 +136,11 @@ final class StaffViewViewModel: ObservableObject {
     init() {
         listenToUsers()
     }
-    
+
     func updateStaff(user: UserData) async throws {
         try await UsersManager.shared.updateUser(user: user)
     }
-    
+
     func listenToUsers() {
         UsersManager.shared.listenToUserChanges { [weak self] result in
             DispatchQueue.main.async {
@@ -155,12 +148,12 @@ final class StaffViewViewModel: ObservableObject {
                 case .success(let users):
                     self?.users = users
                 case .failure(let error):
-                    print("Error")
+                    print("Error: \(error)")
                 }
             }
         }
     }
-    
+
 }
 
 #Preview {
