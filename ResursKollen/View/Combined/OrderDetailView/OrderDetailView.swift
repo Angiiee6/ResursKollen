@@ -62,6 +62,21 @@ struct OrderDetailView: View {
             VStack(spacing: 0) {
                 ScrollView {
                     VStack(spacing: 32) {
+                        //MARK: OrderNumber-Copy
+                        HStack {
+                            Text("Ordernummer: \(order.orderNumber)")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .contextMenu {
+                                                Button(action: {
+                                                    UIPasteboard.general.string = order.orderNumber
+                                                }) {
+                                                    Label("Kopiera", systemImage: "doc.on.doc")
+                                                }
+                                            }
+                                    
+                            Spacer()
+                        }
                         //MARK: Creation date
                         HStack {
                             Text("Skapad: \(order.creationDate.asYYYYMMDD)")
@@ -196,7 +211,7 @@ struct OrderDetailView: View {
             }
             .navigationBarBackButtonHidden(true)
             //MARK: Nav title
-            .navigationTitle(order.orderNumber)
+            .navigationTitle(order.title)
         }
 
         //MARK: onChange
